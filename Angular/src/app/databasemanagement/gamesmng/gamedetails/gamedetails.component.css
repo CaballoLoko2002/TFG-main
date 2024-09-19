@@ -1,0 +1,46 @@
+.mat-mdc-cell{
+    white-space: normal; 
+    word-wrap: break-word;
+  }
+.mat-column-Title {
+    width: 15vw;
+    max-width: 15vw !important;
+    min-width: 15vw !important;
+  }
+  
+  .mat-column-Answer {
+    width: 10vw;
+    max-width: 10vw !important;
+    min-width: 10vw !important;
+  }
+  .mat-column-Information {
+    width: 10vw;
+    max-width: 10vw !important;
+    min-width: 10vw !important;
+  }
+
+  @media (max-width: 768px) {
+    .mat-column-Title, .mat-column-Answer {
+      width: 23vw;
+      max-width: 23vw !important;
+      min-width: 23vw !important;
+    }
+
+    .mat-column-Country{
+      width: 20vw;
+      max-width: 20vw !important;
+      min-width: 20vw !important;
+    }
+    
+
+
+    .mat-column-Information{
+    display: none !important;
+    }
+  
+    .mat-column-Image{
+      display:none !important;
+    }
+  
+ 
+  }

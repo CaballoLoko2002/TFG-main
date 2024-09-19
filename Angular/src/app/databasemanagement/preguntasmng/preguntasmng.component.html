@@ -1,0 +1,227 @@
+
+
+<div *ngIf="gameCreation">
+  <a routerLink="/databaseManagement" style="margin-bottom: 15px; cursor: pointer; text-decoration: underline;">&#8592; Back to management</a>
+
+  <h1 style="text-align: center;">Create a new game</h1>
+  <h3 class="text-secondary mb-1" style="text-align:center">Enter a name, select the questions and click the create button</h3>
+  <mat-divider style="margin-top: 15px; margin-bottom: 15px;"></mat-divider>
+
+  <form [formGroup]="form">
+ <div class="row">
+  <div class="col-lg-6">
+
+    <mat-form-field class="inputForm">
+      <mat-label>Game's name</mat-label>
+      <input  matInput formControlName="name">
+    </mat-form-field>
+  </div>
+  <div class="col-lg-6">
+    <button mat-raised-button (click)="createGame()" [disabled]="form.invalid" color="primary" id="btnCrear">Create game</button>
+  </div>
+ </div>
+
+
+
+
+</form>
+
+<mat-divider style="margin-top: 15px; margin-bottom: 15px;"></mat-divider>
+
+<h2>Questions selected: {{preguntasIn}}</h2>
+
+<table class="table " mat-table [dataSource]="dataSelectedTable">
+
+  <ng-container matColumnDef="Title">
+    <th mat-header-cell *matHeaderCellDef> Title </th>
+    <td mat-cell *matCellDef="let element"> {{element.question}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Answer">
+    <th mat-header-cell *matHeaderCellDef> Answer </th>
+    <td mat-cell *matCellDef="let element"> {{element.answer}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Country">
+    <th mat-header-cell *matHeaderCellDef> Country </th>
+    <td mat-cell *matCellDef="let element"> {{element.country}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Topic">
+    <th mat-header-cell *matHeaderCellDef> Topic </th>
+    <td mat-cell *matCellDef="let element"> {{element.topic}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Image">
+    <th mat-header-cell *matHeaderCellDef> Image </th>
+    <td mat-cell *matCellDef="let element">
+      <div id="ImageField" class="text-center">
+      <img class="image" width="75" [src]="element.image" alt=""> 
+      </div>
+    
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Information">
+    <th mat-header-cell *matHeaderCellDef> Information </th>
+    <td mat-cell *matCellDef="let element"> {{element.information}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Options">
+    <th mat-header-cell *matHeaderCellDef> Options </th>
+    <td mat-cell *matCellDef="let element">
+      <button  mat-icon-button
+      (click)="removeQuestionGame(element)"
+
+      matTooltip="Remove question from the game"
+      matTooltipPosition="below"
+      aria-label="Button that removes a question from the game">
+          <mat-icon>
+            remove</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+
+
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+
+
+<h2 >Select the questions</h2>
+<mat-divider style=" margin-bottom: 15px;"></mat-divider>
+</div>
+
+
+<div>
+  <button *ngIf="!gameCreation" mat-raised-button style=" margin-right: 10px;"[routerLink]="['/databaseManagement/crearPregunta']"  class="btnCrear" color="primary"><mat-icon>add</mat-icon> Create new question</button>
+
+  <button mat-raised-button class="btnCrear" color="primary" (click)="clearFilters()"><mat-icon>cleaning_services</mat-icon>Clear all filters</button>
+
+</div>
+
+<div style="margin-top: 15px;">
+  <div class="col-lg-12">
+    <mat-form-field class="filter">
+      <mat-label>Filter by answer</mat-label>
+      <input [(ngModel)]="respFilter" matInput (keyup)="applyFilter(countryFilter,topicFilter,respFilter)" placeholder="Filter by any attribute...">
+    </mat-form-field>
+</div>
+<div class="row">
+<div class="col-lg-6">
+  <mat-form-field class="filter">
+    <mat-label>Filter by country</mat-label>
+    <mat-select [(ngModel)]="countryFilter" (selectionChange)="applyFilter(countryFilter,topicFilter,respFilter)">
+      <mat-option label="--select something --"> Clear filter </mat-option>
+      <mat-option value="UK">UK</mat-option>
+      <mat-option value="USA">USA</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+<div class="col-lg-6">
+  <mat-form-field class="filter">
+    <mat-label>Filter by topic</mat-label>
+    <mat-select [(ngModel)]="topicFilter" (selectionChange)="applyFilter(countryFilter,topicFilter,respFilter)">
+      <mat-option label="--select something --"> Clear filter</mat-option>
+      <mat-option value="General Knowledge">General Knowledge</mat-option>
+      <mat-option value="Geography">Geography</mat-option>
+      <mat-option value="History">History</mat-option>
+      <mat-option value="Society">Society</mat-option>
+      <mat-option value="Mix">Mix</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<table class="table " mat-table [dataSource]="dataSorted">
+
+  <ng-container matColumnDef="Title">
+    <th mat-header-cell *matHeaderCellDef> Title </th>
+    <td mat-cell *matCellDef="let element"> {{element.question}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Answer">
+    <th mat-header-cell *matHeaderCellDef> Answer </th>
+    <td mat-cell *matCellDef="let element"> {{element.answer}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Country">
+    <th mat-header-cell *matHeaderCellDef> Country </th>
+    <td mat-cell *matCellDef="let element"> {{element.country}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Topic">
+    <th mat-header-cell *matHeaderCellDef> Topic </th>
+    <td mat-cell *matCellDef="let element"> {{element.topic}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Image">
+    <th mat-header-cell *matHeaderCellDef> Image </th>
+    <td mat-cell *matCellDef="let element"> <img width="75" [src]="element.image"  alt=""> </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Information">
+    <th mat-header-cell *matHeaderCellDef> Information </th>
+    <td mat-cell *matCellDef="let element"> {{element.information}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Options">
+    <th mat-header-cell *matHeaderCellDef> Options </th>
+    <td mat-cell *matCellDef="let element">
+
+      <div *ngIf="!gameCreation">
+      <button  mat-icon-button
+      (click)="modifyQuestion(element)"
+
+      matTooltip="Edit question"
+      matTooltipPosition="below"
+      aria-label="Button that deletes a user from the database">
+          <mat-icon>
+            edit</mat-icon>
+      </button>
+
+      <button  mat-icon-button
+      (click)="deleteQuestion(element)"
+
+      matTooltip="Delete question"
+      matTooltipPosition="below"
+      aria-label="Button that deletes a user from the database">
+          <mat-icon>
+          delete</mat-icon>
+      </button>
+
+
+    </div>
+
+    <div *ngIf="gameCreation">
+      <button  mat-icon-button
+      (click)="addQuestion(element)"
+
+      matTooltip="Add question to game"
+      matTooltipPosition="below"
+      aria-label="Button that add question to the game">
+          <mat-icon>
+            add_box</mat-icon>
+      </button>
+
+    </div>
+
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>

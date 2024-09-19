@@ -1,0 +1,78 @@
+
+<nav class="navbar navbar-expand-lg" *ngIf="user">
+    <div class="container-fluid">
+    <div >
+      <img  class="navbarPic"src="assets/images/logoCChase.png" [routerLink]="['/home']" clickable alt="Logo of CChase" loading="lazy" style="margin-top: -1px;" />
+        <button id="CChaseBrand"mat-button [routerLink]="['/home']">CChase</button>
+      </div>
+      <div>
+        <button mat-button [routerLink]="['/rankings']">Leaderboards</button>
+        <button mat-button [routerLink]="['/databaseManagement']" *ngIf="user.rol=='Teacher'">Management</button>
+        <button mat-button (click)="openDialog()">Help</button>
+      </div>
+
+      <div>
+
+ 
+        <img class="navbarPic profile " [src]="user!.image" alt="Profile picture" clickable [matMenuTriggerFor]="menu" >
+      
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="['/profile',user!._id]" type="button" >
+              <mat-icon>person</mat-icon>
+              <span>Profile</span>
+            </button>
+            <button mat-menu-item (click)="logout()">
+              <mat-icon>exit_to_app</mat-icon>
+              <span>Logout</span>
+            </button>
+          </mat-menu>
+      
+      
+        </div>
+
+      </div>
+
+</nav>
+
+<nav class="navbar navbar-expand-lg" *ngIf="!user">
+  <div class="container-fluid">
+  <div >
+    <img  class="navbarPic"src="assets/images/logoCChase.png" [routerLink]="['/']" clickable alt="Logo of CChase" loading="lazy" style="margin-top: -1px;" />
+      <button id="CChaseBrand"mat-button [routerLink]="['/']">Home</button>
+    </div>
+
+    <div>
+      <button mat-button [routerLink]="['/register']">Sign up</button>
+      <button mat-button [routerLink]="['login']">Sign in</button>
+    </div>
+    
+      </div>
+
+
+</nav>
+
+
+
+
+
+<div class="content-wrapper">
+<div class="container">
+      <br>
+      <router-outlet></router-outlet>
+
+
+ 
+      
+</div>
+
+<div class="footer-basic">
+  <footer>
+      <ul class="list-inline">
+          <li class="list-inline-item"><a [routerLink]="['/']">Home</a></li>
+          <li class="list-inline-item" *ngIf="user"><a [routerLink]="['/rankings']">Leaderboards</a></li>
+      </ul>
+      <p class="copyright">Universidad de Murcia © 2024-2025</p>
+      <p class="copyright">Designed by Maria Dolores López Maestre </p>
+  </footer>
+</div>
+</div>

@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="mx-auto d-flex align-items-center justify-content-center">
+
+        <div class="card flex ">
+            <div class="card-body">
+            
+                <h1 class="card-title text-center fs-2">Sign in</h1>
+                <form>
+                    <div class="mb-3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Email Address</mat-label>
+                        <input matInput type="email" class="form-control" id="email"
+                            [(ngModel)]="email" name="email" required>
+                        </mat-form-field>
+                    </div>
+                    <div class="mb-3">
+                        <mat-form-field appearance="outline">
+                            <mat-label>Password</mat-label>
+                        <input matInput type="password" class="form-control" id="password" [(ngModel)]="password" name="password"
+                            required>
+                        </mat-form-field>
+                    </div>
+                    <p *ngIf="errorLogin" class="error"><mat-icon>error</mat-icon>The email or the password is incorrect. Please check your information and try again.</p>
+                    <button mat-raised-button color="primary" type="submit" class="btn btn-primary" id="login-btn" (click)="login()">Login</button>
+                </form>
+
+                <hr>
+                <div>
+                    <p class="card-text">Don't have an account yet?</p>
+                    <button mat-raised-button color="primary"[routerLink]="['/register']" type="button" class="btn btn-secondary">Sign up</button>
+                </div>
+                <hr>
+                <button [routerLink]="['/restore-pass']" type="button" class="btn btn-secondary">I forgot my
+                    password</button>
+            </div>
+
+        </div>
+
+    </div>
+</div>

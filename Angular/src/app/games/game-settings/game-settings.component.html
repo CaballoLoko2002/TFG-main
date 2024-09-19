@@ -1,0 +1,46 @@
+<div class="d-flex justify-content-center">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Game Settings</h5>
+            <h6 class="card-subtitle mb-2 text-muted">Select a country and a topic</h6>
+
+            <form [formGroup]="form">
+                <div class="row">
+                    <div class="col-lg-6">
+
+
+                        <mat-form-field class="selector" appearance="fill">
+                            <mat-label>Select a country</mat-label>
+                            <mat-select formControlName="country">
+                                <mat-option value="UK">UK</mat-option>
+                                <mat-option value="USA">USA</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </div>
+
+                    <div class="col-lg-6">
+                        <mat-form-field class="selector" appearance="fill">
+                            <mat-label>Select a topic</mat-label>
+                            <mat-select formControlName="topic">
+                                <div *ngIf="form.get('country')!.value=='UK'">
+                                <div *ngFor="let topic of UK">
+                                    <mat-option [disabled]="!topic.value" [value]="topic.title">{{topic.title}}</mat-option>
+                                </div>
+                                </div>
+
+                                <div *ngIf="form.get('country')!.value=='USA'">
+                                    <div *ngFor="let topic of USA">
+                                        <mat-option [disabled]="!topic.value" [value]="topic.title">{{topic.title}}</mat-option>
+                                    </div>
+                                    </div>
+                            </mat-select>
+                        </mat-form-field>
+
+                    </div>
+                </div>
+                <button mat-raised-button color="primary" (click)="submit()"> Start game</button>
+            </form>
+        </div>
+    </div>
+</div>

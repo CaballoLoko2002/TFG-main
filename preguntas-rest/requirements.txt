@@ -1,0 +1,7 @@
+gunicorn
+flask
+flask_socketio
+werkzeug
+uuid
+pymongo
+bson

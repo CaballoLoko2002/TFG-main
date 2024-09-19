@@ -1,0 +1,58 @@
+.card{
+    width: 40%;
+    margin: 0 auto;
+    margin-top: 10%
+   
+}
+
+.flex{
+    display:flex;
+}
+
+.btn{
+    margin: 0 auto;
+    display: block;
+}
+
+.card-title{
+    text-align: center;
+}
+
+.card-subtitle{
+    text-align: center
+}
+
+.card-text{
+    text-align:center
+}
+
+.register-full-width{
+    width: 100%
+}
+
+.tick-green {
+    color: green;
+  }
+  
+  .cross-red {
+    color: red;
+  }
+
+  .code-input{
+    margin-bottom: 10px;
+  }
+  ::ng-deep .mat-horizontal-stepper-header{
+    pointer-events: none !important;
+}
+
+.mat-horizontal-stepper-content{
+    background-color: blue;
+
+}
+
+@media (max-width: 768px) {
+    .card{
+      width:100%;
+    }
+ 
+  }

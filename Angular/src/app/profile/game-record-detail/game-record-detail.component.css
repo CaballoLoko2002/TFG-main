@@ -1,0 +1,19 @@
+#backButton{
+    margin-bottom: 15px; 
+    cursor: pointer; 
+    text-decoration: underline;
+    color: blue;
+
+}
+
+#backButton:hover{
+    color:darkblue
+}
+
+#Control{
+    margin-bottom:15px;
+}
+
+button{
+    margin-right:15px;
+}

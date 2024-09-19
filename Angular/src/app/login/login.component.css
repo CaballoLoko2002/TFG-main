@@ -1,0 +1,34 @@
+
+
+.flex{
+    display:flex;
+}
+
+.btn{
+    margin: 0 auto;
+    display: block;
+}
+
+#login-btn{
+    width: 100%
+}
+
+.mat-mdc-form-field{
+    width:100%
+}
+
+.card{
+    width:50%;
+    
+}
+
+.error{
+    color:red
+}
+@media (max-width: 768px) {
+    .card{
+        width:100%;
+        
+    }
+
+}

@@ -1,0 +1,59 @@
+<h4>Management</h4>
+<hr>
+<mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center" backgroundColor="primary"
+    [selectedIndex]="selectedIndex" (selectedIndexChange)="handleMatTabChange($event)">
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">sports_esports</mat-icon>
+            <div class="tab-text">
+                Games
+            </div>
+
+        </ng-template>
+
+        <ng-template matTabContent>
+            <app-gamesmng></app-gamesmng>
+        </ng-template>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">psychology_alt</mat-icon>
+            <div class="tab-text">
+                Questions
+            </div>
+
+        </ng-template>
+        <ng-template matTabContent>
+            <app-preguntasmng [gameCreation]="false"></app-preguntasmng>
+        </ng-template>
+
+    </mat-tab>
+    <mat-tab>
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">person</mat-icon>
+            <div class="tab-text">
+                Users
+            </div>
+
+        </ng-template>
+        <ng-template matTabContent>
+            <app-usersmng></app-usersmng>
+        </ng-template>
+    </mat-tab>
+    <mat-tab>
+
+        <ng-template mat-tab-label>
+            <mat-icon class="tab-icon">list_alt</mat-icon>
+            <div class="tab-text">
+                Topics
+            </div>
+
+        </ng-template>
+        <ng-template matTabContent>
+
+            <app-topicmng></app-topicmng>
+        </ng-template>
+
+    </mat-tab>
+</mat-tab-group>

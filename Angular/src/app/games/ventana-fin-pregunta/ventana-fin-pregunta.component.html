@@ -1,0 +1,38 @@
+<div mat-dialog-title>
+    <div *ngIf="!data.resultado">
+
+        <img src="assets/images/broken-heart.png" class="mx-auto d-block" width=130>
+    </div>
+
+    <div *ngIf="data.resultado">
+        <div>
+            <img src="assets/images/applause.png" class="mx-auto d-block" width=130>
+        </div>
+
+    </div>
+</div>
+
+    <div mat-dialog-content class="contenido">
+        <div *ngIf="data.resultado">
+            <p class="fs-3 fw-bold">Correct answer!</p>
+            <p  class="fs-4">+10 points!</p>
+          
+
+        </div>
+
+
+        <div *ngIf="!data.resultado">
+            <p class="fs-3 fw-bold">You've lost one life :(</p>
+            <p class="fs-4">Correct answer: {{data.correctAns}}</p>
+            
+            
+        </div>
+
+
+
+    </div>
+
+
+<div mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="confirmado()" cdkFocusInitial>Continue</button>
+</div>

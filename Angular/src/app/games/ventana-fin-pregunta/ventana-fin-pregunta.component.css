@@ -1,0 +1,15 @@
+.icon{
+    transform: scale(3);
+    display:block;
+    margin: auto;
+}
+
+.contenido{
+    text-align: center;
+    margin-top: 10px;
+}
+
+button{
+    display:block;
+    margin:auto;
+}

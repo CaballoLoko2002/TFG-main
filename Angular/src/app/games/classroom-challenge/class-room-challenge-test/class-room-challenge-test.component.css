@@ -1,0 +1,28 @@
+.botonInicio{
+    width:100%;
+   
+}
+
+.mat-mdc-list-icon{
+    width:100px;
+    height:100px;
+}
+
+.playerRanking{
+    background-color: lightyellow;
+}
+
+.contenedor-pregunta{
+    margin-bottom: 10px;
+    
+}
+
+::ng-deep code-input input {
+    background: #4758B8!important;
+    color: white!important;
+}
+
+
+
+
+

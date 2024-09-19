@@ -1,0 +1,79 @@
+
+<div>
+<button mat-raised-button [routerLink]="['/databaseManagement/crearGame','true']" style=" margin-top: 10px;" color="primary"><mat-icon>add</mat-icon> Create new game</button> 
+
+</div>
+
+<mat-form-field>
+  <mat-label>Click here to filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Filter by any attribute..." #input>
+</mat-form-field>
+
+<table class="table " mat-table [dataSource]="dataSorted">
+
+    <ng-container matColumnDef="Name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="Code">
+      <th mat-header-cell *matHeaderCellDef> Code </th>
+      <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+    </ng-container>
+  
+    <ng-container matColumnDef="Status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    </ng-container>
+
+  
+    <ng-container matColumnDef="Options">
+      <th mat-header-cell *matHeaderCellDef> Options </th>
+      <td mat-cell *matCellDef="let element"> 
+        <button  mat-icon-button
+        (click)="showDetails(element)"
+        matTooltip="Show details from the game"
+        matTooltipPosition="below"
+        aria-label="Button that shows more details about a game">
+            <mat-icon>
+                plagiarism</mat-icon>
+        </button>
+
+        <button  *ngIf="element.status=='Closed'" mat-icon-button
+        (click)="changeStatus(element,'Opened')"
+        matTooltip="Open game"
+        matTooltipPosition="below"
+        aria-label="Button that opens a game">
+            <mat-icon>
+                lock_open</mat-icon>
+        </button>
+
+        <button  *ngIf="element.status=='Opened'" mat-icon-button
+        (click)="changeStatus(element,'Closed')"
+        matTooltip="Close game"
+        matTooltipPosition="below"
+        aria-label="Button that closes a game">
+            <mat-icon>
+                lock</mat-icon>
+        </button>
+
+        <button  mat-icon-button
+        (click)="deleteGame(element)"
+        matTooltip="Delete game"
+        matTooltipPosition="below"
+        aria-label="Button that deletes a game">
+            <mat-icon>
+                delete</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+  
+  
+      
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+  </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>

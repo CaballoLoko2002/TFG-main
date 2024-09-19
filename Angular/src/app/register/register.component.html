@@ -1,0 +1,161 @@
+
+
+<mat-stepper  linear>
+    <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
+        <div class="card flex ">
+            <div class="card-body">
+                <p class="card-title text-center fs-3">Enter your email address</p>
+                <hr>
+                <form [formGroup]="firstFormGroup">
+                    <ng-template matStepLabel>Enter your email address</ng-template>
+                    <mat-form-field appearance="fill" class="register-full-width">
+                        <mat-label>Email</mat-label>
+                        <input matInput placeholder="Your email address" formControlName="email" #inputRef>
+                    </mat-form-field>
+
+                    <div *ngIf="mailWarningEnabled">
+                        <ul>
+                            <li [ngClass]="{'cross-red': mailWarningEnabled}"> The email address is already in use or
+                                isn't a @um.es address
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button mat-raised-button matStepperNext [disabled]="mailEnabled" color="primary"
+                            (click)="enviarCodigo()">Next</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </mat-step>
+    <!--
+        
+    <mat-step label="Email validation" [editable]="false">
+        <div class="card flex ">
+            <div class="card-body">
+                <p class="card-title text-center fs-2">Enter your code</p>
+                <h6 class="card-subtitle mb-2 text-muted">A code has been sent to the email address introduced in the previous step. Please, write it down below.</h6>
+                <hr>
+                    <code-input style="margin-bottom: 10px;"[isCodeHidden]="false" [codeLength]="5"
+                    (codeCompleted)="onCodeCompleted($event)">
+                    </code-input>
+                    
+
+                    <button mat-raised-button color="accent" (click)="enviarCodigo()" style="margin-bottom: 10px;">Resend code</button>
+
+                    <div>
+                        <button mat-raised-button color="primary" matStepperNext
+                            style="margin-right: 10px" [disabled]="!codeValidation">Next</button>
+                        <button mat-stroked-button matStepperPrevious>Back</button>
+                    </div>
+
+            </div>
+        </div>
+    </mat-step>
+    --> 
+
+    <mat-step [stepControl]="secondFormGroup" label="What's your name?" [editable]="isEditable">
+        <div class="card flex ">
+            <div class="card-body">
+                <p class="card-title text-center fs-3">What's your name?</p>
+                <hr>
+                <form [formGroup]="secondFormGroup">
+                    <mat-form-field appearance="fill" class="register-full-width">
+                        <mat-label>First name</mat-label>
+                        <input matInput formControlName="name" placeholder="First name">
+
+                    </mat-form-field>
+                    <mat-form-field appearance="fill" class="register-full-width">
+                        <mat-label>Last name</mat-label>
+                        <input matInput formControlName="surname" placeholder="Last name">
+                    </mat-form-field>
+
+                    <div>
+                        <button mat-raised-button color="primary" matStepperNext
+                            style="margin-right: 10px">Next</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </mat-step>
+
+    <mat-step [stepControl]="thridFormGroup" label="Introduce your password" [editable]="isEditable">
+        <div class="card flex ">
+            <div class="card-body">
+                <p class="card-title text-center fs-3">Enter a password</p>
+                <hr>
+                <form [formGroup]="thridFormGroup">
+                    <mat-form-field appearance="fill" class="register-full-width">
+                        <mat-label>Enter a password</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"
+                            (keyup)="validatePassword()">
+                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill" class="register-full-width">
+                        <mat-label>Repeat your password</mat-label>
+                        <input matInput [type]="hide ? 'password' : 'text'" formControlName="passConfirmation"
+                            (keyup)="validatePassword()">
+                        <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                            [attr.aria-pressed]="hide">
+                            <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                        </button>
+                    </mat-form-field>
+
+                    <div *ngIf="pass">
+                        Password must:
+                        <ul>
+                            <li [ngClass]="{'tick-green': hasMinimumLength, 'cross-red': !hasMinimumLength}"> Be
+                                between 8 and 16 characters long
+                            </li>
+                            <li [ngClass]="{'tick-green': hasUpperCase, 'cross-red': !hasUpperCase}">Contain at least
+                                one uppercase </li>
+                            <li [ngClass]="{'tick-green': hasLowerCase, 'cross-red': !hasLowerCase}">Contain at least
+                                one lowercase </li>
+                            <li [ngClass]="{'tick-green': hasNumber, 'cross-red': !hasNumber}">Contain at least one
+                                digit
+                            </li>
+                            <li [ngClass]="{'tick-green': hasNonAlphaNumeric, 'cross-red': !hasNonAlphaNumeric}">Contain
+                                at least one non-alphanumeric character
+                            </li>
+                            <li [ngClass]="{'tick-green': isValidated, 'cross-red': !isValidated}">Be identical 
+                            </li>
+                        </ul>
+                    </div>
+
+
+                    <div>
+                        <button mat-raised-button (click)="submit()" [disabled]="!passEnabled" color="primary"
+                            matStepperNext style="margin-right: 10px">Submit</button>
+                        <button mat-stroked-button matStepperPrevious>Back</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </mat-step>
+
+
+    <mat-step label="Confirmation">
+        <div className='success'>
+            <div class="card flex ">
+                <div class="card-body">
+                    <h5 class="card-title">Thank you for your registration!</h5>
+                    <p class="card-text">Your account has been created succesfully. You can now log-in and start learning.  </p>
+                    <button  mat-raised-button color="primary" [routerLink]="['/login']" type="button" class="btn btn-primary">Log in </button>
+                </div>
+            </div>
+        </div>
+    </mat-step>
+</mat-stepper>
+
+<div style="text-align: center;">
+
+   <hr>
+   <h6>Already registered?</h6>
+   <button  mat-raised-button color="primary" [routerLink]="['/login']" type="button" class="btn btn-primary">Sign in </button>
+</div>

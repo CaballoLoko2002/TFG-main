@@ -1,0 +1,19 @@
+.mat-mdc-cell{
+    white-space: normal; 
+    word-wrap: break-word;
+  }
+
+  .mat-mdc-row:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+
+  .mat-mdc-form-field{
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    outline: 10;
+  }
+  
+
+  

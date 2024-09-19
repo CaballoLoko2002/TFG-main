@@ -1,0 +1,87 @@
+
+
+<div class="text-center">
+    <h1>Welcome to CChase!</h1>
+    <h2 class="text-muted">Select a game mode and start learning!</h2>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 d-flex justify-content-center">
+    <div class="card mb-3">
+      <div class="row g-0">
+        <div class="col-md-2">
+          <img src="assets/images/classroom.png" class="img-fluid rounded-start" alt="Classroom Challenge mode icon">
+        </div>
+        <div class="col-md-10">
+          <div class="card-body">
+            <h3 class="card-title fs-4">Classroom Challenge</h3>
+            <p class="card-text">Play Classroom Challenge and beat all your classmates.</p>
+            <button mat-raised-button color="primary" [routerLink]="['/games/classroom']">Play</button>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+  </div>
+
+  <!--
+  <div class="col-lg-6 d-flex justify-content-center ">
+
+      <div class="card mb-3" >
+          <div class="row g-0">
+            <div class="col-md-4">
+              <img src="assets/images/battleMode.png" class="img-fluid rounded-start" alt="Battle mode icon">
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h5 class="card-title">Battle Mode</h5>
+                <p class="card-text">Fight against one mate to see who's better!</p>
+                <button disabled mat-raised-button color="primary">Play</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  </div>
+-->
+</div>
+
+
+<div class="row " >
+    <div class="col-lg-6 d-flex d-flex justify-content-center">
+
+        <div class="card mb-3">
+            <div class="row g-0">
+              <div class="col-md-4">
+                <img src="assets/images/singleplayer.png" class="img-fluid rounded-start" alt="Singleplayer mode icon">
+              </div>
+              <div class="col-md-8">
+                <div class="card-body">
+                  <h3 class="card-title fs-3">Single Player</h3>
+                  <p class="card-text">Select a topic and test your knowledge in these 10-questions games!</p>
+                  <button mat-raised-button color="primary" [routerLink]="['/games']">Play</button>
+                </div>
+              </div>
+            </div>
+          </div>
+    </div>
+
+    <div class="col-lg-6 d-flex justify-content-center">
+
+      <div class="card mb-3" >
+        <div class="row g-0">
+          <div class="col-md-4">
+            <img src="assets/images/infinitemode.png" class="img-fluid rounded-start" alt="Infinite mode icon">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h3 class="card-title fs-3">Infinite mode</h3>
+              <p class="card-text">Let's see how long you can stay alive! Answer questions until you lose all your lives.</p>
+              <button  mat-raised-button color="primary" [routerLink]="['/games/infinite']">Play</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+   
+    </div>
+</div>

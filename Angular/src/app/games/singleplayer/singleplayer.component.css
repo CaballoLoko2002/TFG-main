@@ -1,0 +1,146 @@
+code-input input{
+  content: "Código 1:";
+}
+
+
+.bootstrap-timer {
+  
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border: 1px solid #c9c9c9;
+  border-radius: 8px;
+  display: inline-block;
+  font-weight: 700;
+  font-size: 2rem;
+  
+}
+
+code-input {
+  margin-right: 15px;
+  margin-left: 15px;
+  min-width:50px;
+  --item-border-bottom-has-value: 2px solid #888888;
+  --item-border-bottom-focused: 2px solid #809070;
+}
+
+
+.contenedor-pregunta{
+  margin-bottom: 10px;
+  border:1px solid #c9c9c9;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+button {
+  margin-top: 5px;
+  width: 100%
+}
+
+.texto-pregunta {
+  font-size: 1.2em;
+  padding-top:0.5%;
+  padding-bottom: 0.5%;
+}
+
+
+
+
+.contenedor-respuesta {
+  margin-top: 10px;
+
+}
+
+#ImageField {
+  background-color: 	#EEEDED;
+  width: 100%; /* Ocupa el ancho completo del contenedor padre */
+  height: 25vw; /* Alto del contenedor: 50% del ancho visible del dispositivo */
+  overflow: hidden;
+}
+
+.img-pregunta{
+  width: 100%;
+  max-height: 100%;
+  object-fit: scale-down;
+  object-position:center;
+  
+}
+
+
+
+.contenedor {
+  min-width: 100px;
+ 
+}
+
+.imagenVida {
+  width: 35px;
+}
+
+.imagenTrofeo {
+  width: 150px;
+}
+
+.wrong {
+  --item-background: #FFB2A1
+}
+
+
+
+
+@media (max-width: 820px) {
+
+  #ImageField {
+    background-color: 	#EEEDED;
+    width: 100%; /* Ocupa el ancho completo del contenedor padre */
+    height: 50vw; /* Alto del contenedor: 50% del ancho visible del dispositivo */
+    overflow: hidden; /* Oculta cualquier parte de la imagen que exceda el tamaño del contenedor */
+  
+  }
+
+  .bootstrap-timer {
+    color: #303030;
+    background-color: #eee;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #c9c9c9;
+    border-radius: 8px;
+    display: inline-block;
+    font-weight: 700;
+    font-size: 1rem;
+  
+  }
+  
+
+  #ImageField {
+    background-color: 	#EEEDED;
+    width: 100%; /* Ocupa el ancho completo del contenedor padre */
+    height: 50vw; /* Alto del contenedor: 50% del ancho visible del dispositivo */
+    overflow: hidden;
+  }
+
+  .contenedor {
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  .contenedor-controles button{
+    width:48%;
+    margin-right: 5px;
+  }
+  code-input {
+
+    margin-top: 15px;
+    margin-bottom: 15px;
+    --item-height: 1.3em;
+
+  }
+
+  .texto-pregunta {
+    font-size: 0.9em;
+  }
+
+  .imagenVida {
+    width: 15px;
+  }
+
+}

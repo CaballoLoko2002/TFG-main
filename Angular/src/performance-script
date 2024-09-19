@@ -1,0 +1,16 @@
+var dfr = function () {
+    var n1 = document.getElementById("ds");
+    var r1 = document.createElement("div");
+    r1.innerHTML = n1.textContent;
+    document.body.appendChild(r1);
+    n1.parentElement.removeChild(n1);
+};
+
+var raf = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+        window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+if (raf)
+    raf(function () {
+        window.setTimeout(dfr, 0);
+    });
+else
+    window.addEventListener("load", dfr);

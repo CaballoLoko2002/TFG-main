@@ -1,0 +1,64 @@
+
+<h3 style="text-align: center;" class="text-secondary mb-1">Select the topics you want to enable. Once you've finished, press the "Save Changes" button. </h3>
+
+<div class="row" style="margin:0;overflow: hidden;">
+    <div class="col-lg-6 " >
+        <img class="p-1" src="assets/images/uk_flag.png" alt="United Kingdom flag">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 style="text-align: center;">UK</h1>
+
+            </div>
+
+        </div>
+        
+        <div *ngFor="let data of UK ">
+            <div class="row">
+                <div class="col-lg-12" style="margin-left: 30%;">
+                    <mat-slide-toggle  [aria-label]="data.title" #toggle [checked]="data.value" class="toggle" (change)="onToggleChange(toggle.checked,data.title,'UK')">
+                        <h5>{{data.title}}</h5>
+                </mat-slide-toggle>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        
+
+    </div>
+
+    
+    <div class="col-lg-6">
+
+        <img class="p-1" src="assets/images/usa_flag.png" alt="United States of America flag">
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 style="text-align: center;">USA</h1>
+
+            </div>
+
+        </div>
+
+
+        <div *ngFor="let data of USA ">
+            <div class="row">
+                <div class="col-lg-12" style="margin-left: 30%;">
+                    <mat-slide-toggle  #toggle  [aria-label]="data.title" [checked]="data.value" class="toggle" (change)="onToggleChange(toggle.checked,data.title,'USA')">
+                        <h5>{{data.title}}</h5>
+                </mat-slide-toggle>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        
+    </div>
+
+<button mat-raised-button (click)="submit()" color="primary" style="margin-top: 15px;">Save changes</button>
+</div>

@@ -1,0 +1,101 @@
+<div class="row">
+    <a  routerLink="/login"
+    style="margin-bottom: 15px; cursor: pointer; text-decoration: underline;">&#8592; Back to login</a>
+    <div class="d-flex align-items-center justify-content-center">
+       
+        <div class="card">
+
+            <div class="card-body">
+                <p class="card-title text-center fs-2">Restore password </p>
+                <h6 class="card-subtitle mb-2 text-muted">Please, write the email address you used to create your
+                    account. We will send you a code there.</h6>
+                <hr>
+                <div *ngIf="modo=='modo1'">
+                    <form>
+
+                        <mat-form-field class="full-width-input">
+                            <mat-label>Email</mat-label>
+                            <input type="email" matInput [formControl]="emailFormControl" [errorStateMatcher]="matcher"
+                                placeholder="Ex. pat@example.com">
+                            <mat-error
+                                *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+                                Please enter a valid email address
+                            </mat-error>
+                            <mat-error *ngIf="emailFormControl.hasError('required')">
+                                Email is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+
+                        <button mat-raised-button color="primary" [disabled]="emailFormControl.invalid"
+                            (click)="enviarCodigo()" style="margin-top: 10px;">Send code</button>
+                    </form>
+
+                    <div *ngIf="checkIn" style="margin-top:10px;">
+                        <hr>
+
+                        <code-input [isCodeHidden]="false" [codeLength]="5" (codeCompleted)="onCodeCompleted($event)">
+                        </code-input>
+
+                        <button mat-raised-button color="primary" (click)="activarCodigo()" [disabled]="!codeValidation"
+                            style="margin-top: 10px;">Confirm code</button>
+                    </div>
+                </div>
+                <div *ngIf="modo=='modo2'">
+                    <form [formGroup]="passFormGroup">
+                        <mat-form-field appearance="fill" class="full-width-input">
+                            <mat-label>Enter your password</mat-label>
+                            <input matInput [type]="hide ? 'password' : 'text'" formControlName="password"
+                                (keyup)="validatePassword()">
+                            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                                [attr.aria-pressed]="hide">
+                                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </mat-form-field>
+    
+                        <mat-form-field appearance="fill" class="full-width-input">
+                            <mat-label>Repeat your password</mat-label>
+                            <input matInput [type]="hide ? 'password' : 'text'" formControlName="passConfirmation"
+                                (keyup)="validatePassword()">
+                            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
+                                [attr.aria-pressed]="hide">
+                                <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                        </mat-form-field>
+    
+                        <div *ngIf="pass">
+                            Password must:
+                            <ul>
+                                <li [ngClass]="{'tick-green': hasMinimumLength, 'cross-red': !hasMinimumLength}"> Be
+                                    between 8 and 16 characters long
+                                </li>
+                                <li [ngClass]="{'tick-green': hasUpperCase, 'cross-red': !hasUpperCase}">Contain at least
+                                    one uppercase </li>
+                                <li [ngClass]="{'tick-green': hasLowerCase, 'cross-red': !hasLowerCase}">Contain at least
+                                    one lowercase </li>
+                                <li [ngClass]="{'tick-green': hasNumber, 'cross-red': !hasNumber}">Contain at least one
+                                    digit
+                                </li>
+                                <li [ngClass]="{'tick-green': hasNonAlphaNumeric, 'cross-red': !hasNonAlphaNumeric}">Contain
+                                    at least one non-alphanumeric character
+                                </li>
+                                <li [ngClass]="{'tick-green': isValidated, 'cross-red': !isValidated}">Be identical
+                                </li>
+                            </ul>
+                        </div>
+    
+    
+                        <div>
+                            <button mat-raised-button (click)="submit()" [disabled]="!passEnabled" color="primary"
+                               style="margin-right: 10px">Submit</button>
+                        </div>
+                    </form>
+                </div>
+                <div *ngIf="modo=='modo3'">
+                    <p class="card-text">Your account has been updated succesfully. You can now log-in   </p>
+                    <button mat-raised-button [routerLink]="['/login']" type="button" class="btn btn-primary" color="primary">Log in </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
