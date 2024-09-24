@@ -118,7 +118,7 @@
     </div>
 
 </div>
-<div *ngIf="estado==='enPartida'">
+<div *ngIf="estado==='enPartida'" >
     <div id="Stats Field" class="text-center d-flex justify-content-between">
         <div>
             <p class="fs-5 fw-bold">Question {{indicePregunta}} </p>
@@ -143,13 +143,14 @@
             {{pregunta.question}}
         </div>
 
-     
+
 
     </div>
 
     <div id="ImageField" class="text-center">
-        <img class="img-pregunta"   *ngIf="pregunta.image!=''" [src]="pregunta.image" alt="{{pregunta.information}}">
-        <img class="img-pregunta" *ngIf="pregunta.image==''" src="assets/images/question-placeholder.png" alt="Placeholder image">
+        <img class="img-pregunta" *ngIf="pregunta.image!=''" [src]="pregunta.image" alt="{{pregunta.information}}">
+        <img class="img-pregunta" *ngIf="pregunta.image==''" src="assets/images/question-placeholder.png"
+            alt="Placeholder image">
     </div>
 
     <div id="Response Field" class="contenedor-respuesta">
@@ -158,14 +159,16 @@
             <div class="col-lg-10">
                 <div class="d-flex contenedor">
                     <div *ngFor="let palabra of palabras">
-                        <code-input class="box_respuesta" [isPrevFocusableAfterClearing]="false" inputType="text" *ngIf="!preguntaTerminada" [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false"
+                        <code-input class="box_respuesta" [isPrevFocusableAfterClearing]="false" inputType="text"
+                            *ngIf="!preguntaTerminada" [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false"
                             [isCharsCode]="true" [disabled]="profesor" [codeLength]="palabra.longitud"
-                            (codeChanged)="onCodeChanged($event,palabra.posicion)">
+                            (codeChanged)="onCodeChanged($event, palabra.posicion)"
+                            (keydown)="handleKeyDown($event, palabra.posicion)">
                         </code-input>
                     </div>
                 </div>
 
-                <div class="text-center"  *ngIf="preguntaTerminada">
+                <div class="text-center" *ngIf="preguntaTerminada">
                     <p class="fs-3 text-center"><strong>Correct answer: </strong>{{pregunta.answer}} </p>
                 </div>
             </div>
@@ -179,8 +182,10 @@
                         question</button>
                 </div>
                 <div *ngIf="!profesor">
-                    <button mat-raised-button color="primary" (click)="sendResults()" *ngIf="!preguntaTerminada">Send
-                        results</button>
+                    
+                        <button mat-raised-button color="primary" (keydown)="handleEnter($event)" (click)="sendResults()"
+                            *ngIf="!preguntaTerminada">Send answer
+                        </button>
                 </div>
             </div>
         </div>
@@ -218,7 +223,8 @@
 
 
             <p class="card-text">You can see the detailed results on your History.</p>
-            <button  mat-raised-button color="primary" class="btn btn-primary" [routerLink]="['/home']">Go to Main Menu</button> 
+            <button mat-raised-button color="primary" class="btn btn-primary" [routerLink]="['/home']">Go to Main
+                Menu</button>
 
         </div>
     </div>
@@ -226,10 +232,11 @@
     <mat-list>
         <div mat-subheader class="fs-3">Full ranking</div>
         <hr>
-        <mat-list-item *ngFor="let player of clasification ; let index= index" [ngClass]="{'playerRanking': user!.correo==player.nombre}">
-            <img matListItemIcon *ngIf="index+1==1"src="assets/images/first.png"  alt="First in the ranking">
-            <img matListItemIcon *ngIf="index+1==2"src="assets/images/second.png"  alt="Second in the ranking">
-            <img matListItemIcon *ngIf="index+1==3"src="assets/images/third.png"  alt="Third in the ranking">
+        <mat-list-item *ngFor="let player of clasification ; let index= index"
+            [ngClass]="{'playerRanking': user!.correo==player.nombre}">
+            <img matListItemIcon *ngIf="index+1==1" src="assets/images/first.png" alt="First in the ranking">
+            <img matListItemIcon *ngIf="index+1==2" src="assets/images/second.png" alt="Second in the ranking">
+            <img matListItemIcon *ngIf="index+1==3" src="assets/images/third.png" alt="Third in the ranking">
             <p matListItemIcon *ngIf="index+1 > 3">{{index+1}}</p>
             <div matListItemTitle>{{player.nombre}}</div>
             <div matListItemLine>{{player.score}}</div>

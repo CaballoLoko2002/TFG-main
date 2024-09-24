@@ -203,6 +203,31 @@ export class SingleplayerComponent implements OnInit {
 
   }
 
+  public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
+    const LEFT_ARROW_KEY = 37;
+    const RIGHT_ARROW_KEY = 39;
+
+    // Si se presiona la flecha derecha, simular la tecla Tab
+    if (event.keyCode === RIGHT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index >= 0 && index < focusableElements.length - 1) {
+        focusableElements[index + 1].focus();
+      }
+    }
+
+    // Si se presiona la flecha izquierda, simular Shift + Tab
+    if (event.keyCode === LEFT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index > 0) {
+        focusableElements[index - 1].focus();
+      }
+    }
+  }
+
 
   //SI NO HEMOS LLEGADO A LA ULTIMA PREGUNTA, ENTONCES CONTINUAMOS EL JUEGO
 
@@ -248,6 +273,8 @@ export class SingleplayerComponent implements OnInit {
   }
 
 }
+
+
 
 @Component({
   selector: 'dialog-animations-example-dialog',

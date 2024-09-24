@@ -84,7 +84,12 @@ button {
 }
 
 
-
+::ng-deep code-input input {
+  background: #4758B8!important;
+  color: white!important;
+  font-size: 20px!important;
+  font-weight: bold!important;
+}
 
 @media (max-width: 820px) {
 

@@ -1,86 +1,93 @@
-
 <div *ngIf="!fin">
-<div *ngIf="preguntaActual">
-    <div id="Stats Field" class="text-center d-flex justify-content-between">
-        <div>
-           <p class=" fw-bold">Question {{indicePregunta}}</p>
-        </div>
-    <div>
-        <cd-timer #basicTimer class="bootstrap-timer" (onComplete)="timeOut()" [countdown]="true" [startTime]="tiempo" format="intelli"></cd-timer>
-    </div>    
-    
-        <div>
-            <p class="fw-bold" style="margin:0"> Score: {{puntuacion}}</p>
-            <img class="imagenVida"*ngFor="let imagen of imagenesVidas; let i = index" src="assets/images/vida.png" alt="Vida {{ i + 1 }}">
-    
-          
-        </div>
-    
-    </div>
-    
-    
-    <div id="Question Field" class=" text-center contenedor-pregunta">
-        <div class="texto-pregunta fw-bold text-break ">
-            {{preguntaActual.question}}
+    <div *ngIf="preguntaActual">
+        <div id="Stats Field" class="text-center d-flex justify-content-between">
+            <div>
+                <p class=" fw-bold">Question {{indicePregunta}}</p>
+            </div>
+            <div>
+                <cd-timer #basicTimer class="bootstrap-timer" (onComplete)="timeOut()" [countdown]="true"
+                    [startTime]="tiempo" format="intelli"></cd-timer>
+            </div>
+
+            <div>
+                <p class="fw-bold" style="margin:0"> Score: {{puntuacion}}</p>
+                <img class="imagenVida" *ngFor="let imagen of imagenesVidas; let i = index" src="assets/images/vida.png"
+                    alt="Vida {{ i + 1 }}">
+
+
+            </div>
+
         </div>
 
-    
-    </div>
+
+        <div id="Question Field" class=" text-center contenedor-pregunta">
+            <div class="texto-pregunta fw-bold text-break ">
+                {{preguntaActual.question}}
+            </div>
 
 
-    <div id="ImageField" class="text-center">
-       
-            <img class="img-pregunta"   *ngIf="preguntaActual.image!=''" [src]="preguntaActual.image" alt="{{preguntaActual.information}}">
-            <img class="img-pregunta" *ngIf="preguntaActual.image==''" src="assets/images/question-placeholder.png" alt="Placeholder image">
+        </div>
 
-    </div>
 
-    <div id="Response Field" class="contenedor-respuesta" >
-       
+        <div id="ImageField" class="text-center">
+
+            <img class="img-pregunta" *ngIf="preguntaActual.image!=''" [src]="preguntaActual.image"
+                alt="{{preguntaActual.information}}">
+            <img class="img-pregunta" *ngIf="preguntaActual.image==''" src="assets/images/question-placeholder.png"
+                alt="Placeholder image">
+
+        </div>
+
+        <div id="Response Field" class="contenedor-respuesta">
+
             <div class="row">
                 <div class="col-lg-10 col-md-12">
                     <div class="d-flex contenedor">
                         <div *ngFor="let palabra of palabras">
-                            <code-input [isPrevFocusableAfterClearing]="false" inputType="text" [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false" [isCharsCode]="true" [codeLength]="palabra.longitud"
-                                (codeChanged)="onCodeChanged($event,palabra.posicion)">
+                            <code-input [isPrevFocusableAfterClearing]="false" inputType="text"
+                                [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false" [isCharsCode]="true"
+                                [codeLength]="palabra.longitud" (codeChanged)="onCodeChanged($event,palabra.posicion)"
+                                (keydown)="handleKeyDown($event, palabra.posicion)">
                             </code-input>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-2 contenedor-controles">
                     <button mat-raised-button color="primary" (click)="sendResults()">Send answer</button>
-                    <button mat-raised-button (click)="nextQuestion(false)" style="background-color: #cd2026; color: white">Skip question</button>
+                    <button mat-raised-button (click)="nextQuestion(false)"
+                        style="background-color: #cd2026; color: white">Skip question</button>
                 </div>
             </div>
-    
+
         </div>
     </div>
+</div>
+
+<div *ngIf="fin">
+
+    <div class="text-center text-decoration-underline">
+        <h1>Results</h1>
     </div>
-    
-    <div *ngIf="fin">
-    
-        <div class="text-center text-decoration-underline">
-            <h1>Results</h1>
-        </div>
-    
-        <div class="text-center">
-            <h2>Final Score: {{puntuacion}}</h2>
-        </div>
-    
-    
-        <div class="card">
-            <h3 class="card-header text-center">Summary</h3>
-            <div class="card-body">
-              <h4 class="card-title text-decoration-underline fs-5">Correct answers </h4>
-              {{puntuacion}}
-              
-              <h4 class="card-title text-decoration-underline fs-5">Wrong answers </h4>
-              {{preguntasIncorrectas}}
-    
-    
-              <p class="card-text">You can see the detailed results on your History.</p>
-              <button  mat-raised-button color="primary" class="btn btn-primary" [routerLink]="['/home']">Go to Main Menu</button>            
-            </div>
-          </div>
-        
+
+    <div class="text-center">
+        <h2>Final Score: {{puntuacion}}</h2>
     </div>
+
+
+    <div class="card">
+        <h3 class="card-header text-center">Summary</h3>
+        <div class="card-body">
+            <h4 class="card-title text-decoration-underline fs-5">Correct answers </h4>
+            {{puntuacion}}
+
+            <h4 class="card-title text-decoration-underline fs-5">Wrong answers </h4>
+            {{preguntasIncorrectas}}
+
+
+            <p class="card-text">You can see the detailed results on your History.</p>
+            <button mat-raised-button color="primary" class="btn btn-primary" [routerLink]="['/home']">Go to Main
+                Menu</button>
+        </div>
+    </div>
+
+</div>

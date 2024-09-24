@@ -112,8 +112,8 @@ export class InfinitemodeComponent implements OnInit {
 
     //COMPROBAMOS LA RESPUESTA
     for (let i = 0; i < this.numeroPalabras; i++) {
-      if(this.respuesta[i]==undefined){
-        correct=false
+      if (this.respuesta[i] == undefined) {
+        correct = false
       }
       else if (this.palabras[i].palabra != this.respuesta[i].toLocaleUpperCase()) {
         correct = false
@@ -162,7 +162,7 @@ export class InfinitemodeComponent implements OnInit {
             this.temporizador.start()
             this.questionS.getQuestionInfinite().subscribe({
               next: (results: any) => {
-     
+
                 this.preguntaActual = results
                 this.actualizarPregunta()
 
@@ -194,11 +194,11 @@ export class InfinitemodeComponent implements OnInit {
     }
 
     this.user!.vitrina!.numPartidas = this.user!.vitrina!.numPartidas + 1
-    this.gameRecord.fecha=new Date().toString()
+    this.gameRecord.fecha = new Date().toString()
     this.user?.history?.push(this.gameRecord)
     this.auth.updateUser(this.user!)
-   
-    this.userS.sendGameResults(this.user?._id!,this.gameRecord).subscribe()
+
+    this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe()
 
   }
 
@@ -211,7 +211,32 @@ export class InfinitemodeComponent implements OnInit {
     this.gameRecord.answers.push(entrada);
 
 
-   
 
+
+  }
+
+  public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
+    const LEFT_ARROW_KEY = 37;
+    const RIGHT_ARROW_KEY = 39;
+
+    // Si se presiona la flecha derecha, simular la tecla Tab
+    if (event.keyCode === RIGHT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index >= 0 && index < focusableElements.length - 1) {
+        focusableElements[index + 1].focus();
+      }
+    }
+
+    // Si se presiona la flecha izquierda, simular Shift + Tab
+    if (event.keyCode === LEFT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index > 0) {
+        focusableElements[index - 1].focus();
+      }
+    }
   }
 }
