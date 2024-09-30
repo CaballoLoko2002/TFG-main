@@ -7,6 +7,8 @@ import { User } from 'src/app/interfaces/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { VentanaFinPreguntaComponent } from '../ventana-fin-pregunta/ventana-fin-pregunta.component';
+import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';
+
 
 @Component({
   selector: 'app-singleplayer',
@@ -18,8 +20,8 @@ export class SingleplayerComponent implements OnInit {
   @ViewChild('basicTimer') temporizador;
 
   //Topic y pais
-  topic:string;
-  country:string;
+  topic: string;
+  country: string;
 
   preguntas: Question[];
   preguntaActual: Question;
@@ -34,7 +36,7 @@ export class SingleplayerComponent implements OnInit {
   fin: boolean = false;
   respuestasCorrectas = 0;
   respuestasIncorrectas = 10;
-
+  skipQuestionDialogRef: MatDialogRef<SkipQuestionDialogComponent> | null = null;
   correcto: boolean = true;
 
 
@@ -44,46 +46,60 @@ export class SingleplayerComponent implements OnInit {
 
 
 
-  constructor(private activatedRoute: ActivatedRoute, private auth: AuthService, private userS: UserService, public dialog: MatDialog,private router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, private auth: AuthService, private userS: UserService, public dialog: MatDialog, private router: Router) {
 
   }
 
   ngOnInit(): void {
 
 
-    this.topic= this.activatedRoute.snapshot.queryParamMap.get('categoria')!;
-    this.country= this.activatedRoute.snapshot.queryParamMap.get('pais')!;
+    this.topic = this.activatedRoute.snapshot.queryParamMap.get('categoria')!;
+    this.country = this.activatedRoute.snapshot.queryParamMap.get('pais')!;
     this.preguntas = <Question[]>(this.activatedRoute.snapshot.data['resolvedResponse'])
 
-    if(this.preguntas.length>0){
-    this.vidas = 5;
-    this.imagenesVidas = Array(this.vidas).fill(null);
-    this.tiempo = 60;
+    if (this.preguntas.length > 0) {
+      this.vidas = 5;
+      this.imagenesVidas = Array(this.vidas).fill(null);
+      this.tiempo = 60;
 
 
-    this.auth.user.subscribe(x => this.user = x)
+      this.auth.user.subscribe(x => this.user = x)
 
 
-    this.gameRecord.gameMode = 'Single Player Mode'
-    this.gameRecord.correctAnswers = 0;
-    this.gameRecord.answers = [];
+      this.gameRecord.gameMode = 'Single Player Mode'
+      this.gameRecord.correctAnswers = 0;
+      this.gameRecord.answers = [];
 
 
-    this.actualizarPregunta()
+      this.actualizarPregunta()
 
+    }
+    else {
+      this.dialog
+        .open(DialogError, {
+          disableClose: true
+        }).afterClosed()
+        .subscribe(() => {
+          this.router.navigate(['/games'])
+        })
+    }
   }
-  else{
-    this.dialog
-      .open(DialogError,{
-        disableClose: true
-      }).afterClosed()
-      .subscribe(()=>{
-        this.router.navigate(['/games'])
-      })
-  }
-  }
 
+  confirmSkipQuestion(): void {
+    // Abre el diálogo y guarda la referencia
+    this.skipQuestionDialogRef = this.dialog.open(SkipQuestionDialogComponent, {
+      width: '300px',
+      data: { message: 'Are you sure you want to skip this question?' }
+    });
 
+    // Suscribirse para saber cuando el diálogo se cierra
+    this.skipQuestionDialogRef.afterClosed().subscribe(result => {
+      this.skipQuestionDialogRef = null; // Limpiar la referencia cuando se cierra
+      if (result === true) {
+        this.nextQuestion(false);
+      }
+    });
+  }
 
   actualizarPregunta() {
 
@@ -125,6 +141,10 @@ export class SingleplayerComponent implements OnInit {
   }
 
   timeOut() {
+    if (this.skipQuestionDialogRef) {
+      this.skipQuestionDialogRef.close(); // Cierra el diálogo
+      this.skipQuestionDialogRef = null;  // Limpiar la referencia
+    }
     this.nextQuestion(this.checkResults())
   }
 
@@ -135,8 +155,8 @@ export class SingleplayerComponent implements OnInit {
 
     //COMPROBAMOS LA RESPUESTA
     for (let i = 0; i < this.numeroPalabras; i++) {
-      if(this.respuesta[i]==undefined){
-        correct=false
+      if (this.respuesta[i] == undefined) {
+        correct = false
       }
       else if (this.palabras[i].palabra != this.respuesta[i].toLocaleUpperCase()) {
         correct = false
@@ -168,8 +188,8 @@ export class SingleplayerComponent implements OnInit {
     this.dialog
       .open(VentanaFinPreguntaComponent, {
         data: {
-         resultado: resultado,
-         correctAns:this.preguntaActual.answer
+          resultado: resultado,
+          correctAns: this.preguntaActual.answer
         },
         disableClose: true
       })
@@ -234,10 +254,10 @@ export class SingleplayerComponent implements OnInit {
   obtenerResultadosFinal() {
     this.fin = true;
     this.respuestasIncorrectas = this.preguntas.length - this.respuestasCorrectas;
-    this.gameRecord.incorrectAnswers=this.respuestasIncorrectas;
-    this.gameRecord.score=this.puntuacion;
-    this.gameRecord.topic= this.topic;
-    this.gameRecord.country=this.country;
+    this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
+    this.gameRecord.score = this.puntuacion;
+    this.gameRecord.topic = this.topic;
+    this.gameRecord.country = this.country;
     if (this.respuestasCorrectas == 10) {
       this.user!.vitrina!.medallaOro! = this.user!.vitrina!.medallaOro! + 1
     } else if (this.respuestasCorrectas == 9) {
@@ -247,16 +267,16 @@ export class SingleplayerComponent implements OnInit {
     }
 
 
-    this.user!.vitrina!.numPartidas=this.user!.vitrina!.numPartidas+1
+    this.user!.vitrina!.numPartidas = this.user!.vitrina!.numPartidas + 1
     this.auth.updateUser(this.user!)
 
 
     this.gameRecord.correctAnswers = this.respuestasCorrectas
-    this.gameRecord.fecha=new Date().toString()
+    this.gameRecord.fecha = new Date().toString()
 
     this.user?.history?.push(this.gameRecord)
     this.auth.updateUser(this.user!)
-    this.userS.sendGameResults(this.user?._id!,this.gameRecord).subscribe()
+    this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe()
 
 
   }
@@ -280,8 +300,8 @@ export class SingleplayerComponent implements OnInit {
   selector: 'dialog-animations-example-dialog',
   templateUrl: 'dialog-error.html',
 })
-export class DialogError{
+export class DialogError {
 
-  constructor(public dialogRef: MatDialogRef<DialogError>) {}
+  constructor(public dialogRef: MatDialogRef<DialogError>) { }
 
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { GameRecord } from 'src/app/interfaces/gameRecord';
 import { Question } from 'src/app/interfaces/question';
 import { User } from 'src/app/interfaces/user';
@@ -7,6 +7,8 @@ import { AuthService } from 'src/app/services/auth.service';
 import QuestionService from 'src/app/services/question.service';
 import { UserService } from 'src/app/services/user.service';
 import { VentanaFinPreguntaComponent } from '../ventana-fin-pregunta/ventana-fin-pregunta.component';
+import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';
+
 
 @Component({
   selector: 'app-infinitemode',
@@ -27,7 +29,7 @@ export class InfinitemodeComponent implements OnInit {
   tiempo: number
   puntuacion: number = 0;
   fin: boolean = false;
-
+  skipQuestionDialogRef: MatDialogRef<SkipQuestionDialogComponent> | null = null;
   preguntasIncorrectas: number = 0;
 
 
@@ -104,6 +106,10 @@ export class InfinitemodeComponent implements OnInit {
   }
 
   timeOut() {
+    if (this.skipQuestionDialogRef) {
+      this.skipQuestionDialogRef.close(); // Cierra el diálogo
+      this.skipQuestionDialogRef = null;  // Limpiar la referencia
+    }
     this.nextQuestion(this.checkResults())
   }
 
@@ -213,6 +219,22 @@ export class InfinitemodeComponent implements OnInit {
 
 
 
+  }
+
+  confirmSkipQuestion(): void {
+    // Abre el diálogo y guarda la referencia
+    this.skipQuestionDialogRef = this.dialog.open(SkipQuestionDialogComponent, {
+      width: '300px',
+      data: { message: 'Are you sure you want to skip this question?' }
+    });
+
+    // Suscribirse para saber cuando el diálogo se cierra
+    this.skipQuestionDialogRef.afterClosed().subscribe(result => {
+      this.skipQuestionDialogRef = null; // Limpiar la referencia cuando se cierra
+      if (result === true) {
+        this.nextQuestion(false);
+      }
+    });
   }
 
   public handleKeyDown(event: KeyboardEvent, posicionActual: number) {

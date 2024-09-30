@@ -32,6 +32,7 @@ import { RestorePassComponent } from './restore-pass/restore-pass.component';
 import { VentanaExitoComponent } from './databasemanagement/ventana-exito/ventana-exito.component';
 import { InfinitemodeComponent } from './games/infinitemode/infinitemode.component';
 import { LandingpageComponent } from './landingpage/landingpage.component';
+import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-question-dialog.component';
 
 
 
@@ -63,7 +64,8 @@ import { LandingpageComponent } from './landingpage/landingpage.component';
     VentanaInformacionComponent,
     InfinitemodeComponent,
     LandingpageComponent,
-    DialogError
+    DialogError,
+    SkipQuestionDialogComponent
 
   ],
   imports: [

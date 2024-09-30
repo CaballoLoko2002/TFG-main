@@ -1,0 +1,39 @@
+/* Usar ::ng-deep para penetrar el Shadow DOM de Angular Material */
+::ng-deep mat-dialog-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Estilo para el botón "Yes" */
+::ng-deep .yes-button.mat-mdc-button {
+    background-color: #4758B8 !important;
+    color: white !important;
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Estilo para el botón "No" */
+::ng-deep .no-button.mat-mdc-button {
+    background-color: #cd2026 !important;
+    color: white !important;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Efecto hover para mejorar la experiencia */
+::ng-deep .yes-button.mat-mdc-button:hover,
+::ng-deep .no-button.mat-mdc-button:hover {
+    opacity: 0.8 !important;
+}
+
+/* Efecto activo cuando el botón es presionado */
+::ng-deep .yes-button.mat-mdc-button:active,
+::ng-deep .no-button.mat-mdc-button:active {
+    transform: scale(0.98) !important;
+}
