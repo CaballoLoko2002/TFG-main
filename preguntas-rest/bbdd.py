@@ -225,6 +225,17 @@ class DataBase:
             toReturn.append(parteJsonToPregunta(objeto))
         return toReturn
     
+    def getPreguntasPorPais(self, pais):
+        # Busca todas las preguntas del país sin filtrar por categoría
+        resultados = list(self.collection.find({"pais": pais}))
+
+        toReturn = []
+        json_data = dumps(resultados)
+        for objeto in json.loads(json_data):
+            toReturn.append(parteJsonToPregunta(objeto))
+        return toReturn
+
+    
 
 
     

@@ -290,20 +290,27 @@ def getPreguntasGame(id):
     response.status_code =200
     return response
 
-@app.route("/preguntas/singleplayer",methods=['GET'])
+@app.route("/preguntas/singleplayer", methods=['GET'])
 def getPreguntasSinglePlayer():
     pais = request.args.get('pais')
     categoria = request.args.get('categoria')
-    print(pais +categoria)
-    preguntas= baseDatos.getQuestionsSinglePlayer(pais,categoria)
-    listaJson=[]
+
+    # Si la categoría es "Mix", obtenemos todas las preguntas del país
+    if categoria == "Mix" or categoria is None:
+        preguntas = baseDatos.getPreguntasPorPais(pais)
+    else:
+        preguntas = baseDatos.getQuestionsSinglePlayer(pais, categoria)
+
+    listaJson = []
     for pregunta in preguntas:
-        doc= pregunta.to_dict()
+        doc = pregunta.to_dict()
         listaJson.append(doc)
 
-    response=jsonify(listaJson)
-    response.status_code =200
+    response = jsonify(listaJson)
+    response.status_code = 200
     return response
+
+
 
 
 
