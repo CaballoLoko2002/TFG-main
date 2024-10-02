@@ -23,8 +23,13 @@
         <div id="Question Field" class=" text-center contenedor-pregunta">
             <div class="texto-pregunta fw-bold text-break ">
                 {{preguntaActual.question}}
-            </div>
 
+
+            </div>
+            <button mat-raised-button color="primary" (click)="leerPregunta()">
+                Read Question
+                <img src="assets/images/megafono.png" alt="Read" style="width: 20px; height: 20px; margin-left: 8px;">
+            </button>
 
         </div>
 
@@ -54,7 +59,8 @@
                 </div>
                 <div class="col-lg-2 contenedor-controles">
                     <button mat-raised-button color="primary" (click)="sendResults()">Send answer</button>
-                    <button mat-raised-button  (click)="confirmSkipQuestion()" style="background-color: #cd2026; color: white">Skip question</button>
+                    <button mat-raised-button (click)="confirmSkipQuestion()"
+                        style="background-color: #cd2026; color: white">Skip question</button>
                 </div>
             </div>
 

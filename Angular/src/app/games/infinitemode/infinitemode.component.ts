@@ -68,7 +68,19 @@ export class InfinitemodeComponent implements OnInit {
       }
     })
 
+    document.addEventListener('keydown', this.handleEnterPress);
+    
   }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.handleEnterPress);
+  }
+  
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.sendResults();
+    }
+  };
 
   actualizarPregunta() {
 
@@ -97,6 +109,28 @@ export class InfinitemodeComponent implements OnInit {
     this.respuesta[posicion] = code
   }
 
+  leerPregunta(): void {
+    if (this.preguntaActual.country === 'UK') {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
+        utterance.lang = 'en-GB'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    } else {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
+        utterance.lang = 'en-US'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    }
+    
+  }
 
   sendResults() {
     let resultado = this.checkResults();

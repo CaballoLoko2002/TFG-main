@@ -6,7 +6,7 @@
 }
 
 /* Estilo para el botón "Yes" */
-::ng-deep .yes-button.mat-mdc-button {
+::ng-deep .yes {
     background-color: #4758B8 !important;
     color: white !important;
     padding: 10px 20px;
@@ -17,7 +17,7 @@
 }
 
 /* Estilo para el botón "No" */
-::ng-deep .no-button.mat-mdc-button {
+::ng-deep .no {
     background-color: #cd2026 !important;
     color: white !important;
     padding: 10px 20px;
@@ -27,13 +27,13 @@
 }
 
 /* Efecto hover para mejorar la experiencia */
-::ng-deep .yes-button.mat-mdc-button:hover,
-::ng-deep .no-button.mat-mdc-button:hover {
+::ng-deep .yes:hover,
+::ng-deep .no:hover {
     opacity: 0.8 !important;
 }
 
 /* Efecto activo cuando el botón es presionado */
-::ng-deep .yes-button.mat-mdc-button:active,
-::ng-deep .no-button.mat-mdc-button:active {
+::ng-deep .yes:active,
+::ng-deep .no:active {
     transform: scale(0.98) !important;
 }

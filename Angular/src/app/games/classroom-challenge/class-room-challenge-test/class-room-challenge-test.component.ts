@@ -72,7 +72,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
     if(this.sala!=undefined){
       this.socketService.salirSala(this.sala.id,this.user!.correo); // Envía una señal al servidor antes de cerrar la pestaña o cambiar de vista
     }
-
+    document.removeEventListener('keydown', this.handleEnterPress);
     this.socketService.cerrarSocket()
 
   }
@@ -165,7 +165,17 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       }
 
     })
+
+    if (this.user?.rol != "Teacher") {
+      document.addEventListener('keydown', this.handleEnterPress);
+    }
   }
+  
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.sendResults();
+    }
+  };
 
   //METODOS DEL SOCKET
   public crearSala() {
@@ -258,6 +268,28 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
   onCodeChanged(code: string, posicion) {
     this.respuesta[posicion] = code
+  }
+
+  leerPregunta(): void {
+    if (this.pregunta.country === 'UK') {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
+        utterance.lang = 'en-GB'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    } else {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
+        utterance.lang = 'en-US'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    }
   }
 
   sendResults() {

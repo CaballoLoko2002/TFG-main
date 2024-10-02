@@ -52,38 +52,47 @@ export class SingleplayerComponent implements OnInit {
 
   ngOnInit(): void {
 
-
+    // Lógica ya existente
     this.topic = this.activatedRoute.snapshot.queryParamMap.get('categoria')!;
     this.country = this.activatedRoute.snapshot.queryParamMap.get('pais')!;
     this.preguntas = <Question[]>(this.activatedRoute.snapshot.data['resolvedResponse'])
-
+  
     if (this.preguntas.length > 0) {
       this.vidas = 5;
       this.imagenesVidas = Array(this.vidas).fill(null);
       this.tiempo = 60;
-
-
-      this.auth.user.subscribe(x => this.user = x)
-
-
-      this.gameRecord.gameMode = 'Single Player Mode'
+  
+      this.auth.user.subscribe(x => this.user = x);
+  
+      this.gameRecord.gameMode = 'Single Player Mode';
       this.gameRecord.correctAnswers = 0;
       this.gameRecord.answers = [];
-
-
-      this.actualizarPregunta()
-
-    }
-    else {
+  
+      this.actualizarPregunta();
+    } else {
       this.dialog
         .open(DialogError, {
           disableClose: true
         }).afterClosed()
         .subscribe(() => {
-          this.router.navigate(['/games'])
-        })
+          this.router.navigate(['/games']);
+        });
     }
+  
+    
+    document.addEventListener('keydown', this.handleEnterPress);
   }
+
+  ngOnDestroy(): void {
+    document.removeEventListener('keydown', this.handleEnterPress);
+  }
+  
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.sendResults();
+    }
+  };
+  
 
   confirmSkipQuestion(): void {
     // Abre el diálogo y guarda la referencia
@@ -99,6 +108,28 @@ export class SingleplayerComponent implements OnInit {
         this.nextQuestion(false);
       }
     });
+  }
+
+  leerPregunta(): void {
+    if (this.preguntaActual.country === 'UK') {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
+        utterance.lang = 'en-GB'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    } else {
+      if ('speechSynthesis' in window) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
+        utterance.lang = 'en-US'; 
+        synth.speak(utterance);
+      } else {
+        console.warn('Speech synthesis not supported in this browser.');
+      }
+    }
   }
 
   actualizarPregunta() {
