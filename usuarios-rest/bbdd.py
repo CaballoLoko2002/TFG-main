@@ -248,7 +248,21 @@ class DataBase:
         },
         ])
     
-    
+    def getTopMix(self):
+        return self.collection.aggregate([
+            {"$match": {"rol": "Student"}},
+            {"$sort": {"vitrina.recordMix": -1}},  # Ordenar por recordMix
+            {"$limit": 10},
+            {
+                "$project": {
+                    "name": "$name",
+                    "lastname": "$lastname",
+                    "score": "$vitrina.recordMix",  # Devolver el recordMix
+                    "_id": 0
+                }
+            }
+        ])
+
 
 
 

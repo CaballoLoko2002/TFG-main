@@ -219,69 +219,43 @@ def getAllTemas():
 
 @app.route("/usuarios/top", methods=['GET'])
 def getusersTop():
-
     medallas = list(baseDatos.getTopMedallas())
-    medallasPlata=list(baseDatos.getTopMedallasSilver())
-    medallasBronce=list(baseDatos.getTopMedallasBronce())
+    medallasPlata = list(baseDatos.getTopMedallasSilver())
+    medallasBronce = list(baseDatos.getTopMedallasBronce())
     trofeos = list(baseDatos.getTopTrofeos())
     infins = list(baseDatos.getTopInfinites())
-    trofeosPlata=list(baseDatos.getTopTrofeosPlata())
-    trofeosBronce=list(baseDatos.getTopTrofeosBronce())
+    mix = list(baseDatos.getTopMix())  # NUEVO: ranking de Mix
+    trofeosPlata = list(baseDatos.getTopTrofeosPlata())
+    trofeosBronce = list(baseDatos.getTopTrofeosBronce())
 
-
-    i=1
-    for medal in medallas:
-        
-        medal['ind'] = i
-        i +=1
-        print(medal)
-
-    i=1
-    for medal in medallasPlata:
-        medal['ind'] = i
-        i +=1
-        print(medal)
-
-    i=1
-    for medal in medallasBronce:
-        medal['ind'] = i
-        i +=1
-        print(medal)
-
-
-
-    i=1
-    for trof in trofeos:
-        trof['ind'] = i
-        i +=1
-    
-    i=1
-    for trof in trofeosPlata:
-        print(trof)
-        trof['ind'] = i
-        i +=1
-
-    i=1
-    for trof in trofeosBronce:
-        print(trof)
-        trof['ind'] = i
-        i +=1
-
-    i=1
-    for inf in infins:
-        inf['ind'] = i
-        i +=1
-
+    # Añadir índices a cada ranking
+    for i, item in enumerate(medallas, 1):
+        item['ind'] = i
+    for i, item in enumerate(medallasPlata, 1):
+        item['ind'] = i
+    for i, item in enumerate(medallasBronce, 1):
+        item['ind'] = i
+    for i, item in enumerate(trofeos, 1):
+        item['ind'] = i
+    for i, item in enumerate(trofeosPlata, 1):
+        item['ind'] = i
+    for i, item in enumerate(trofeosBronce, 1):
+        item['ind'] = i
+    for i, item in enumerate(infins, 1):
+        item['ind'] = i
+    for i, item in enumerate(mix, 1):  # Añadir índices para Mix
+        item['ind'] = i
 
     contenido = {
-        "resultado" : "OK",
-        "medallas" : medallas,
-        "medallasPlata":medallasPlata,
+        "resultado": "OK",
+        "medallas": medallas,
+        "medallasPlata": medallasPlata,
         "medallasBronce": medallasBronce,
-        "trofeos" : trofeos,
-        "trofeosPlata" : trofeosPlata,
-        "trofeosBronce" : trofeosBronce,
-        "infinites" : infins
+        "trofeos": trofeos,
+        "trofeosPlata": trofeosPlata,
+        "trofeosBronce": trofeosBronce,
+        "infinites": infins,
+        "mix": mix  # NUEVO: se incluye el ranking Mix
     }
     response = jsonify(contenido)
     response.status_code = 200
