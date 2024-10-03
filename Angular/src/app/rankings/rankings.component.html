@@ -26,7 +26,16 @@
                         <p *ngIf="data.ind > '3'">{{data.ind}}</p>
                     </td>
                 </ng-container>
-    
+                
+                <ng-container matColumnDef="image">
+                    <th mat-header-cell *matHeaderCellDef> Image </th>
+                    <td mat-cell *matCellDef="let data">
+                        <div id="ImageField" class="text-center">
+                            <img class="image" [src]="data!.image" width="75" alt="User profile picture">
+                        </div>
+                    </td>
+                </ng-container>
+
                 <ng-container matColumnDef="Nombre">
                     <th mat-header-cell *matHeaderCellDef> Name </th>
                     <td mat-cell *matCellDef="let data">

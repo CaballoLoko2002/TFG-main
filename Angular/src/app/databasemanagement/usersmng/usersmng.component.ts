@@ -1,7 +1,7 @@
-import { Component,OnInit, ViewChild } from '@angular/core';
-import { MatDialog} from '@angular/material/dialog';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
+import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/interfaces/user';
 import { UserService } from 'src/app/services/user.service';
@@ -14,36 +14,46 @@ import { VentanasConfirmacionComponent } from '../ventanas-confirmacion/ventanas
 })
 export class UsersmngComponent implements OnInit {
 
-  columnsToDisplay = ['nombre','lastname','correo','image','rol',"actions"];
+  columnsToDisplay = ['nombre', 'lastname', 'correo', 'image', 'rol', "actions"];
+  dataSource: User[];
+  dataSorted: MatTableDataSource<User>;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
+  constructor(private userService: UserService, public dialog: MatDialog) {}
 
-  dataSource: User[]
-  dataSorted: MatTableDataSource<User>
-  @ViewChild(MatSort) sort:MatSort
-  @ViewChild(MatPaginator) paginator:MatPaginator
-
-  constructor (private userService: UserService, public dialog:MatDialog){
-
-  }
-
-  //Aqui dentro obtenemos los datos y encendemos el sorter
   ngOnInit(): void {
-
-     this.userService.getAlumnos().subscribe({
+    this.userService.getAlumnos().subscribe({
       next: (results: any) => {
-        this.dataSource=results
+        this.dataSource = results;
         this.dataSorted = new MatTableDataSource(this.dataSource);
-        this.dataSorted.sort = this.sort;
-        this.dataSorted.paginator=this.paginator
 
+        // Custom filter to ignore case sensitivity
+        this.dataSorted.filterPredicate = (data: User, filter: string) => {
+          const transformedFilter = filter.trim().toLowerCase();
+          return (
+            data.nombre.toLowerCase().includes(transformedFilter) ||
+            data.lastname.toLowerCase().includes(transformedFilter) ||
+            data.correo.toLowerCase().includes(transformedFilter) ||
+            data.rol.toLowerCase().includes(transformedFilter)
+          );
+        };
+
+        // Custom sorting to ignore case sensitivity
+        this.dataSorted.sortingDataAccessor = (item, property) => {
+          if (typeof item[property] === 'string') {
+            return item[property].toLowerCase();
+          }
+          return item[property];
+        };
+
+        this.dataSorted.sort = this.sort;
+        this.dataSorted.paginator = this.paginator;
       },
       error: (error: any) => console.log(error),
       complete: () => console.log('Done getting users')
-    }
-    );
+    });
   }
-
-
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -53,45 +63,43 @@ export class UsersmngComponent implements OnInit {
     }
   }
 
+  onSortChange(sortDirection: string) {
+    this.sort.active = 'nombre';  // Define default sorting column
+    this.sort.direction = sortDirection as SortDirection; // Cast sortDirection to the correct type
+    this.dataSorted.sort = this.sort;
+  }
 
-  changeToProfessor(user:User){
-    this.dialog
-    .open(VentanasConfirmacionComponent, {
+  changeToProfessor(user: User) {
+    this.dialog.open(VentanasConfirmacionComponent, {
       data: `Once you update the role of this user you will lose access to their data`
     })
     .afterClosed()
     .subscribe((confirmado: Boolean) => {
       if (confirmado) {
         this.userService.changeToProfessor(user).subscribe({
-          next: ()=>{
+          next: () => {
             this.dataSource = this.dataSource.filter(item => item !== user);
-            this.dataSorted.data=this.dataSource;
+            this.dataSorted.data = this.dataSource;
           }
-        })
+        });
       }
-
-    })
+    });
   }
 
-  deleteUser(user:User){
-    this.dialog
-    .open(VentanasConfirmacionComponent, {
+  deleteUser(user: User) {
+    this.dialog.open(VentanasConfirmacionComponent, {
       data: `Once you delete this user you will lose access to their data`
     })
     .afterClosed()
     .subscribe((confirmado: Boolean) => {
       if (confirmado) {
         this.userService.deleteUser(user._id).subscribe({
-          next:()=>{
+          next: () => {
             this.dataSource = this.dataSource.filter(item => item !== user);
-            this.dataSorted.data=this.dataSource;
+            this.dataSorted.data = this.dataSource;
           }
-        })
+        });
       }
-
-    })
+    });
   }
-
-
 }
-

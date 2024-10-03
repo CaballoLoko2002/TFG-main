@@ -32,6 +32,7 @@ export class RankingsComponent implements OnInit {
           {tabName: "Gold Trophies", cardText:"Top gold trophies", img:"assets/images/trophy.png", imgDes: "Gold Trophy Image",ranking:results.trofeos},
           {tabName: "Silver Trophies", cardText:"Top silver trophies", img:"assets/images/silverTrophy.png", imgDes: "Silver Trophy Image",ranking:results.trofeosPlata},
           {tabName: "Bronze Trophies", cardText:"Top bronze trophies", img:"assets/images/bronzeTrophy.png", imgDes: "Bronze Trophy Image",ranking:results.trofeosBronce},
+          {tabName: "Mix Score", cardText:"Top Mix score ", img:"assets/images/infinite.png", imgDes: "Infinite Score Image",ranking:results.recordMix},
           {tabName: "Infinite Score", cardText:"Top infinite score ", img:"assets/images/infinite.png", imgDes: "Infinite Score Image",ranking:results.infinites},
         ]
 

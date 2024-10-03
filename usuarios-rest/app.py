@@ -288,49 +288,67 @@ def getusersTop():
     return response
 
 
-@app.route("/usuarios/<id>/records",methods=['POST'])
+@app.route("/usuarios/<id>/records", methods=['POST'])
 def saveGameRecord(id):
-    jon= json.loads(request.data)
+    jon = json.loads(request.data)
 
-    resultado= jon['correctAnswers']
-    modo= jon['gameMode']
-    if(modo=='Classroom Challenge'):
-        place=jon['place']
+    resultado = jon['correctAnswers']
+    modo = jon['gameMode']
+    # Obtenemos el topic de forma segura, si no existe, topic será None
+    topic = jon.get('topic', None)
+
+    if modo == 'Classroom Challenge':
+        place = jon['place']
     else:
-        place=-1
-    addTrophy(id,resultado,modo,place)
-    baseDatos.saveRegistroPartida(id,jon)
+        place = -1
+
+    # Aquí pasamos también el topic (si está presente)
+    addTrophy(id, resultado, modo, place, topic)
+    
+    # Guardar el historial del juego
+    baseDatos.saveRegistroPartida(id, jon)
+    
     return Response(status=200)
 
-def addTrophy(userId,resultado,modo,place):
-
-    alumno=baseDatos.getUserById(userId)
-    v=alumno.vitrina
-    if(modo=='Single Player Mode'):
-        if(resultado<9 and resultado>=7):
-            v['medallaBronce']= v['medallaBronce'] +1
-
-        if(resultado==9):
-            v['medallaPlata']= v['medallaPlata'] +1
-        
-        if(resultado==10):
-            v['medallaOro']= v['medallaOro'] +1
-
-    if(modo=='Classroom Challenge'):
-        
-        if(place==0):
-            v['trofeoOro']=v['trofeoOro']+1
-        elif(place==1):
-            v['trofeoPlata']=v['trofeoPlata']+1
-        elif(place==2):
-            v['trofeoBronce']=v['trofeoBronce']+1
-
-    if(modo=='Infinite Mode' and resultado>v['recordInfinito']):
-        v['recordInfinito']=resultado
 
 
-    v['numPartidas']=v['numPartidas']+1
-    baseDatos.actualizarVitrina(userId,v)
+def addTrophy(userId, resultado, modo, place, topic):
+
+    alumno = baseDatos.getUserById(userId)
+    v = alumno.vitrina
+
+    if modo == 'Single Player Mode':
+        # Verificamos si topic es 'Mix', y actuamos en consecuencia
+        if topic == 'Mix':
+            # Si el topic es Mix, manejamos el récord de Mix
+            if resultado > v.get('recordMix', 0):
+                v['recordMix'] = resultado
+        else:
+            # Si no es 'Mix' o topic es None, manejamos las medallas
+            if resultado < 9 and resultado >= 7:
+                v['medallaBronce'] = v.get('medallaBronce', 0) + 1
+            elif resultado == 9:
+                v['medallaPlata'] = v.get('medallaPlata', 0) + 1
+            elif resultado == 10:
+                v['medallaOro'] = v.get('medallaOro', 0) + 1
+
+    if modo == 'Classroom Challenge':
+        if place == 0:
+            v['trofeoOro'] = v.get('trofeoOro', 0) + 1
+        elif place == 1:
+            v['trofeoPlata'] = v.get('trofeoPlata', 0) + 1
+        elif place == 2:
+            v['trofeoBronce'] = v.get('trofeoBronce', 0) + 1
+
+    if modo == 'Infinite Mode' and resultado > v.get('recordInfinito', 0):
+        v['recordInfinito'] = resultado
+
+    # Actualizamos el número de partidas
+    v['numPartidas'] = v.get('numPartidas', 0) + 1
+
+    # Actualizamos la vitrina en la base de datos
+    baseDatos.actualizarVitrina(userId, v)
+
 
 
 

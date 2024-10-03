@@ -33,6 +33,7 @@ export class SingleplayerComponent implements OnInit {
   vidas: number;
   tiempo: number
   puntuacion: number = 0;
+  puntuacionMix: number = 0;
   fin: boolean = false;
   respuestasCorrectas = 0;
   respuestasIncorrectas = 10;
@@ -56,18 +57,18 @@ export class SingleplayerComponent implements OnInit {
     this.topic = this.activatedRoute.snapshot.queryParamMap.get('categoria')!;
     this.country = this.activatedRoute.snapshot.queryParamMap.get('pais')!;
     this.preguntas = <Question[]>(this.activatedRoute.snapshot.data['resolvedResponse'])
-  
+
     if (this.preguntas.length > 0) {
       this.vidas = 5;
       this.imagenesVidas = Array(this.vidas).fill(null);
       this.tiempo = 60;
-  
+
       this.auth.user.subscribe(x => this.user = x);
-  
+
       this.gameRecord.gameMode = 'Single Player Mode';
       this.gameRecord.correctAnswers = 0;
       this.gameRecord.answers = [];
-  
+
       this.actualizarPregunta();
     } else {
       this.dialog
@@ -78,21 +79,21 @@ export class SingleplayerComponent implements OnInit {
           this.router.navigate(['/games']);
         });
     }
-  
-    
+
+
     document.addEventListener('keydown', this.handleEnterPress);
   }
 
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.handleEnterPress);
   }
-  
+
   handleEnterPress = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       this.sendResults();
     }
   };
-  
+
 
   confirmSkipQuestion(): void {
     // Abre el diálogo y guarda la referencia
@@ -115,7 +116,7 @@ export class SingleplayerComponent implements OnInit {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
-        utterance.lang = 'en-GB'; 
+        utterance.lang = 'en-GB';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -124,7 +125,7 @@ export class SingleplayerComponent implements OnInit {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.preguntaActual.question);
-        utterance.lang = 'en-US'; 
+        utterance.lang = 'en-US';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -200,6 +201,7 @@ export class SingleplayerComponent implements OnInit {
   nextQuestion(resultado: boolean) {
     if (resultado) {
       this.puntuacion += 10;
+      this.puntuacionMix += 1;
       this.respuestasCorrectas++;
     }
 
@@ -287,30 +289,49 @@ export class SingleplayerComponent implements OnInit {
     this.respuestasIncorrectas = this.preguntas.length - this.respuestasCorrectas;
     this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
     this.gameRecord.score = this.puntuacion;
+    this.gameRecord.scoreMix = this.puntuacionMix; // Solo relevante si el topic es Mix
     this.gameRecord.topic = this.topic;
     this.gameRecord.country = this.country;
-    if (this.respuestasCorrectas == 10) {
-      this.user!.vitrina!.medallaOro! = this.user!.vitrina!.medallaOro! + 1
-    } else if (this.respuestasCorrectas == 9) {
-      this.user!.vitrina!.medallaPlata! = this.user!.vitrina!.medallaPlata! + 1
-    } else if (this.respuestasCorrectas < 9 && this.respuestasCorrectas >= 7) {
-      this.user!.vitrina!.medallaBronce! = this.user!.vitrina!.medallaBronce! + 1
+
+    // Si el topic es "Mix", registramos la puntuación de Mix
+    if (this.gameRecord.topic === 'Mix') {
+      let mixPrvRecord = this.user!.vitrina!.recordMix || 0;
+
+      // Actualizamos el récord de Mix si la puntuación actual es mayor
+      if (this.puntuacionMix > mixPrvRecord) {
+        this.user!.vitrina!.recordMix = this.puntuacionMix;
+      }
+    } else {
+      // Para otros topics, manejamos las medallas como antes
+      if (this.respuestasCorrectas == 10) {
+        this.user!.vitrina!.medallaOro = (this.user!.vitrina!.medallaOro || 0) + 1;
+      } else if (this.respuestasCorrectas == 9) {
+        this.user!.vitrina!.medallaPlata = (this.user!.vitrina!.medallaPlata || 0) + 1;
+      } else if (this.respuestasCorrectas < 9 && this.respuestasCorrectas >= 7) {
+        this.user!.vitrina!.medallaBronce = (this.user!.vitrina!.medallaBronce || 0) + 1;
+      }
     }
 
+    // Incrementamos el número de partidas jugadas
+    this.user!.vitrina!.numPartidas = (this.user!.vitrina!.numPartidas || 0) + 1;
 
-    this.user!.vitrina!.numPartidas = this.user!.vitrina!.numPartidas + 1
-    this.auth.updateUser(this.user!)
+    // Actualizamos el usuario en la base de datos
+    this.auth.updateUser(this.user!);
 
+    // Registramos las respuestas correctas y la fecha
+    this.gameRecord.correctAnswers = this.respuestasCorrectas;
+    this.gameRecord.fecha = new Date().toString();
 
-    this.gameRecord.correctAnswers = this.respuestasCorrectas
-    this.gameRecord.fecha = new Date().toString()
+    // Añadimos el registro de la partida al historial del usuario
+    this.user?.history?.push(this.gameRecord);
 
-    this.user?.history?.push(this.gameRecord)
-    this.auth.updateUser(this.user!)
-    this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe()
+    // Actualizamos el usuario de nuevo en la base de datos
+    this.auth.updateUser(this.user!);
 
-
+    // Enviamos los resultados de la partida al backend
+    this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe();
   }
+
 
   construirHistorial() {
     let entrada = {

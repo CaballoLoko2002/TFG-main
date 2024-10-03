@@ -10,6 +10,7 @@ export interface GameRecord{
     }[]
     gameMode: string;
     score:number;
+    scoreMix?:number;
     fecha?:string
     country?:string;
     topic?:string;

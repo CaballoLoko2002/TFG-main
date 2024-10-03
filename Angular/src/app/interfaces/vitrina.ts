@@ -6,5 +6,6 @@ export interface Vitrina {
     trofeoPlata:number;
     trofeoBronce:number;
     recordInfinito: number;
+    recordMix: number;
     numPartidas: number;
 }

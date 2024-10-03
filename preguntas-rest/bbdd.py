@@ -22,7 +22,7 @@ def parseJsonToGame(json) -> Juego:
 class DataBase:
     def __init__(self) -> None:
         # establish connex
-        conn = MongoClient("mongodb+srv://gonzalo:Contrasena1234@cchaseprueba.mtrqiqh.mongodb.net/?retryWrites=true&w=majority")
+        conn = MongoClient("mongodb+srv://davidanton:david@cluster0.e000g1u.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
         #conn = MongoClient("localhost",27017)
         # connect db
         #self.db = conn.test

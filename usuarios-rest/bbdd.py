@@ -31,24 +31,31 @@ class DataBase:
         self.collectionHistorial=self.db.Historia
         
 
-    def registrarAlumno(self, mail, password, name,lastname):
+    def registrarAlumno(self, mail, password, name, lastname):
         collection = self.db.User
-        aInsertar = {"mail": mail,
-                     "password": password,
-                     "name": name,
-                     "lastname":lastname,
-                     "image":"",
-                     "rol": "Student",
-                     "vitrina": {"medallaOro": 0,
-                                 "medallaPlata": 0,
-                                 "medallaBronce": 0,
-                                 "trofeoOro": 0,
-                                 "trofeoPlata":0,
-                                 "trofeoBronce":0,
-                                 "recordInfinito": 0,
-                                 "numPartidas": 0},
-                     "history":[]}
+        aInsertar = {
+            "mail": mail,
+            "password": password,
+            "name": name,
+            "lastname": lastname,
+            "image": "",
+            "rol": "Student",
+            "vitrina": {
+                "medallaOro": 0,
+                "medallaPlata": 0,
+                "medallaBronce": 0,
+                "trofeoOro": 0,
+                "trofeoPlata": 0,
+                "trofeoBronce": 0,
+                "recordInfinito": 0,
+                "recordMix": 0,  # INICIALIZAR recordMix
+                "numPartidas": 0
+            },
+            "history": []
+        }
         collection.insert_one(aInsertar)
+
+
 
     def getUserById(self,id) -> User:
         myquery={"_id":{"$eq":ObjectId(id)}}

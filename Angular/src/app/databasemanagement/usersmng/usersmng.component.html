@@ -1,23 +1,25 @@
-
-
 <mat-form-field>
     <mat-label>Click here to filter</mat-label>
     <input matInput (keyup)="applyFilter($event)" placeholder="Filter by any attribute..." #input>
-  </mat-form-field>
+</mat-form-field>
 
+<mat-form-field>
+    <mat-label>Sort by</mat-label>
+    <mat-select (selectionChange)="onSortChange($event.value)">
+        <mat-option value="asc">Sort A-Z</mat-option>
+        <mat-option value="desc">Sort Z-A</mat-option>
+    </mat-select>
+</mat-form-field>
 
-
-
-
-<table mat-table [dataSource]="dataSorted" matSort >
+<table mat-table [dataSource]="dataSorted" matSort>
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
     <!-- Position Column -->
 
- 
+
     <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header="nombre" > Name </th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header="nombre"> Name </th>
         <td mat-cell *matCellDef="let data">
             {{data.nombre}}
         </td>
@@ -42,7 +44,7 @@
         <th mat-header-cell *matHeaderCellDef> Image </th>
         <td mat-cell *matCellDef="let data">
             <div id="ImageField" class="text-center">
-            <img class="image" [src]="data!.image"  width="75" alt="User profile picture">
+                <img class="image" [src]="data!.image" width="75" alt="User profile picture">
             </div>
         </td>
     </ng-container>
@@ -51,7 +53,7 @@
     <ng-container matColumnDef="rol">
         <th mat-header-cell *matHeaderCellDef> Role </th>
         <td mat-cell *matCellDef="let data">
-           {{data.rol}}
+            {{data.rol}}
         </td>
     </ng-container>
 
@@ -60,39 +62,30 @@
         <td mat-cell *matCellDef="let data">
 
 
-            <button [routerLink]="['/profile',data!._id]"  mat-icon-button
-            #tooltip="matTooltip"
-            matTooltip="View profile"
-            matTooltipPosition="below"
-            aria-label="Button that gives access to the user profile ">
+            <button [routerLink]="['/profile',data!._id]" mat-icon-button #tooltip="matTooltip"
+                matTooltip="View profile" matTooltipPosition="below"
+                aria-label="Button that gives access to the user profile ">
                 <mat-icon>
-                person</mat-icon>
+                    person</mat-icon>
             </button>
 
-            <button  mat-icon-button
-            (click)="changeToProfessor(data)"
-            #tooltip="matTooltip"
-            matTooltip="Change role to Teacher"
-            matTooltipPosition="below"
-            aria-label="Button that change the user status to professor">
+            <button mat-icon-button (click)="changeToProfessor(data)" #tooltip="matTooltip"
+                matTooltip="Change role to Teacher" matTooltipPosition="below"
+                aria-label="Button that change the user status to professor">
                 <mat-icon>
-                upgrade</mat-icon>
+                    upgrade</mat-icon>
             </button>
-            
-            <button  mat-icon-button
-            (click)="deleteUser(data)"
-            #tooltip="matTooltip"
-            matTooltip="Delete user"
-            matTooltipPosition="below"
-            aria-label="Button that deletes a user from the database">
+
+            <button mat-icon-button (click)="deleteUser(data)" #tooltip="matTooltip" matTooltip="Delete user"
+                matTooltipPosition="below" aria-label="Button that deletes a user from the database">
                 <mat-icon>
-                delete</mat-icon>
+                    delete</mat-icon>
             </button>
 
 
-         
 
-          
+
+
     </ng-container>
 </table>
 
