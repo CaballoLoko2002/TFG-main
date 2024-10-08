@@ -193,20 +193,28 @@ def editPregunta(id):
 
     enunciado = request.form["question"]
     solucion = request.form["answer"]
-    pais= request.form["country"]
+    pais = request.form["country"]
     categoria = request.form["topic"]
-    informacion=request.form.get('information', '')
+    informacion = request.form.get('information', '')
+    
+    # Si se ha subido un nuevo archivo, lo procesamos
     if 'files' in request.files:
-        file= request.files['files']
-        image=upload_foto(file,id)
+        file = request.files['files']
+        image = upload_foto(file, id)
     else:
-        delete_foto(id)
-        baseDatos.updateImagen(id,"")
+        # Solo eliminamos la foto si el frontend ha enviado una indicación clara de que la foto debe ser eliminada
+        if request.form.get('delete_image', 'false') == 'true':
+            delete_foto(id)
+            baseDatos.updateImagen(id, "")
+        else:
+            # Si no se sube ninguna imagen nueva y no se ha indicado eliminar la imagen, mantenemos la imagen anterior.
+            image = baseDatos.getPreguntaById(id)['image']
+            baseDatos.updateImagen(id, image)
 
-    baseDatos.editarPregunta(id,enunciado,solucion,pais,categoria,informacion)
-
+    baseDatos.editarPregunta(id, enunciado, solucion, pais, categoria, informacion)
 
     return Response(status=200)
+
 
 
 @app.route("/preguntas/infinite",methods=['GET'])

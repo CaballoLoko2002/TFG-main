@@ -87,58 +87,56 @@ export class CrearpreguntaComponent {
     this.form.get('information')?.enable()
 
   }
-
+  
   eliminarFoto(){
-    this.selectedFile=null
-    this.isFile=false;
-    this.form.get('information')?.enable()
+    this.selectedFile = null;
+    this.isFile = false;
+    this.imageURL = ""; // Limpiamos la vista previa de la imagen
+    this.form.get('information')?.disable();
   }
 
-  submit(){
-    this.country = this.form.get('country')?.value!
-    this.topic=this.form.get('topic')?.value!;
-    this.question=this.form.get('question')?.value!
-    this.answer=this.form.get('answer')?.value!
-    this.information=this.form.get('information')?.value!
-
-    const formData= new FormData();
-    formData.append("question",this.question)
-    formData.append("answer",this.answer)
-    formData.append("country",this.country)
-    formData.append('topic',this.topic)
-
-
-    if(this.selectedFile!=null){
-    formData.append('files',this.selectedFile,this.selectedFile.name)
+  submit() {
+    this.country = this.form.get('country')?.value!;
+    this.topic = this.form.get('topic')?.value!;
+    this.question = this.form.get('question')?.value!;
+    this.answer = this.form.get('answer')?.value!;
+    this.information = this.form.get('information')?.value!;
+  
+    const formData = new FormData();
+    formData.append("question", this.question);
+    formData.append("answer", this.answer);
+    formData.append("country", this.country);
+    formData.append('topic', this.topic);
+  
+    if (this.selectedFile != null) {
+      formData.append('files', this.selectedFile, this.selectedFile.name);
     }
-
-    if(this.information!=''){
-      formData.append("information",this.information)
+  
+    // Enviar una bandera indicando si se eliminó la imagen
+    if (!this.isFile) {
+      formData.append('delete_image', 'true');  // Eliminar imagen
     }
-    if(this.country!='' && this.topic!='' && this.question!='' && this.answer!=''){
-    if(!this.editing){
-    this.questionS.addQuestion(formData).subscribe({
-      next: () => {
-        this.router.navigate(['databaseManagement'])
-      },
-      error: (error: any) => console.log(error),
-
-
-    })
+  
+    if (this.information != '') {
+      formData.append("information", this.information);
+    }
+  
+    if (this.country != '' && this.topic != '' && this.question != '' && this.answer != '') {
+      if (!this.editing) {
+        this.questionS.addQuestion(formData).subscribe({
+          next: () => {
+            this.router.navigate(['databaseManagement']);
+          },
+          error: (error: any) => console.log(error),
+        });
+      } else {
+        this.questionS.editQuestion(this.preQuestion._id, formData).subscribe({
+          next: () => {
+            this.router.navigate(['databaseManagement']);
+          },
+          error: (error: any) => console.log(error),
+        });
+      }
+    }
   }
-
-  else{
-    this.questionS.editQuestion(this.preQuestion._id,formData).subscribe({
-      next:() =>{
-        this.router.navigate(['databaseManagement'])
-      },
-      error: (error:any) => console.log(error)
-    })
-
-  }
-}
-    }
-
-
-
 }
