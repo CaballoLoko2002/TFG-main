@@ -1,4 +1,3 @@
-
 <h1 class="fs-5">Leaderboards</h1>
 <p>Click on the side tabs to see the top 10 ranking in each category</p>
 
@@ -7,54 +6,66 @@
 
     <div *ngFor="let ranking of rankings">
         <mat-tab label={{ranking.tabName}}>
-        <div class="card">
-            <img [src]="ranking.img" class="card-img-top" [alt]="ranking.imgDes" style="margin-top:5px;">
-            <div class="card-body">
-                <h5 class="card-title fs-2">{{ranking.cardText}}</h5>
+            <div class="card">
+                <img [src]="ranking.img" class="card-img-top" [alt]="ranking.imgDes" style="margin-top:5px;">
+                <div class="card-body">
+                    <h5 class="card-title fs-2">{{ranking.cardText}}</h5>
+                </div>
+
+
+
+                <table mat-table [dataSource]="ranking.ranking">
+                    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+                    <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
+
+                    <ng-container matColumnDef="No">
+                        <th mat-header-cell *matHeaderCellDef> No </th>
+                        <td mat-cell *matCellDef="let data">
+                            <img *ngIf="data.ind=='1'" src="assets/images/first.png" class="icon"
+                                alt="First in the top">
+                            <img *ngIf="data.ind=='2'" src="assets/images/second.png" class="icon"
+                                alt="Second in the top">
+                            <img *ngIf="data.ind=='3'" src="assets/images/third.png" class="icon"
+                                alt="Third in the top">
+                            <p *ngIf="data.ind > '3'">{{data.ind}}</p>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Nombre">
+                        <th mat-header-cell *matHeaderCellDef> Name </th>
+                        <td mat-cell *matCellDef="let data">
+                            {{data.name}} {{data.lastname}}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="Score">
+                        <th mat-header-cell *matHeaderCellDef> Score </th>
+                        <td mat-cell *matCellDef="let data">
+                            {{data.score}}
+                        </td>
+                    </ng-container>
+
+                </table>
+
+                <div
+                    style="margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+
+                    <mat-form-field appearance="fill" style="flex: 1; min-width: 200px;">
+                        <mat-label>Search by Name</mat-label>
+                        <input matInput (keyup)="applyFilter($event, ranking.ranking)" placeholder="Enter a name">
+                    </mat-form-field>
+
+                    <!-- Envolver el paginador para mejorar la alineación -->
+                    <div style="display: flex; align-items: center;">
+                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+                    </div>
+                </div>
+
+
+
+
+
             </div>
-
-            <table mat-table [dataSource]="ranking.ranking" >
-                <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-                <tr mat-row *matRowDef="let myRowData; columns: columnsToDisplay"></tr>
-                
-                <ng-container matColumnDef="No">
-                    <th mat-header-cell *matHeaderCellDef> No </th>
-                    <td mat-cell *matCellDef="let data">
-                        <img *ngIf="data.ind=='1'"src="assets/images/first.png" class="icon" alt="First in the top">
-                        <img *ngIf="data.ind=='2'"src="assets/images/second.png" class="icon" alt="Second in the top">
-                        <img *ngIf="data.ind=='3'"src="assets/images/third.png" class="icon" alt="Third in the top">
-                        <p *ngIf="data.ind > '3'">{{data.ind}}</p>
-                    </td>
-                </ng-container>
-                
-                <ng-container matColumnDef="image">
-                    <th mat-header-cell *matHeaderCellDef> Image </th>
-                    <td mat-cell *matCellDef="let data">
-                        <div id="ImageField" class="text-center">
-                            <img class="image" [src]="data!.image" width="75" alt="User profile picture">
-                        </div>
-                    </td>
-                </ng-container>
-
-                <ng-container matColumnDef="Nombre">
-                    <th mat-header-cell *matHeaderCellDef> Name </th>
-                    <td mat-cell *matCellDef="let data">
-                        {{data.name}} {{data.lastname}}
-                    </td>
-                </ng-container>
-    
-                
-                <ng-container matColumnDef="Score">
-                    <th mat-header-cell *matHeaderCellDef> Score </th>
-                    <td mat-cell *matCellDef="let data">
-                        {{data.score}}
-                    </td>
-                </ng-container>
-    
-            </table>
-        </div>
-
-
         </mat-tab>
     </div>
 

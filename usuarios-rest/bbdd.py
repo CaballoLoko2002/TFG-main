@@ -140,7 +140,7 @@ class DataBase:
         return self.collection.aggregate([
                { "$match": { "rol": { "$eq": "Student" } } },
              {"$sort":{"vitrina.medallaOro":-1}},
-        {"$limit":10},
+        
          {
         "$project": {
             "name": "$name",
@@ -155,7 +155,7 @@ class DataBase:
         return self.collection.aggregate([
                { "$match": { "rol": { "$eq": "Student" } } },
              {"$sort":{"vitrina.medallaPlata":-1}},
-        {"$limit":10},
+        
          {
         "$project": {
             "name": "$name",
@@ -170,7 +170,7 @@ class DataBase:
         return self.collection.aggregate([ 
                { "$match": { "rol": { "$eq": "Student" } } },
             {"$sort":{"vitrina.medallaBronce":-1}},
-        {"$limit":10},
+        
          {
         "$project": {
             "name": "$name",
@@ -185,26 +185,24 @@ class DataBase:
 
     def getTopTrofeos(self):
         return self.collection.aggregate([
-               { "$match": { "rol": { "$eq": "Student" } } },
-            {"$sort":{"vitrina.trofeoOro":-1}},
-        {"$limit":10},
-         {
-        "$project": {
-            "name": "$name",
-            "lastname": "$lastname",
-            "score": "$vitrina.trofeoOro",
-            "_id":0
-         }
-        },
-        {"$sort":{"score":-1}},
-        {"$limit":10}
+            { "$match": { "rol": { "$eq": "Student" } } },
+            { "$sort": { "vitrina.trofeoOro": -1 } },
+            {
+                "$project": {
+                    "name": "$name",
+                    "lastname": "$lastname",
+                    "score": "$vitrina.trofeoOro",
+                    "_id": 0
+                }
+            }
         ])
+
     
     def getTopTrofeosPlata(self):
         return self.collection.aggregate([
              { "$match": { "rol": { "$eq": "Student" } } },
                {"$sort":{"vitrina.trofeoPlata":-1}},
-        {"$limit":10},
+        
          {
         "$project": {
             "name": "$name",
@@ -220,7 +218,7 @@ class DataBase:
         return self.collection.aggregate([
                { "$match": { "rol": { "$eq": "Student" } } },
         {"$sort":{"vitrina.trofeoBronce":-1}},
-        {"$limit":10},
+        
          {
         "$project": {
             "name": "$name",
@@ -237,7 +235,7 @@ class DataBase:
         return self.collection.aggregate([
                { "$match": { "rol": { "$eq": "Student" } } },
           {"$sort":{"vitrina.recordInfinito":-1}},
-        {"$limit":10},
+        
         {
         "$project": {
             "name": "$name",
@@ -252,7 +250,7 @@ class DataBase:
         return self.collection.aggregate([
             {"$match": {"rol": "Student"}},
             {"$sort": {"vitrina.recordMix": -1}},  # Ordenar por recordMix
-            {"$limit": 10},
+            
             {
                 "$project": {
                     "name": "$name",

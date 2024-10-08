@@ -70,3 +70,11 @@ td, th {
   }
 }
 
+.mat-paginator {
+  align-self: center;
+  display: flex;
+  align-items: center;
+  height: auto;
+}
+
+
