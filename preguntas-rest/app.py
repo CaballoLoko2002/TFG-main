@@ -456,8 +456,67 @@ def salirSala(sala,user):
         del rooms[int(sala)]
     socketio.emit("detallesSala",room.to_dict(),to=int(sala))
 
+@socketio.on('crearSalaAlumno')
+def crear_sala_alumno(user, codigo):
+    if codigo in rooms:
+        emit('detallesSalaAlumno', 'error')  # Si el código ya existe, enviar error
+    else:
+        room = Room(codigo, None)  # Creamos una sala sin código de juego específico
+        room.players.append(user)
+        rooms[codigo] = room
+        join_room(codigo)
+        emit('detallesSalaAlumno', room.to_dict(), to=codigo)
+
+@socketio.on('entrarSalaAlumno')
+def entrar_sala_alumno(user, sala):
+    sala = int(sala)
+    if sala not in rooms:
+        emit('detallesSalaAlumno', 'error')  # Si la sala no existe, enviamos error
+    else:
+        join_room(sala)
+        room = rooms.get(sala)
+        room.players.append(user)
+        emit('detallesSalaAlumno', room.to_dict(), to=sala)
+
+@socketio.on('empezarJuegoAlumno')
+def empezar_juego_alumno(sala, tiempo):
+    sala = int(sala)
+    if sala in rooms:
+        room = rooms.get(sala)
+        room.timer = tiempo  # Actualizamos el temporizador si está habilitado
+        emit('iniciarJuegoAlumno', room.to_dict(), to=sala)  # Iniciar el juego para todos los jugadores
+    else:
+        emit('detallesSalaAlumno', 'error')
+
+@socketio.on('empezarJuegoAlumno')
+def empezar_juego_alumno(sala, tiempo):
+    sala = int(sala)
+    if sala in rooms:
+        room = rooms.get(sala)
+        room.timer = tiempo
+        # Verifica si las preguntas están definidas antes de acceder
+        if not room.questions:
+            room.questions = baseDatos.getQuestionsGameByCode(int(room.gameCode))
+        room.questionNumber = 0  # Asegúrate de resetear el contador de preguntas
+        socketio.emit("preguntaJuego", room.questions[room.questionNumber].to_dict(), to=sala)
 
 
+@socketio.on('resultadoAlumno')
+def recibir_resultado(user, score, sala):
+    room = rooms.get(int(sala))
+    room.scores[user] = score
+    room.scoresrcv += 1
+
+    if room.scoresrcv == len(room.players):  # Si todos los jugadores han respondido
+        room.scoresrcv = 0  # Reseteamos el contador de respuestas
+        if room.questionNumber + 1 < len(room.questions):  # Si hay más preguntas
+            room.questionNumber += 1
+            socketio.emit("preguntaJuego", room.questions[room.questionNumber].to_dict(), to=int(sala))
+        else:
+            socketio.emit("mostrarResultados", to=int(sala))  # Si no hay más preguntas, mostrar resultados
+
+
+        
 
 if __name__ == '__main__':
     from waitress import serve

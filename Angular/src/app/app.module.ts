@@ -33,6 +33,7 @@ import { VentanaExitoComponent } from './databasemanagement/ventana-exito/ventan
 import { InfinitemodeComponent } from './games/infinitemode/infinitemode.component';
 import { LandingpageComponent } from './landingpage/landingpage.component';
 import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-question-dialog.component';
+import { BattlemodeComponent } from './games/battlemode/battlemode.component';
 
 
 
@@ -65,7 +66,8 @@ import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-q
     InfinitemodeComponent,
     LandingpageComponent,
     DialogError,
-    SkipQuestionDialogComponent
+    SkipQuestionDialogComponent,
+    BattlemodeComponent
 
   ],
   imports: [

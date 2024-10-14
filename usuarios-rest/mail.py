@@ -3,42 +3,36 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+
+import os
+
  
 def enviarCorreoRegistro(destinatario, code): 
-    # create message object instance
     msg = MIMEMultipart()
- 
- 
     message = f"<html><head><title>New User</title></head><body><h1>Welcome to Cultural Challenge for English Students</h1><br>Your code is <em>{code}</em>.<br>Thank you.</body></html>"
- 
-    # setup the parameters of the message
-    #password = "YmEuQj49"
-    #msg['From'] = "CChase@um.es"
-    msg['From'] = ""
-    password= ""
+
+    msg['From'] = os.getenv('SMTP_USER', 'cchasetfg@gmail.com')  # Cambia por tu correo
     msg['To'] = destinatario
     msg['Subject'] = "New Player CChase"
-    
-    # add in the message body
     msg.attach(MIMEText(message, 'html'))
-    
-    #create server
-    #server= smtplib.SMTP('smtp.gmail.com: 587')
-    server = smtplib.SMTP('smtp.um.es: 587')
-    
-    server.starttls()
-    
-    # Login Credentials for sending the mail
-    #server.login("gonzalomanzanrescarmona@gmail.com", password)
-    server.login("guillermo.nunezc@um.es", password)
-    
 
-    # send the message via the server.
+    # Usar Gmail como servidor SMTP
+    server = smtplib.SMTP('smtp.gmail.com', 587)
+    server.starttls()
+
+    # Obtener credenciales desde variables de entorno
+    smtp_user = os.getenv('SMTP_USER', 'cchasetfg@gmail.com')
+    smtp_password = os.getenv('SMTP_PASSWORD', 'tu_contraseña_de_aplicación')
+
+    # Autenticarse en el servidor
+    server.login(smtp_user, smtp_password)
+
+    # Enviar el mensaje
     server.sendmail(msg['From'], msg['To'], msg.as_string())
     server.quit()
- 
-    print("successfully sent email to %s:" % (msg['To']))
-    return
+
+    print("Correo enviado con éxito a %s" % (msg['To']))
+
 
 def enviarCorreoPassword(destinatario, code): 
     # create message object instance

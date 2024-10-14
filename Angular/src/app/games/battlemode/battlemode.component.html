@@ -1,0 +1,147 @@
+<!-- Pantalla inicial: Botones de Create Room y Join Room -->
+<div *ngIf="estado === 'inicio'">
+    <div class="battle-mode-container text-center">
+        <h1>Battle Mode</h1>
+        <button mat-raised-button color="primary" (click)="createRoom()">Create Room</button>
+        <button mat-raised-button color="accent" (click)="joinRoom()">Join Room</button>
+    </div>
+</div>
+
+<!-- Pantalla de espera de jugadores tras crear una sala -->
+<div *ngIf="estado === 'waitingForPlayers'">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="d-flex justify-content-center">
+                <img src="assets/images/waitingRoom.png" style="width:50%" alt="Waiting room picture" />
+            </div>
+            <div id="gameSettings">
+                <h3>Game settings</h3>
+                <hr>
+                <!-- Checkbox para habilitar o deshabilitar el temporizador -->
+                <mat-checkbox class="example-margin" [(ngModel)]="timerEnabled">Enable timer</mat-checkbox>
+
+                <!-- Campo de entrada de tiempo, habilitado solo cuando el temporizador está activo -->
+                <mat-form-field class="example-form-field" style="width:100%">
+                    <mat-label>Time in seconds</mat-label>
+                    <input matInput type="number" [(ngModel)]="tiempo" [disabled]="!timerEnabled">
+                </mat-form-field>
+                <form [formGroup]="form">
+                    <h6 class="card-subtitle mb-2 text-muted">Select a country and a topic</h6>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <mat-form-field class="selector" appearance="fill">
+                                <mat-label>Select a country</mat-label>
+                                <mat-select formControlName="country">
+                                    <mat-option value="UK">UK</mat-option>
+                                    <mat-option value="USA">USA</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <mat-form-field class="selector" appearance="fill">
+                                <mat-label>Select a topic</mat-label>
+                                <mat-select formControlName="topic">
+                                    <div *ngIf="form.get('country')!.value === 'UK'">
+                                        <div *ngFor="let topic of UK">
+                                            <mat-option [disabled]="!topic.value" [value]="topic.title">
+                                                {{ topic.title }}
+                                            </mat-option>
+                                        </div>
+                                    </div>
+
+                                    <div *ngIf="form.get('country')!.value === 'USA'">
+                                        <div *ngFor="let topic of USA">
+                                            <mat-option [disabled]="!topic.value" [value]="topic.title">
+                                                {{ topic.title }}
+                                            </mat-option>
+                                        </div>
+                                    </div>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        
+                    </div>
+                    <button mat-raised-button color="primary" (click)="startGame()">Start game</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-6 text-center">
+            <h1 style="text-align:center">Room Code: {{codigo}}</h1> <!-- Mostrar código de sala -->
+            <h2>Waiting for players...</h2>
+            <!-- Mostrar la lista de jugadores conectados -->
+            <ul>
+                <li *ngFor="let jugador of jugadores">{{jugador}}</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Pantalla de Join Room -->
+<div *ngIf="estado === 'joinRoom'">
+    <div class="d-flex justify-content-center">
+        <div class="card" style="width: 25rem;">
+            <div class="card-body">
+                <h5 class="card-title">Enter a room code</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Your game code will be provided to you by the host.</h6>
+                <form>
+                    <mat-form-field class="example-form-field" style="width:100%">
+                        <mat-label>Room code</mat-label>
+                        <input matInput type="number" [(ngModel)]="codigoSala" name="studentRoomCode">
+                        <!-- Asegúrate de que sea number -->
+                    </mat-form-field>
+                    <p style="color: red" *ngIf="errorSala">The room code is incorrect. Please check the code and try
+                        again.</p>
+                    <button mat-raised-button color="primary" (click)="entrarSala()">Enter room</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pantalla de espera de inicio de juego tras unirse a una sala -->
+<div *ngIf="estado === 'waitingForGame'">
+    <h2>Please, wait until the game starts...</h2>
+</div>
+
+<!-- Pantalla de juego en marcha -->
+<div *ngIf="estado === 'enPartida'">
+    <div id="StatsField" class="text-center d-flex justify-content-between">
+        <div>
+            <p class="fs-5 fw-bold">Question {{indicePregunta + 1}}</p>
+        </div>
+
+        <div *ngIf="timerEnabled">
+            <cd-timer #basicTimer class="bootstrap-timer" (onComplete)="timeOut()" [countdown]="true" 
+                [startTime]="tiempo" format="intelli"></cd-timer>
+        </div>
+
+        <div>
+            <p class="fs-5 fw-bold">Score: {{puntuacion}}</p>
+        </div>
+    </div>
+
+    <div id="QuestionField" class="text-center contenedor-pregunta">
+        <div class="texto-pregunta fw-bold text-break">
+            {{pregunta.question}}
+        </div>
+        <button mat-raised-button color="primary" (click)="leerPregunta()">
+            Read Question
+            <img src="assets/images/megafono.png" alt="Read" style="width: 20px; height: 20px; margin-left: 8px;">
+        </button>
+    </div>
+
+    <div id="ImageField" class="text-center">
+        <img class="img-pregunta" *ngIf="pregunta.image !== ''" [src]="pregunta.image" alt="{{pregunta.information}}">
+        <img class="img-pregunta" *ngIf="pregunta.image === ''" src="assets/images/question-placeholder.png" alt="Placeholder image">
+    </div>
+
+    <div id="ResponseField" class="contenedor-respuesta">
+        <mat-form-field class="example-form-field" style="width:100%">
+            <mat-label>Your answer</mat-label>
+            <input matInput type="text" [(ngModel)]="respuesta" placeholder="Type your answer here" name="respuestaJugador">
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="sendAnswer(respuesta)">Send Answer</button>
+    </div>
+</div>

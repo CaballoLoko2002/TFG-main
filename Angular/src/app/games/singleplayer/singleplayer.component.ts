@@ -201,7 +201,7 @@ export class SingleplayerComponent implements OnInit {
   nextQuestion(resultado: boolean) {
     if (resultado) {
       this.puntuacion += 10;
-      this.puntuacionMix += 1;
+      this.puntuacionMix += 10;
       this.respuestasCorrectas++;
     }
 
