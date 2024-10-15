@@ -50,6 +50,8 @@ export default class QuestionService {
       url += `&categoria=${categoria}`;
     }
 
+    console.log('URL generada:', url);
+    
     return this.http.get<any>(url)
       .pipe(
         map(questions => questions.map(question => ({

@@ -4,3 +4,8 @@
     font-size: 20px!important;
     font-weight: bold!important;
 }
+
+::ng-deep .wrong input {
+    background-color: #FFCDD2 !important; /* Rojo clarito */
+    color: #000000 !important; /* Texto en negro */
+  }

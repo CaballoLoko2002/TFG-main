@@ -12,21 +12,22 @@ import { Question } from 'src/app/interfaces/question';
 @Component({
   selector: 'app-battlemode',
   templateUrl: './battlemode.component.html',
-  styleUrls: ['./battlemode.component.css']
+  styleUrls: ['../classroom-challenge/class-room-challenge-test/class-room-challenge-test.component.css', '../singleplayer/singleplayer.component.css']
 })
 export class BattlemodeComponent implements OnInit {
 
   // Declaración de las propiedades existentes...
-  estado: string = 'inicio';  
-  codigo: number = 0;  
-  codigoSala: number | null = null;  
+  estado: string = 'inicio';
+  codigo: number = 0;
+  codigoSala: number | null = null;
   errorSala: boolean = false;
-  jugadores: string[] = [];  
-  userEmail?: string;  
-  timerEnabled: boolean = false;  
-  tiempo: number = 20;  
-  paisSeleccionado: string;  
-  temaSeleccionado: string;  
+  jugadores: string[] = [];
+  userEmail?: string;
+  timerEnabled: boolean = false;
+  tiempo: number = 20;
+  paisSeleccionado: string;
+  temaSeleccionado: string;
+  
 
   // Variables del juego
   form: FormGroup;
@@ -34,12 +35,13 @@ export class BattlemodeComponent implements OnInit {
   UK: any;
   USA: any;
   pregunta: Question;  // Pregunta actual
-  indicePregunta: number = 0;  
-  puntuacion: number = 0;  
-  respuestasEnviadas: number = 0;  
-
-  // Propiedad para almacenar la respuesta del jugador
-  respuesta: string = '';  // Declaramos 'respuesta'
+  indicePregunta: number = 0;
+  puntuacion: number = 0;
+  respuestasEnviadas: number = 0;
+  respuesta: string[]
+  correcto: boolean = true;
+  palabras: any[];
+  preguntaTerminada: boolean = false;  
 
   // Temporizador para el juego
   @ViewChild('basicTimer') temporizador;
@@ -121,7 +123,7 @@ export class BattlemodeComponent implements OnInit {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
-        utterance.lang = 'en-GB'; 
+        utterance.lang = 'en-GB';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -130,7 +132,7 @@ export class BattlemodeComponent implements OnInit {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
-        utterance.lang = 'en-US'; 
+        utterance.lang = 'en-US';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -187,8 +189,9 @@ export class BattlemodeComponent implements OnInit {
 
   // Inicio del juego
   startGame() {
-    const pais = this.paisSeleccionado;
-    const tema = this.temaSeleccionado;
+    // Obtener los valores del formulario directamente en el momento de iniciar el juego
+    const pais = this.form.get('country')?.value;
+    const tema = this.form.get('topic')?.value;
 
     console.log(`Starting game with country: ${pais}, topic: ${tema}`);
 
@@ -197,24 +200,61 @@ export class BattlemodeComponent implements OnInit {
       return;
     }
 
-    // Iniciar el juego para todos los jugadores
-    this.socketService.empezarJuegoAlumno(this.codigo, this.tiempo);
-    this.estado = 'enPartida';  // Cambiar estado a 'enPartida'
-
-    // Escuchar la pregunta del servidor
-    this.socketService.recibirPregunta().subscribe((pregunta) => {
-      this.pregunta = pregunta;
-      this.indicePregunta++;  // Incrementar el índice de la pregunta
-      this.respuesta = '';  // Resetear la respuesta
-
-      // Si el temporizador está habilitado, iniciar el temporizador
-      if (this.timerEnabled) {
-        this.temporizador.reset();
-        this.temporizador.start();
+    // Aquí se hace la llamada para obtener preguntas del servicio
+    this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
+      next: (preguntas: Question[]) => {
+        if (preguntas.length > 0) {
+          this.pregunta = preguntas[this.indicePregunta]; // Tomamos la primera pregunta
+          this.estado = 'enPartida';  // Cambiamos el estado a 'enPartida'
+          console.log('Pregunta recibida:', this.pregunta);
+        } else {
+          console.error('No se encontraron preguntas');
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener preguntas:', error);
       }
     });
   }
 
+  sendResults() {
+  
+  }
 
+  public handleEnter(event: KeyboardEvent) {
+    // Verifica si la tecla presionada es "Enter"
+    if (event.key === "Enter") {
+        event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
+        this.sendResults(); 
+    }
+  }
 
+  public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
+    const LEFT_ARROW_KEY = 37;
+    const RIGHT_ARROW_KEY = 39;
+  
+    // Si se presiona la flecha derecha, simular la tecla Tab
+    if (event.keyCode === RIGHT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index >= 0 && index < focusableElements.length - 1) {
+        focusableElements[index + 1].focus();
+      }
+    }
+  
+    // Si se presiona la flecha izquierda, simular Shift + Tab
+    if (event.keyCode === LEFT_ARROW_KEY) {
+      event.preventDefault(); // Prevenir el comportamiento por defecto
+      const focusableElements = Array.from(document.querySelectorAll('input, button, select, textarea, a[href]')) as HTMLElement[];
+      const index = focusableElements.indexOf(document.activeElement as HTMLElement);
+      if (index > 0) {
+        focusableElements[index - 1].focus();
+      }
+    }
+  }
+
+  onCodeChanged(code: string, posicion) {
+    this.respuesta[posicion] = code
+  }
 }

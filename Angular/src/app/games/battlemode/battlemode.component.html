@@ -106,14 +106,15 @@
 </div>
 
 <!-- Pantalla de juego en marcha -->
-<div *ngIf="estado === 'enPartida'">
+<div *ngIf="estado==='enPartida'" class="classroom-challenge-game">
+    <!-- Stats Field: Display current question number, timer, and score -->
     <div id="StatsField" class="text-center d-flex justify-content-between">
         <div>
-            <p class="fs-5 fw-bold">Question {{indicePregunta + 1}}</p>
+            <p class="fs-5 fw-bold">Question {{indicePregunta}}</p>
         </div>
 
         <div *ngIf="timerEnabled">
-            <cd-timer #basicTimer class="bootstrap-timer" (onComplete)="timeOut()" [countdown]="true" 
+            <cd-timer #basicTimer class="bootstrap-timer" (onComplete)="timeOut()" [countdown]="true"
                 [startTime]="tiempo" format="intelli"></cd-timer>
         </div>
 
@@ -122,6 +123,7 @@
         </div>
     </div>
 
+    <!-- Question Field: Show the current question and button to read the question -->
     <div id="QuestionField" class="text-center contenedor-pregunta">
         <div class="texto-pregunta fw-bold text-break">
             {{pregunta.question}}
@@ -132,16 +134,41 @@
         </button>
     </div>
 
+    <!-- Image Field: Show the image related to the question if available -->
     <div id="ImageField" class="text-center">
         <img class="img-pregunta" *ngIf="pregunta.image !== ''" [src]="pregunta.image" alt="{{pregunta.information}}">
-        <img class="img-pregunta" *ngIf="pregunta.image === ''" src="assets/images/question-placeholder.png" alt="Placeholder image">
+        <img class="img-pregunta" *ngIf="pregunta.image === ''" src="assets/images/question-placeholder.png"
+            alt="Placeholder image">
     </div>
 
+    <!-- Response Field: Interactive area for students to input their answers -->
     <div id="ResponseField" class="contenedor-respuesta">
-        <mat-form-field class="example-form-field" style="width:100%">
-            <mat-label>Your answer</mat-label>
-            <input matInput type="text" [(ngModel)]="respuesta" placeholder="Type your answer here" name="respuestaJugador">
-        </mat-form-field>
-        <button mat-raised-button color="primary" (click)="sendAnswer(respuesta)">Send Answer</button>
+        <div class="row">
+            <!-- Input fields for student's answer -->
+            <div class="col-lg-10">
+                <div class="d-flex contenedor">
+                    <div *ngFor="let palabra of palabras">
+                        <code-input class="box_respuesta" [isPrevFocusableAfterClearing]="false" inputType="text"
+                            *ngIf="!preguntaTerminada" [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false"
+                            [isCharsCode]="true" [codeLength]="palabra.longitud"
+                            (codeChanged)="onCodeChanged($event, palabra.posicion)"
+                            (keydown)="handleKeyDown($event, palabra.posicion)">
+                        </code-input>
+                    </div>
+                </div>
+
+                <!-- Display the correct answer if the question is already finished -->
+                <div class="text-center" *ngIf="preguntaTerminada">
+                    <p class="fs-3 text-center"><strong>Correct answer: </strong>{{pregunta.answer}} </p>
+                </div>
+            </div>
+
+            <!-- Buttons for sending the student's answer -->
+            <div class="col-lg-2">
+                <button mat-raised-button color="primary" (keydown)="handleEnter($event)" (click)="sendResults()"
+                    *ngIf="!preguntaTerminada">Send answer</button>
+            </div>
+        </div>
     </div>
 </div>
+

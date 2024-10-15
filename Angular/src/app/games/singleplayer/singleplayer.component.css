@@ -91,6 +91,11 @@ button {
   font-weight: bold!important;
 }
 
+::ng-deep .wrong input {
+  background-color: #FFCDD2 !important; /* Rojo clarito */
+  color: #000000 !important; /* Texto en negro */
+}
+
 @media (max-width: 820px) {
 
   #ImageField {

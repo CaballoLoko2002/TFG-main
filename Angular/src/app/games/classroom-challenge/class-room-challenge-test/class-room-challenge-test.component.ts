@@ -220,7 +220,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
         event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
         this.sendResults(); 
     }
-}
+  }
 
   
   public entrarSala() {

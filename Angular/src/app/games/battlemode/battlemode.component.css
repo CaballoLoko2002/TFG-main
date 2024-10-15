@@ -1,12 +1,30 @@
-.battle-mode-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.botonInicio{
+    width:100%;
+   
 }
 
-button {
-    margin: 10px;
-    width: 200px;
+.mat-mdc-list-icon{
+    width:100px;
+    height:100px;
 }
+
+.playerRanking{
+    background-color: lightyellow;
+}
+
+.contenedor-pregunta{
+    margin-bottom: 10px;
+    
+}
+
+::ng-deep code-input input {
+    background: #4758B8!important;
+    color: white!important;
+    font-size: 20px!important;
+    font-weight: bold!important;
+}
+
+
+
+
+
