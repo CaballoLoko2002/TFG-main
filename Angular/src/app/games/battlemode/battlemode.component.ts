@@ -8,6 +8,8 @@ import { Temas } from 'src/app/interfaces/temas';  // Interfaz para temas
 import { MatDialog } from '@angular/material/dialog';  // Para manejar los diálogos
 import { EsperarResultadosModalComponent } from '../classroom-challenge/esperar-resultados-modal/esperar-resultados-modal.component'; // Diálogo para esperar resultados
 import { Question } from 'src/app/interfaces/question';
+import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';  // Importar componente de omitir pregunta
+import { MatDialogRef } from '@angular/material/dialog';  // Importar MatDialogRef
 
 @Component({
   selector: 'app-battlemode',
@@ -27,13 +29,13 @@ export class BattlemodeComponent implements OnInit {
   tiempo: number = 20;
   paisSeleccionado: string;
   temaSeleccionado: string;
-  
 
   // Variables del juego
   form: FormGroup;
   temas_response: Temas;
   UK: any;
   USA: any;
+  preguntas: Question[] = [];  // Definir la propiedad preguntas (conjunto de preguntas)
   pregunta: Question;  // Pregunta actual
   indicePregunta: number = 0;
   puntuacion: number = 0;
@@ -41,7 +43,8 @@ export class BattlemodeComponent implements OnInit {
   respuesta: string[]
   correcto: boolean = true;
   palabras: any[];
-  preguntaTerminada: boolean = false;  
+  preguntaTerminada: boolean = false;
+  skipQuestionDialogRef: MatDialogRef<SkipQuestionDialogComponent> | null = null;
 
   // Temporizador para el juego
   @ViewChild('basicTimer') temporizador;
@@ -182,14 +185,18 @@ export class BattlemodeComponent implements OnInit {
 
 
 
-  // Temporizador agotado, avanzar a la siguiente pregunta
+  // Método timeOut que cierra el diálogo si se acaba el tiempo
   timeOut() {
-    this.sendAnswer('');  // Enviar respuesta vacía si el tiempo se acaba
+    if (this.skipQuestionDialogRef) {
+      this.skipQuestionDialogRef.close();  // Cierra el diálogo si está abierto
+      this.skipQuestionDialogRef = null;
+    }
+    this.sendResults();  // Enviar los resultados si el temporizador termina
   }
+
 
   // Inicio del juego
   startGame() {
-    // Obtener los valores del formulario directamente en el momento de iniciar el juego
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
 
@@ -200,13 +207,15 @@ export class BattlemodeComponent implements OnInit {
       return;
     }
 
-    // Aquí se hace la llamada para obtener preguntas del servicio
+    // Obtener preguntas del servicio (esto ya lo haces)
     this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
       next: (preguntas: Question[]) => {
         if (preguntas.length > 0) {
-          this.pregunta = preguntas[this.indicePregunta]; // Tomamos la primera pregunta
-          this.estado = 'enPartida';  // Cambiamos el estado a 'enPartida'
+          this.preguntas = preguntas; // Almacenar todas las preguntas
+          this.pregunta = this.preguntas[this.indicePregunta]; // Tomar la primera pregunta
+          this.estado = 'enPartida';  // Cambiar el estado a 'enPartida'
           console.log('Pregunta recibida:', this.pregunta);
+          this.temporizador.start();  // Inicia el temporizador (si está habilitado)
         } else {
           console.error('No se encontraron preguntas');
         }
@@ -217,22 +226,82 @@ export class BattlemodeComponent implements OnInit {
     });
   }
 
+  finalizarJuego() {
+    this.estado = 'finPartida';  // Cambiar el estado a 'finPartida'
+    if (this.timerEnabled) {
+      this.temporizador.stop();  // Detener el temporizador si está activado
+    }
+    console.log('Juego terminado. Puntuación final:', this.puntuacion);
+    // Aquí podrías mostrar un diálogo o redirigir a una pantalla de resultados.
+  }
+
+  nextQuestion(resultado: boolean) {
+    // Si la respuesta es correcta, incrementar puntuación
+    if (resultado) {
+      this.puntuacion += 10;  // Incrementar puntuación por respuesta correcta
+    }
+
+    this.indicePregunta++;  // Avanzar al índice de la siguiente pregunta
+
+    // Comprobar si quedan más preguntas
+    if (this.indicePregunta < this.preguntas.length) {
+      this.pregunta = this.preguntas[this.indicePregunta];  // Actualizar nueva pregunta
+      this.preguntaTerminada = false;  // Reiniciar estado de la pregunta
+      if (this.timerEnabled) {
+        this.temporizador.reset();  // Reiniciar el temporizador
+        this.temporizador.start();  // Comenzar el temporizador para la nueva pregunta
+      }
+    } else {
+      // No hay más preguntas, finalizar el juego y mostrar resultados
+      this.finalizarJuego();
+    }
+  }
+
+  // Método para confirmar saltar pregunta
+  confirmSkipQuestion(): void {
+    this.skipQuestionDialogRef = this.dialog.open(SkipQuestionDialogComponent, {
+      width: '300px',
+      data: { message: 'Are you sure you want to skip this question?' }
+    });
+
+    // Suscribirse para saber cuándo se cierra el diálogo
+    this.skipQuestionDialogRef.afterClosed().subscribe(result => {
+      this.skipQuestionDialogRef = null;  // Limpiar referencia al cerrar
+      if (result === true) {
+        this.nextQuestion(false);  // Saltar a la siguiente pregunta
+      }
+    });
+  }
+
   sendResults() {
-  
+    const resultado = this.checkResults();  // Verificar si la respuesta es correcta
+    this.preguntaTerminada = true;  // Indicar que la pregunta ha terminado
+    this.nextQuestion(resultado);  // Pasar a la siguiente pregunta
+  }
+
+
+  checkResults(): boolean {
+    let correct = true;
+    for (let i = 0; i < this.palabras.length; i++) {
+      if (this.respuesta[i] == undefined || this.palabras[i].palabra !== this.respuesta[i].toUpperCase()) {
+        correct = false;
+      }
+    }
+    return correct;
   }
 
   public handleEnter(event: KeyboardEvent) {
     // Verifica si la tecla presionada es "Enter"
     if (event.key === "Enter") {
-        event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
-        this.sendResults(); 
+      event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
+      this.sendResults();
     }
   }
 
   public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
     const LEFT_ARROW_KEY = 37;
     const RIGHT_ARROW_KEY = 39;
-  
+
     // Si se presiona la flecha derecha, simular la tecla Tab
     if (event.keyCode === RIGHT_ARROW_KEY) {
       event.preventDefault(); // Prevenir el comportamiento por defecto
@@ -242,7 +311,7 @@ export class BattlemodeComponent implements OnInit {
         focusableElements[index + 1].focus();
       }
     }
-  
+
     // Si se presiona la flecha izquierda, simular Shift + Tab
     if (event.keyCode === LEFT_ARROW_KEY) {
       event.preventDefault(); // Prevenir el comportamiento por defecto

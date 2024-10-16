@@ -106,11 +106,12 @@
 </div>
 
 <!-- Pantalla de juego en marcha -->
+<!-- Pantalla de juego en marcha -->
 <div *ngIf="estado==='enPartida'" class="classroom-challenge-game">
     <!-- Stats Field: Display current question number, timer, and score -->
     <div id="StatsField" class="text-center d-flex justify-content-between">
         <div>
-            <p class="fs-5 fw-bold">Question {{indicePregunta}}</p>
+            <p class="fs-5 fw-bold">Question {{indicePregunta + 1}} / {{preguntas.length}}</p> <!-- Mostrar el número actual de pregunta -->
         </div>
 
         <div *ngIf="timerEnabled">
@@ -163,12 +164,19 @@
                 </div>
             </div>
 
-            <!-- Buttons for sending the student's answer -->
+            <!-- Buttons for sending the student's answer and skipping the question -->
             <div class="col-lg-2">
                 <button mat-raised-button color="primary" (keydown)="handleEnter($event)" (click)="sendResults()"
                     *ngIf="!preguntaTerminada">Send answer</button>
+                <button mat-raised-button color="warn" (click)="confirmSkipQuestion()">Skip question</button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Pantalla de resultados finales -->
+<div *ngIf="estado === 'finPartida'" class="text-center">
+    <h1>Game Over</h1>
+    <h2>Your final score: {{puntuacion}}</h2>
+    <button mat-raised-button color="primary" routerLink="/home">Return to Menu</button>
+</div>
