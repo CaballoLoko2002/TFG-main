@@ -61,7 +61,7 @@
                             </mat-form-field>
                         </div>
 
-                        
+
                     </div>
                     <button mat-raised-button color="primary" (click)="startGame()">Start game</button>
                 </form>
@@ -111,7 +111,8 @@
     <!-- Stats Field: Display current question number, timer, and score -->
     <div id="StatsField" class="text-center d-flex justify-content-between">
         <div>
-            <p class="fs-5 fw-bold">Question {{indicePregunta + 1}} / {{preguntas.length}}</p> <!-- Mostrar el número actual de pregunta -->
+            <p class="fs-5 fw-bold">Question {{indicePregunta + 1}} / {{preguntas.length}}</p>
+            <!-- Mostrar el número actual de pregunta -->
         </div>
 
         <div *ngIf="timerEnabled">
@@ -149,18 +150,12 @@
             <div class="col-lg-10">
                 <div class="d-flex contenedor">
                     <div *ngFor="let palabra of palabras">
-                        <code-input class="box_respuesta" [isPrevFocusableAfterClearing]="false" inputType="text"
-                            *ngIf="!preguntaTerminada" [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false"
-                            [isCharsCode]="true" [codeLength]="palabra.longitud"
-                            (codeChanged)="onCodeChanged($event, palabra.posicion)"
+                        <code-input [isPrevFocusableAfterClearing]="false" inputType="text"
+                            [ngClass]="{'wrong': !correcto}" [isCodeHidden]="false" [isCharsCode]="true"
+                            [codeLength]="palabra.longitud" (codeChanged)="onCodeChanged($event,palabra.posicion)"
                             (keydown)="handleKeyDown($event, palabra.posicion)">
                         </code-input>
                     </div>
-                </div>
-
-                <!-- Display the correct answer if the question is already finished -->
-                <div class="text-center" *ngIf="preguntaTerminada">
-                    <p class="fs-3 text-center"><strong>Correct answer: </strong>{{pregunta.answer}} </p>
                 </div>
             </div>
 

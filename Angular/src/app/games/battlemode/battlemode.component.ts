@@ -10,6 +10,7 @@ import { EsperarResultadosModalComponent } from '../classroom-challenge/esperar-
 import { Question } from 'src/app/interfaces/question';
 import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';  // Importar componente de omitir pregunta
 import { MatDialogRef } from '@angular/material/dialog';  // Importar MatDialogRef
+import { VentanaFinPreguntaComponent } from '../ventana-fin-pregunta/ventana-fin-pregunta.component';
 
 @Component({
   selector: 'app-battlemode',
@@ -168,54 +169,30 @@ export class BattlemodeComponent implements OnInit {
     });
   }
 
-  // Enviar respuesta del jugador
-  sendAnswer(respuesta: string) {
-    if (!this.userEmail) {
-      console.error("User email is undefined. Cannot send answer.");
-      return;
-    }
-
-    // Incrementar el contador de respuestas y enviar la respuesta
-    this.respuestasEnviadas++;
-    this.socketService.enviarResultadoAlumno(this.userEmail, this.puntuacion, this.codigo.toString());
-
-    // Avanzar a la siguiente pregunta o esperar el resultado si todos han respondido
-    console.log(`Answer sent: ${respuesta}`);
-  }
-
-
-
-  // Método timeOut que cierra el diálogo si se acaba el tiempo
-  timeOut() {
-    if (this.skipQuestionDialogRef) {
-      this.skipQuestionDialogRef.close();  // Cierra el diálogo si está abierto
-      this.skipQuestionDialogRef = null;
-    }
-    this.sendResults();  // Enviar los resultados si el temporizador termina
-  }
-
 
   // Inicio del juego
   startGame() {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
-
+  
     console.log(`Starting game with country: ${pais}, topic: ${tema}`);
-
+  
     if (!this.userEmail) {
       console.error("User email is undefined. Cannot start the game.");
       return;
     }
-
-    // Obtener preguntas del servicio (esto ya lo haces)
+  
     this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
       next: (preguntas: Question[]) => {
         if (preguntas.length > 0) {
-          this.preguntas = preguntas; // Almacenar todas las preguntas
-          this.pregunta = this.preguntas[this.indicePregunta]; // Tomar la primera pregunta
-          this.estado = 'enPartida';  // Cambiar el estado a 'enPartida'
+          this.preguntas = preguntas;
+          this.pregunta = this.preguntas[this.indicePregunta];
+          this.actualizarPregunta();  // Asegurarse de inicializar palabras aquí
+          this.estado = 'enPartida';
           console.log('Pregunta recibida:', this.pregunta);
-          this.temporizador.start();  // Inicia el temporizador (si está habilitado)
+          if (this.timerEnabled) {
+            this.temporizador.start();
+          }
         } else {
           console.error('No se encontraron preguntas');
         }
@@ -235,26 +212,31 @@ export class BattlemodeComponent implements OnInit {
     // Aquí podrías mostrar un diálogo o redirigir a una pantalla de resultados.
   }
 
-  nextQuestion(resultado: boolean) {
-    // Si la respuesta es correcta, incrementar puntuación
-    if (resultado) {
-      this.puntuacion += 10;  // Incrementar puntuación por respuesta correcta
-    }
-
+  nextQuestion() {
     this.indicePregunta++;  // Avanzar al índice de la siguiente pregunta
-
+  
     // Comprobar si quedan más preguntas
     if (this.indicePregunta < this.preguntas.length) {
       this.pregunta = this.preguntas[this.indicePregunta];  // Actualizar nueva pregunta
-      this.preguntaTerminada = false;  // Reiniciar estado de la pregunta
+      this.actualizarPregunta();  // Volver a configurar la respuesta y palabras
+      this.preguntaTerminada = false;  // Reiniciar el estado de la pregunta
       if (this.timerEnabled) {
         this.temporizador.reset();  // Reiniciar el temporizador
         this.temporizador.start();  // Comenzar el temporizador para la nueva pregunta
       }
     } else {
-      // No hay más preguntas, finalizar el juego y mostrar resultados
+      // Si no hay más preguntas, finalizar el juego
       this.finalizarJuego();
     }
+  }
+
+  // Método timeOut que cierra el diálogo si se acaba el tiempo
+  timeOut() {
+    if (this.skipQuestionDialogRef) {
+      this.skipQuestionDialogRef.close();  // Cierra el diálogo si está abierto
+      this.skipQuestionDialogRef = null;
+    }
+    this.nextQuestion();  // Saltar a la siguiente pregunta
   }
 
   // Método para confirmar saltar pregunta
@@ -268,27 +250,75 @@ export class BattlemodeComponent implements OnInit {
     this.skipQuestionDialogRef.afterClosed().subscribe(result => {
       this.skipQuestionDialogRef = null;  // Limpiar referencia al cerrar
       if (result === true) {
-        this.nextQuestion(false);  // Saltar a la siguiente pregunta
+        this.nextQuestion();  // Saltar a la siguiente pregunta
       }
     });
   }
 
   sendResults() {
-    const resultado = this.checkResults();  // Verificar si la respuesta es correcta
-    this.preguntaTerminada = true;  // Indicar que la pregunta ha terminado
-    this.nextQuestion(resultado);  // Pasar a la siguiente pregunta
+    let resultado = this.checkResults();  // Verificar si la respuesta es correcta
+    this.correcto = resultado;  // Asignar el resultado para aplicar estilos a los inputs
+  
+    // Aplicar el estilo "wrong" en caso de respuesta incorrecta
+    if (!resultado) {
+      this.palabras.forEach((palabra, index) => {
+        if (this.respuesta[index] !== palabra.palabra) {
+          this.palabras[index].estadoIncorrecto = true;  // Marca la palabra como incorrecta para cambiar el estilo
+        }
+      });
+    } else {
+      // Solo si la respuesta es correcta se abren los resultados y se aumenta la puntuación
+      this.puntuacion += 10;  // Incrementa la puntuación solo si la respuesta es correcta
+  
+      this.preguntaTerminada = true;  // Marcar que la pregunta fue respondida correctamente
+  
+      // Detener el temporizador mientras se muestra el resultado
+      if (this.timerEnabled) {
+        this.temporizador.stop();
+      }
+  
+      // Abrir el diálogo de resultado similar al Single Player
+      this.dialog
+        .open(VentanaFinPreguntaComponent, {
+          data: {
+            resultado: resultado,  // Si la respuesta fue correcta o incorrecta
+            correctAns: this.pregunta.answer  // Mostrar la respuesta correcta en el diálogo
+          },
+          disableClose: true  // El usuario debe interactuar con el diálogo para cerrarlo
+        })
+        .afterClosed()
+        .subscribe((confirmado: Boolean) => {
+          if (confirmado && resultado) {
+            this.nextQuestion();  // Pasar a la siguiente pregunta si se cerró el diálogo
+          } else {
+            // Si no es correcto o se sigue intentando, mantener la pregunta activa
+            this.preguntaTerminada = false;
+            if (this.timerEnabled) {
+              this.temporizador.reset();
+              this.temporizador.start();
+            }
+          }
+        });
+    }
   }
-
-
+  
+  
   checkResults(): boolean {
     let correct = true;
+  
+    // Verificar cada palabra ingresada
     for (let i = 0; i < this.palabras.length; i++) {
-      if (this.respuesta[i] == undefined || this.palabras[i].palabra !== this.respuesta[i].toUpperCase()) {
+      if (this.respuesta[i] === undefined || this.palabras[i].palabra !== this.respuesta[i].toUpperCase()) {
+        this.palabras[i].estadoIncorrecto = true;  // Marcar como incorrecta
         correct = false;
+      } else {
+        this.palabras[i].estadoIncorrecto = false;  // Si es correcta, no mostrar error
       }
     }
-    return correct;
+  
+    return correct;  // Devuelve si la respuesta es correcta o no
   }
+  
 
   public handleEnter(event: KeyboardEvent) {
     // Verifica si la tecla presionada es "Enter"
@@ -297,6 +327,26 @@ export class BattlemodeComponent implements OnInit {
       this.sendResults();
     }
   }
+
+  actualizarPregunta() {
+    this.palabras = [];
+    this.respuesta = [];
+
+    let texto = this.pregunta.answer.trim();
+    // Dividir el texto en palabras utilizando espacios en blanco como separadores
+    const palabras_divididas = texto.split(/\s+/);
+    // Filtrar y eliminar elementos vacíos en caso de que haya varios espacios consecutivos
+    const palabrasFiltradas = palabras_divididas.filter(palabra => palabra !== '');
+
+    let counter: number = 0;
+
+    // Crear las palabras para el input basado en la respuesta correcta
+    for (let pal of palabrasFiltradas) {
+      this.palabras.push({ palabra: pal.toLocaleUpperCase(), longitud: pal.length, posicion: counter });
+      counter++;
+    }
+  }
+
 
   public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
     const LEFT_ARROW_KEY = 37;
