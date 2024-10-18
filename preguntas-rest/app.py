@@ -471,12 +471,15 @@ def crear_sala_alumno(user, codigo):
 def entrar_sala_alumno(user, sala):
     sala = int(sala)
     if sala not in rooms:
+        print(f"Error: Sala {sala} no encontrada para el usuario {user}")
         emit('detallesSalaAlumno', 'error')  # Si la sala no existe, enviamos error
     else:
         join_room(sala)
         room = rooms.get(sala)
         room.players.append(user)
+        print(f"El usuario {user} ha entrado a la sala {sala}")
         emit('detallesSalaAlumno', room.to_dict(), to=sala)
+
 
 @socketio.on('empezarJuegoAlumno')
 def empezar_juego_alumno(sala, tiempo):
@@ -501,22 +504,52 @@ def empezar_juego_alumno(sala, tiempo):
         socketio.emit("preguntaJuego", room.questions[room.questionNumber].to_dict(), to=sala)
 
 
-@socketio.on('resultadoAlumno')
-def recibir_resultado(user, score, sala):
-    room = rooms.get(int(sala))
+@socketio.on('enviarPreguntas')
+def recibir_preguntas(data):
+    sala = int(data['sala'])
+    preguntas = data['preguntas']
+    
+    # Guardar las preguntas en la sala (para referencia futura si es necesario)
+    if sala in rooms:
+        room = rooms.get(sala)
+        room.questions = preguntas
+        room.questionNumber = 0  # Reiniciar el contador de preguntas
+
+        # Enviar **todas las preguntas** a todos los jugadores en la sala
+        socketio.emit('preguntasJuego', preguntas, to=sala)  # Enviar el array completo
+    else:
+        emit('error', {'message': 'Sala no encontrada'})
+
+@socketio.on('resultadoAlumno_battlemode')
+def recibir_resultado_battlemode(user, score, sala):
+    sala = int(sala)
+    room = rooms.get(sala)
+    
+    # Verificación de la existencia de la sala
+    if room is None:
+        print(f"Error: Sala {sala} no encontrada para el usuario {user}")
+        return  # Manejo de error: la sala no existe
+    
+    # Registrar el resultado del jugador
     room.scores[user] = score
-    room.scoresrcv += 1
+    room.scoresrcv += 1  # Incrementar el contador de resultados recibidos
 
-    if room.scoresrcv == len(room.players):  # Si todos los jugadores han respondido
-        room.scoresrcv = 0  # Reseteamos el contador de respuestas
-        if room.questionNumber + 1 < len(room.questions):  # Si hay más preguntas
-            room.questionNumber += 1
-            socketio.emit("preguntaJuego", room.questions[room.questionNumber].to_dict(), to=int(sala))
-        else:
-            socketio.emit("mostrarResultados", to=int(sala))  # Si no hay más preguntas, mostrar resultados
+    # Emitir los resultados parciales a todos los jugadores en la sala
+    socketio.emit('resultadosParciales_battlemode', {'user': user, 'score': score}, to=sala)
+
+    # Si todos los jugadores han terminado, enviar los resultados finales
+    if room.scoresrcv == len(room.players):
+        # Convertir el diccionario de scores en una lista de objetos {nombre: user, score: score}
+        resultados_finales = [{"user": nombre, "score": score} for nombre, score in room.scores.items()]
+
+        # Emitir los resultados finales en formato de lista
+        socketio.emit("mostrarResultadosFinales_battlemode", resultados_finales, to=sala)
 
 
-        
+
+
+
+       
 
 if __name__ == '__main__':
     from waitress import serve

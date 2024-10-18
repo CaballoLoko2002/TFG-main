@@ -117,17 +117,42 @@ export class SocketService {
       });
     });
   }
-
-  // Nueva función para empezar el juego en modo Battle Mode, sala ahora es un number
-  public empezarJuegoAlumno(sala: number, tiempo: number) {
-    this.socket.emit('empezarJuegoAlumno', sala, tiempo);
+  
+  // SocketService: Enviar preguntas al servidor para todos los jugadores
+  enviarPreguntas(sala: number, preguntas: Question[]) {
+    this.socket.emit('enviarPreguntas', { sala, preguntas });
   }
 
-
-  // Nueva función para enviar resultados en modo Battle Mode
-  public enviarResultadoAlumno(user: string, score: number, sala: string) {
-    this.socket.emit('resultadoAlumno', user, score, sala);
+  // SocketService: Recibir la pregunta inicial para todos los jugadores
+  public recibirPreguntasJuego(): Observable<Question[]> {
+    return new Observable((observer) => {
+      this.socket.on('preguntasJuego', (preguntas: Question[]) => {
+        observer.next(preguntas);  // Enviar todas las preguntas
+      });
+    });
   }
 
+  // Enviar la puntuación final al servidor en modo Battle Mode
+  enviarResultadoAlumnoBattlemode(user: string, score: number, sala: string) {
+    this.socket.emit('resultadoAlumno_battlemode', user, score, sala);
+  }
+
+  // Recibir los resultados parciales de otros jugadores en modo Battle Mode
+  recibirResultadosParcialesBattlemode(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('resultadosParciales_battlemode', (resultado) => {
+        observer.next(resultado);
+      });
+    });
+  }
+
+  // Recibir los resultados finales cuando todos los jugadores terminen en modo Battle Mode
+  recibirResultadosFinalesBattlemode(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('mostrarResultadosFinales_battlemode', (resultados) => {
+        observer.next(resultados);
+      });
+    });
+  }
 
 }

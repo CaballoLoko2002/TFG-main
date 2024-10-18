@@ -169,9 +169,50 @@
     </div>
 </div>
 
-<!-- Pantalla de resultados finales -->
-<div *ngIf="estado === 'finPartida'" class="text-center">
-    <h1>Game Over</h1>
-    <h2>Your final score: {{puntuacion}}</h2>
-    <button mat-raised-button color="primary" routerLink="/home">Return to Menu</button>
+<div *ngIf="estado === 'esperandoResultados'">
+    <h2>Waiting for the other players to finish...</h2>
+    <!-- Aquí podrías mostrar resultados parciales -->
 </div>
+
+<!-- Pantalla de resultados finales -->
+<!-- Pantalla de resultados finales -->
+<div *ngIf="estado === 'resultadosFinales'" class="text-center">
+    <h1>Winner!</h1>
+    <h2>{{winner.user}}</h2>
+    <img src="assets/images/trophy.png" style="width:200px;height:200px" alt="Winner's trophy" />
+    <h2>Highest Score: {{winner.score}}</h2>
+
+    <!-- Resumen del jugador -->
+    <div class="card">
+        <h3 class="card-header text-center">Summary</h3>
+        <div class="card-body">
+            <h4 class="card-title text-decoration-underline fs-5">My score</h4>
+            {{puntuacion}}
+            <h4 class="card-title text-decoration-underline fs-5">Correct answers</h4>
+            {{respuestasCorrectas}}
+            <h4 class="card-title text-decoration-underline fs-5">Wrong answers</h4>
+            {{respuestasIncorrectas}}
+
+            <p class="card-text">You can see the detailed results in your History.</p>
+            <button mat-raised-button color="primary" routerLink="/home">Return to Menu</button>
+        </div>
+    </div>
+
+    <!-- Ranking completo -->
+    <mat-list>
+        <div mat-subheader class="fs-3">Full ranking</div>
+        <hr>
+        <mat-list-item *ngFor="let player of clasification; let index = index">
+            <!-- Imágenes para los tres primeros lugares -->
+            <img matListItemIcon *ngIf="index + 1 === 1" src="assets/images/first.png" alt="First place">
+            <img matListItemIcon *ngIf="index + 1 === 2" src="assets/images/second.png" alt="Second place">
+            <img matListItemIcon *ngIf="index + 1 === 3" src="assets/images/third.png" alt="Third place">
+            <!-- Mostrar el número de posición para los demás jugadores -->
+            <p matListItemIcon *ngIf="index + 1 > 3">{{index + 1}}</p>
+
+            <div matListItemTitle>{{player.user}}</div>
+            <div matListItemLine>{{player.score}} points</div>
+        </mat-list-item>
+    </mat-list>
+</div>
+

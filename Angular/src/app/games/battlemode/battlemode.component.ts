@@ -30,6 +30,7 @@ export class BattlemodeComponent implements OnInit {
   tiempo: number = 20;
   paisSeleccionado: string;
   temaSeleccionado: string;
+  resultadosFinales: { user: string, score: number }[] = [];
 
   // Variables del juego
   form: FormGroup;
@@ -41,11 +42,20 @@ export class BattlemodeComponent implements OnInit {
   indicePregunta: number = 0;
   puntuacion: number = 0;
   respuestasEnviadas: number = 0;
-  respuesta: string[]
+  respuesta: string[];
   correcto: boolean = true;
   palabras: any[];
   preguntaTerminada: boolean = false;
   skipQuestionDialogRef: MatDialogRef<SkipQuestionDialogComponent> | null = null;
+  acumulado: number = 0;  // Segundos acumulados del temporizador
+
+  //VARIABLES DE LA CLASIFICACION
+  clasification: any;
+  winner: any;
+  index: number = 1;
+  respuestasCorrectas: number = 0;
+  respuestasIncorrectas: number = 0;
+
 
   // Temporizador para el juego
   @ViewChild('basicTimer') temporizador;
@@ -93,6 +103,40 @@ export class BattlemodeComponent implements OnInit {
         ];
       }
     });
+
+    // **Aquí agregamos la suscripción para recibir las preguntas cuando se envíen por el socket**
+    this.socketService.recibirPreguntasJuego().subscribe((preguntas: Question[]) => {
+      this.preguntas = preguntas;  // Almacenar todas las preguntas
+      this.pregunta = this.preguntas[this.indicePregunta];
+      this.actualizarPregunta();  // Inicializar las palabras aquí
+      this.estado = 'enPartida';
+
+      // Si el temporizador está habilitado, iniciarlo
+      if (this.timerEnabled) {
+        this.temporizador.start();
+      }
+    });
+
+    // Suscribirse para recibir resultados parciales en modo Battle Mode
+    this.socketService.recibirResultadosParcialesBattlemode().subscribe((resultado: any) => {
+      console.log(`${resultado.user} ha terminado con ${resultado.score} puntos`);
+      // Aquí puedes actualizar la UI para mostrar los resultados parciales de los jugadores
+    });
+
+    // Suscribirse para recibir los resultados finales en modo Battle Mode
+    this.socketService.recibirResultadosFinalesBattlemode().subscribe((resultados) => {
+      console.log('Resultados recibidos:', resultados);  // Verifica si es una lista de objetos {user, score}
+
+      if (Array.isArray(resultados)) {
+        this.clasification = resultados;  // Asigna los resultados a la variable de clasificación
+        this.winner = this.clasification.reduce((max, player) => max.score > player.score ? max : player);  // Determina el ganador
+        this.estado = 'resultadosFinales';  // Cambia el estado para mostrar los resultados
+      } else {
+        console.error('Se esperaba un array de resultados, pero se recibió:', resultados);
+      }
+    });
+
+
   }
 
   // Método para manejar el envío del formulario
@@ -155,41 +199,54 @@ export class BattlemodeComponent implements OnInit {
       this.errorSala = true;
       return;
     }
+    console.log(`Intentando unirse a la sala con código: ${this.codigoSala} para el usuario: ${this.userEmail}`);
 
     this.socketService.entrarSalaAlumno(this.userEmail, this.codigoSala);
+
     this.socketService.recibirSalaAlumno().subscribe((info) => {
       if (info === 'error') {
         this.errorSala = true;
         this.estado = 'joinRoom';
+        console.error("Error al intentar unirse a la sala, código incorrecto.");
       } else {
         this.jugadores = info.players;
         this.errorSala = false;
         this.estado = 'waitingForGame';
+        // Asignación solo si codigoSala no es null
+        if (this.codigoSala !== null) {
+          this.codigo = this.codigoSala;
+        }
+        console.log("Unido a la sala correctamente. Jugadores en la sala:", this.jugadores);
       }
     });
   }
 
-
-  // Inicio del juego
+  // Inicio del juego para todos los jugadores
   startGame() {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
-  
+
     console.log(`Starting game with country: ${pais}, topic: ${tema}`);
-  
+
     if (!this.userEmail) {
       console.error("User email is undefined. Cannot start the game.");
       return;
     }
-  
+
+    // Obtener las preguntas solo para el anfitrión
     this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
       next: (preguntas: Question[]) => {
         if (preguntas.length > 0) {
           this.preguntas = preguntas;
           this.pregunta = this.preguntas[this.indicePregunta];
-          this.actualizarPregunta();  // Asegurarse de inicializar palabras aquí
+          this.actualizarPregunta();  // Inicializar las palabras aquí
           this.estado = 'enPartida';
           console.log('Pregunta recibida:', this.pregunta);
+
+          // Enviar preguntas a todos los jugadores de la sala a través de sockets
+          this.socketService.enviarPreguntas(this.codigo, this.preguntas);
+
+          // Si el temporizador está habilitado, iniciarlo
           if (this.timerEnabled) {
             this.temporizador.start();
           }
@@ -204,17 +261,21 @@ export class BattlemodeComponent implements OnInit {
   }
 
   finalizarJuego() {
-    this.estado = 'finPartida';  // Cambiar el estado a 'finPartida'
-    if (this.timerEnabled) {
-      this.temporizador.stop();  // Detener el temporizador si está activado
+    if (this.userEmail) {
+      // Enviar el resultado solo si userEmail está definido
+      console.log(`Enviando resultado a la sala: ${this.codigo}`);
+      this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
+      this.estado = 'esperandoResultados';  // Estado de espera para los resultados de los otros jugadores
+      console.log('Juego terminado. Esperando resultados...');
+    } else {
+      console.error("User email is undefined. Cannot send results.");
+      // Aquí puedes manejar el caso en el que userEmail sea undefined, por ejemplo, mostrando un error en la UI
     }
-    console.log('Juego terminado. Puntuación final:', this.puntuacion);
-    // Aquí podrías mostrar un diálogo o redirigir a una pantalla de resultados.
   }
 
   nextQuestion() {
     this.indicePregunta++;  // Avanzar al índice de la siguiente pregunta
-  
+
     // Comprobar si quedan más preguntas
     if (this.indicePregunta < this.preguntas.length) {
       this.pregunta = this.preguntas[this.indicePregunta];  // Actualizar nueva pregunta
@@ -258,25 +319,25 @@ export class BattlemodeComponent implements OnInit {
   sendResults() {
     let resultado = this.checkResults();  // Verificar si la respuesta es correcta
     this.correcto = resultado;  // Asignar el resultado para aplicar estilos a los inputs
-  
-    // Aplicar el estilo "wrong" en caso de respuesta incorrecta
+
+    if (this.timerEnabled) {
+      this.acumulado = this.temporizador.get().seconds;  // Capturar los segundos restantes
+      this.temporizador.stop();  // Detener el temporizador
+    }
+
     if (!resultado) {
+      this.respuestasIncorrectas++;
       this.palabras.forEach((palabra, index) => {
         if (this.respuesta[index] !== palabra.palabra) {
           this.palabras[index].estadoIncorrecto = true;  // Marca la palabra como incorrecta para cambiar el estilo
         }
       });
     } else {
-      // Solo si la respuesta es correcta se abren los resultados y se aumenta la puntuación
-      this.puntuacion += 10;  // Incrementa la puntuación solo si la respuesta es correcta
-  
+      // Incrementa la puntuación base y añade los segundos restantes
+      this.puntuacion += 10 + this.acumulado;
+      this.respuestasCorrectas++;
       this.preguntaTerminada = true;  // Marcar que la pregunta fue respondida correctamente
-  
-      // Detener el temporizador mientras se muestra el resultado
-      if (this.timerEnabled) {
-        this.temporizador.stop();
-      }
-  
+
       // Abrir el diálogo de resultado similar al Single Player
       this.dialog
         .open(VentanaFinPreguntaComponent, {
@@ -301,11 +362,11 @@ export class BattlemodeComponent implements OnInit {
         });
     }
   }
-  
-  
+
+
   checkResults(): boolean {
     let correct = true;
-  
+
     // Verificar cada palabra ingresada
     for (let i = 0; i < this.palabras.length; i++) {
       if (this.respuesta[i] === undefined || this.palabras[i].palabra !== this.respuesta[i].toUpperCase()) {
@@ -315,10 +376,9 @@ export class BattlemodeComponent implements OnInit {
         this.palabras[i].estadoIncorrecto = false;  // Si es correcta, no mostrar error
       }
     }
-  
+
     return correct;  // Devuelve si la respuesta es correcta o no
   }
-  
 
   public handleEnter(event: KeyboardEvent) {
     // Verifica si la tecla presionada es "Enter"
@@ -347,7 +407,6 @@ export class BattlemodeComponent implements OnInit {
     }
   }
 
-
   public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
     const LEFT_ARROW_KEY = 37;
     const RIGHT_ARROW_KEY = 39;
@@ -374,6 +433,6 @@ export class BattlemodeComponent implements OnInit {
   }
 
   onCodeChanged(code: string, posicion) {
-    this.respuesta[posicion] = code
+    this.respuesta[posicion] = code;
   }
 }
