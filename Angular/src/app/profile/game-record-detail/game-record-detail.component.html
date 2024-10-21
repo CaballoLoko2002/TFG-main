@@ -22,11 +22,11 @@
             <hr>
             <button mat-raised-button color="primary" (click)="cambioModo('Questions')"><mat-icon>quiz</mat-icon> Questions</button>
             <button mat-raised-button color="primary" (click)="cambioModo('Ranking')"><mat-icon>leaderboard</mat-icon>Ranking</button>
-
         </div>
         </div>
 
         <div *ngIf="modo=='Questions'">
+            <button mat-raised-button color="primary" (click)="downloadAnswers()">Download</button>
         <div class="d-flex justify-content-center fs-3 " id="Recuento" *ngIf="!gameRecord.top">
             <p style="margin-right:10px; color:green; "><mat-icon>done</mat-icon>Correct: {{gameRecord.correctAnswers}}
             </p>
