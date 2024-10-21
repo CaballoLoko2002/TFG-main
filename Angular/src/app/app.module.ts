@@ -34,6 +34,7 @@ import { InfinitemodeComponent } from './games/infinitemode/infinitemode.compone
 import { LandingpageComponent } from './landingpage/landingpage.component';
 import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-question-dialog.component';
 import { BattlemodeComponent } from './games/battlemode/battlemode.component';
+import { VentanaAciertoPreguntaComponent } from './games/ventana-acierto-pregunta/ventana-acierto-pregunta.component';
 
 
 
@@ -67,7 +68,8 @@ import { BattlemodeComponent } from './games/battlemode/battlemode.component';
     LandingpageComponent,
     DialogError,
     SkipQuestionDialogComponent,
-    BattlemodeComponent
+    BattlemodeComponent,
+    VentanaAciertoPreguntaComponent
 
   ],
   imports: [

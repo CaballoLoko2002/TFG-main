@@ -10,7 +10,7 @@ import { EsperarResultadosModalComponent } from '../classroom-challenge/esperar-
 import { Question } from 'src/app/interfaces/question';
 import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';  // Importar componente de omitir pregunta
 import { MatDialogRef } from '@angular/material/dialog';  // Importar MatDialogRef
-import { VentanaFinPreguntaComponent } from '../ventana-fin-pregunta/ventana-fin-pregunta.component';
+import { VentanaAciertoPreguntaComponent } from '../ventana-acierto-pregunta/ventana-acierto-pregunta.component';
 
 @Component({
   selector: 'app-battlemode',
@@ -226,39 +226,31 @@ export class BattlemodeComponent implements OnInit {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
 
-    console.log(`Starting game with country: ${pais}, topic: ${tema}`);
-
     if (!this.userEmail) {
       console.error("User email is undefined. Cannot start the game.");
       return;
     }
 
-    // Obtener las preguntas solo para el anfitrión
+    // Obtener las preguntas para el anfitrión
     this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
       next: (preguntas: Question[]) => {
         if (preguntas.length > 0) {
           this.preguntas = preguntas;
           this.pregunta = this.preguntas[this.indicePregunta];
-          this.actualizarPregunta();  // Inicializar las palabras aquí
+          this.actualizarPregunta();
           this.estado = 'enPartida';
-          console.log('Pregunta recibida:', this.pregunta);
 
-          // Enviar preguntas a todos los jugadores de la sala a través de sockets
+          // Enviar preguntas y temporizador a todos los jugadores
           this.socketService.enviarPreguntas(this.codigo, this.preguntas);
 
-          // Si el temporizador está habilitado, iniciarlo
           if (this.timerEnabled) {
-            this.temporizador.start();
+            this.temporizador.start();  // Iniciar el temporizador para todos
           }
-        } else {
-          console.error('No se encontraron preguntas');
         }
-      },
-      error: (error) => {
-        console.error('Error al obtener preguntas:', error);
       }
     });
   }
+
 
   finalizarJuego() {
     if (this.userEmail) {
@@ -274,6 +266,13 @@ export class BattlemodeComponent implements OnInit {
   }
 
   nextQuestion() {
+    // Resetear el estadoIncorrecto de todas las palabras antes de pasar a la siguiente pregunta
+    this.palabras.forEach(palabra => {
+      palabra.estadoIncorrecto = false;  // Resetear a false
+    });
+
+    this.correcto = true;  // Asegurarse de que el estado correcto se reinicie
+
     this.indicePregunta++;  // Avanzar al índice de la siguiente pregunta
 
     // Comprobar si quedan más preguntas
@@ -290,6 +289,7 @@ export class BattlemodeComponent implements OnInit {
       this.finalizarJuego();
     }
   }
+
 
   // Método timeOut que cierra el diálogo si se acaba el tiempo
   timeOut() {
@@ -320,7 +320,8 @@ export class BattlemodeComponent implements OnInit {
     let resultado = this.checkResults();  // Verificar si la respuesta es correcta
     this.correcto = resultado;  // Asignar el resultado para aplicar estilos a los inputs
 
-    if (this.timerEnabled) {
+    // Solo detener el temporizador si la respuesta es correcta
+    if (resultado && this.timerEnabled) {
       this.acumulado = this.temporizador.get().seconds;  // Capturar los segundos restantes
       this.temporizador.stop();  // Detener el temporizador
     }
@@ -340,7 +341,7 @@ export class BattlemodeComponent implements OnInit {
 
       // Abrir el diálogo de resultado similar al Single Player
       this.dialog
-        .open(VentanaFinPreguntaComponent, {
+        .open(VentanaAciertoPreguntaComponent, {
           data: {
             resultado: resultado,  // Si la respuesta fue correcta o incorrecta
             correctAns: this.pregunta.answer  // Mostrar la respuesta correcta en el diálogo
@@ -362,6 +363,7 @@ export class BattlemodeComponent implements OnInit {
         });
     }
   }
+
 
 
   checkResults(): boolean {
