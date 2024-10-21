@@ -60,7 +60,7 @@ export class BattlemodeComponent implements OnInit {
   // Temporizador para el juego
   @ViewChild('basicTimer') temporizador;
 
-  
+
   constructor(
     private router: Router,
     private socketService: SocketService,
@@ -69,6 +69,20 @@ export class BattlemodeComponent implements OnInit {
     private _formBuilder: FormBuilder,
     public dialog: MatDialog
   ) { }
+
+  ngOnDestroy(): void {
+    // Verifica si el usuario está en una sala y sale de la sala antes de destruir el componente
+    if (this.codigo !== 0 && this.userEmail) {
+      this.socketService.salirSala(this.codigo.toString(), this.userEmail);
+    }
+
+  }
+
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.sendResults();
+    }
+  };
 
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
@@ -81,6 +95,7 @@ export class BattlemodeComponent implements OnInit {
     this.form = this._formBuilder.group({
       country: ["UK", Validators.required],
       topic: ["", Validators.required],
+      maximo: ["", [Validators.required, Validators.min(1)]],
     });
 
     // Obtener los temas disponibles
@@ -123,7 +138,7 @@ export class BattlemodeComponent implements OnInit {
       this.tiempo = data.tiempo;
       this.timerEnabled = true;  // Asegurarse de habilitar el temporizador
       console.log('Temporizador actualizado:', this.tiempo);
-      
+
       // Verificar si la referencia al temporizador está disponible
       if (this.temporizador) {
         this.temporizador.start();  // Inicia el temporizador si está disponible
@@ -131,7 +146,7 @@ export class BattlemodeComponent implements OnInit {
         console.error('Temporizador no disponible.');
       }
     });
-  
+
 
 
     // Suscribirse para recibir resultados parciales en modo Battle Mode
@@ -145,8 +160,12 @@ export class BattlemodeComponent implements OnInit {
       console.log('Resultados recibidos:', resultados);  // Verifica si es una lista de objetos {user, score}
 
       if (Array.isArray(resultados)) {
-        this.clasification = resultados;  // Asigna los resultados a la variable de clasificación
-        this.winner = this.clasification.reduce((max, player) => max.score > player.score ? max : player);  // Determina el ganador
+        // Ordenar los resultados por score de mayor a menor
+        this.clasification = resultados.sort((a, b) => b.score - a.score);
+
+        // Determina el ganador, que será el primer jugador en la lista ordenada
+        this.winner = this.clasification[0];  // El jugador con la mayor puntuación es el primero
+
         this.estado = 'resultadosFinales';  // Cambia el estado para mostrar los resultados
       } else {
         console.error('Se esperaba un array de resultados, pero se recibió:', resultados);
@@ -239,28 +258,28 @@ export class BattlemodeComponent implements OnInit {
   }
 
   // Inicio del juego para todos los jugadores
-  // Inicio del juego para todos los jugadores
   startGame() {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
-
+    const maximo = this.form.get('maximo')?.value; // Obtener el máximo de preguntas del formulario
+  
     if (!this.userEmail) {
       console.error("User email is undefined. Cannot start the game.");
       return;
     }
-
+  
     // Obtener las preguntas para el anfitrión
-    this.questionS.getQuestionsSinglePlayer(pais, tema).subscribe({
+    this.questionS.getQuestionsBattleMode(pais, tema, maximo).subscribe({
       next: (preguntas: Question[]) => {
         if (preguntas.length > 0) {
           this.preguntas = preguntas;
           this.pregunta = this.preguntas[this.indicePregunta];
           this.actualizarPregunta();
           this.estado = 'enPartida';
-
+  
           // Enviar preguntas a todos los jugadores en la sala
           this.socketService.enviarPreguntas(this.codigo, this.preguntas);
-
+  
           // Iniciar el temporizador y enviarlo a todos los jugadores si está habilitado
           if (this.timerEnabled) {
             this.socketService.enviarTemporizador(this.codigo, this.tiempo);
@@ -270,7 +289,6 @@ export class BattlemodeComponent implements OnInit {
       }
     });
   }
-
 
 
   finalizarJuego() {

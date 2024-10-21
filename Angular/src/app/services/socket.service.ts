@@ -93,6 +93,10 @@ export class SocketService {
     this.socket.emit('salirSala', sala, user);
   }
 
+  public salirSalaAlumno(sala: string, user: string) {
+    this.socket.emit('salirSalaAlumno', sala, user);
+  }
+
   public cerrarSocket() {
     this.socket.disconnect();
   }

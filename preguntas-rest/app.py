@@ -1,5 +1,6 @@
 import base64
 import json
+import random
 from os import getcwd, remove
 import codecs
 import os
@@ -319,7 +320,27 @@ def getPreguntasSinglePlayer():
     return response
 
 
+@app.route("/preguntas/battlemode", methods=['GET'])
+def getPreguntasBattleMode():
+    pais = request.args.get('pais')
+    categoria = request.args.get('categoria')
+    maximo = request.args.get('maximo')
 
+    # Si la categoría es "Mix", obtenemos todas las preguntas del país
+    if categoria == "Mix" or categoria is None:
+        preguntas = baseDatos.getPreguntasPorPais(pais)
+    else:
+        preguntas = baseDatos.getQuestionsSinglePlayer(pais, categoria)
+
+    random.shuffle(preguntas)
+
+    listaJson = []
+    listaJson = [pregunta.to_dict() for pregunta in preguntas[:int(maximo)]]
+
+
+    response = jsonify(listaJson)
+    response.status_code = 200
+    return response
 
 
 
@@ -455,6 +476,14 @@ def salirSala(sala,user):
     if(len(room.players)==0):
         del rooms[int(sala)]
     socketio.emit("detallesSala",room.to_dict(),to=int(sala))
+
+@socketio.on("salirSalaAlumno")
+def salirSalaAlumno(sala,user):
+    room=rooms.get(int(sala))
+    room.players.remove(user)
+    if(len(room.players)==0):
+        del rooms[int(sala)]
+    socketio.emit("detallesSalaAlumno",room.to_dict(),to=int(sala))
 
 @socketio.on('crearSalaAlumno')
 def crear_sala_alumno(user, codigo):

@@ -66,6 +66,32 @@ export default class QuestionService {
       );
   }
 
+  getQuestionsBattleMode(pais: string, categoria: string, maximo: number): Observable<any> {
+    // Si la categoría es "Mix", omitimos la categoría y buscamos todas las preguntas del país
+    let url = `${this.apiUrl}/preguntas/battlemode?pais=${pais}`;
+
+    // Solo añadimos la categoría si no es "Mix"
+    if (categoria !== 'Mix') {
+      url += `&categoria=${categoria}`;
+    }
+
+    url += `&maximo=${maximo}`;
+    
+    console.log('URL generada:', url);
+    
+    return this.http.get<any>(url)
+      .pipe(
+        map(questions => questions.map(question => ({
+          _id: question._id,
+          question: question.question,
+          answer: question.answer,
+          country: question.country,
+          topic: question.topic,
+          image: this.imageService.obtenerImagenPregunta(question),
+          information: question.information
+        })))
+      );
+  }
 
   deleteQuestion(_id: any): Observable<any> {
     return this.http.delete(`${this.apiUrl}/preguntas/${_id}`)
