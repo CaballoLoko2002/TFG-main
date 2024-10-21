@@ -126,7 +126,7 @@ export class SocketService {
   // SocketService: Recibir la pregunta inicial para todos los jugadores
   public recibirPreguntasJuego(): Observable<Question[]> {
     return new Observable((observer) => {
-      this.socket.on('preguntasJuego', (preguntas: Question[]) => {
+      this.socket.on('preguntasJuegoAlumno', (preguntas: Question[]) => {
         observer.next(preguntas);  // Enviar todas las preguntas
       });
     });
@@ -154,5 +154,19 @@ export class SocketService {
       });
     });
   }
+
+  // Enviar temporizador
+  enviarTemporizador(sala: number, timer: number) {
+    this.socket.emit('temporizador', sala, timer);
+  }
+
+  public recibirActualizacionTemporizador(): Observable<any> {
+    return new Observable((observer) => {
+      this.socket.on('actualizarTemporizador', (data) => {
+        observer.next(data);
+      });
+    });
+  }
+  
 
 }

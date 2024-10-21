@@ -60,6 +60,7 @@ export class BattlemodeComponent implements OnInit {
   // Temporizador para el juego
   @ViewChild('basicTimer') temporizador;
 
+  
   constructor(
     private router: Router,
     private socketService: SocketService,
@@ -116,6 +117,22 @@ export class BattlemodeComponent implements OnInit {
         this.temporizador.start();
       }
     });
+
+    // Suscribirse para recibir actualizaciones del temporizador
+    this.socketService.recibirActualizacionTemporizador().subscribe((data) => {
+      this.tiempo = data.tiempo;
+      this.timerEnabled = true;  // Asegurarse de habilitar el temporizador
+      console.log('Temporizador actualizado:', this.tiempo);
+      
+      // Verificar si la referencia al temporizador está disponible
+      if (this.temporizador) {
+        this.temporizador.start();  // Inicia el temporizador si está disponible
+      } else {
+        console.error('Temporizador no disponible.');
+      }
+    });
+  
+
 
     // Suscribirse para recibir resultados parciales en modo Battle Mode
     this.socketService.recibirResultadosParcialesBattlemode().subscribe((resultado: any) => {
@@ -222,6 +239,7 @@ export class BattlemodeComponent implements OnInit {
   }
 
   // Inicio del juego para todos los jugadores
+  // Inicio del juego para todos los jugadores
   startGame() {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
@@ -240,16 +258,19 @@ export class BattlemodeComponent implements OnInit {
           this.actualizarPregunta();
           this.estado = 'enPartida';
 
-          // Enviar preguntas y temporizador a todos los jugadores
+          // Enviar preguntas a todos los jugadores en la sala
           this.socketService.enviarPreguntas(this.codigo, this.preguntas);
 
+          // Iniciar el temporizador y enviarlo a todos los jugadores si está habilitado
           if (this.timerEnabled) {
-            this.temporizador.start();  // Iniciar el temporizador para todos
+            this.socketService.enviarTemporizador(this.codigo, this.tiempo);
+            this.temporizador.start();  // Iniciar el temporizador para el anfitrión
           }
         }
       }
     });
   }
+
 
 
   finalizarJuego() {

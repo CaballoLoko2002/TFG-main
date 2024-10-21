@@ -481,29 +481,6 @@ def entrar_sala_alumno(user, sala):
         emit('detallesSalaAlumno', room.to_dict(), to=sala)
 
 
-@socketio.on('empezarJuegoAlumno')
-def empezar_juego_alumno(sala, tiempo):
-    sala = int(sala)
-    if sala in rooms:
-        room = rooms.get(sala)
-        room.timer = tiempo  # Actualizamos el temporizador si está habilitado
-        emit('iniciarJuegoAlumno', room.to_dict(), to=sala)  # Iniciar el juego para todos los jugadores
-    else:
-        emit('detallesSalaAlumno', 'error')
-
-@socketio.on('empezarJuegoAlumno')
-def empezar_juego_alumno(sala, tiempo):
-    sala = int(sala)
-    if sala in rooms:
-        room = rooms.get(sala)
-        room.timer = tiempo
-        # Verifica si las preguntas están definidas antes de acceder
-        if not room.questions:
-            room.questions = baseDatos.getQuestionsGameByCode(int(room.gameCode))
-        room.questionNumber = 0  # Asegúrate de resetear el contador de preguntas
-        socketio.emit("preguntaJuego", room.questions[room.questionNumber].to_dict(), to=sala)
-
-
 @socketio.on('enviarPreguntas')
 def recibir_preguntas(data):
     sala = int(data['sala'])
@@ -516,7 +493,7 @@ def recibir_preguntas(data):
         room.questionNumber = 0  # Reiniciar el contador de preguntas
 
         # Enviar **todas las preguntas** a todos los jugadores en la sala
-        socketio.emit('preguntasJuego', preguntas, to=sala)  # Enviar el array completo
+        socketio.emit('preguntasJuegoAlumno', preguntas, to=sala)  # Enviar el array completo
     else:
         emit('error', {'message': 'Sala no encontrada'})
 
@@ -546,6 +523,10 @@ def recibir_resultado_battlemode(user, score, sala):
         socketio.emit("mostrarResultadosFinales_battlemode", resultados_finales, to=sala)
 
 
+@socketio.on('temporizador')
+def recibir_temporizador(sala, timer):
+    # Emitir el temporizador a todos los jugadores en la sala
+    socketio.emit('actualizarTemporizador', {'tiempo': timer}, to=int(sala))
 
 
 
