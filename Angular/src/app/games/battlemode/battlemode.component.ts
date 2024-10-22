@@ -73,7 +73,7 @@ export class BattlemodeComponent implements OnInit {
   ngOnDestroy(): void {
     // Verifica si el usuario está en una sala y sale de la sala antes de destruir el componente
     if (this.codigo !== 0 && this.userEmail) {
-      this.socketService.salirSala(this.codigo.toString(), this.userEmail);
+      this.socketService.salirSalaAlumno(this.codigo.toString(), this.userEmail);
     }
 
   }
