@@ -240,6 +240,13 @@ export class InfinitemodeComponent implements OnInit {
 
     this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe()
 
+    // Enviamos las estadísticas de la partida al backend**
+    this.userS.sendEstadisticas('InfinityMode', this.puntuacion, this.preguntasIncorrectas)
+      .subscribe({
+        next: (response) => console.log('Estadísticas enviadas correctamente', response),
+        error: (error) => console.error('Error al enviar estadísticas', error)
+      });
+
   }
 
   construirHistorial() {

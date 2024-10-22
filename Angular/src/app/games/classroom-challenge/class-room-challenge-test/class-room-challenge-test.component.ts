@@ -421,6 +421,12 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
     this.auth.updateUser(this.user!)
     this.userS.sendGameResults(this.user?._id!,this.gameRecord).subscribe()
 
+    this.userS.sendEstadisticas("Classroom", this.respuestasCorrectas, this.respuestasIncorrectas,)
+    .subscribe({
+      next: (response) => console.log('Estadísticas enviadas correctamente', response),
+      error: (error) => console.error('Error al enviar estadísticas', error)
+    });
+
 
   }
 

@@ -11,6 +11,7 @@ import { Question } from 'src/app/interfaces/question';
 import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';  // Importar componente de omitir pregunta
 import { MatDialogRef } from '@angular/material/dialog';  // Importar MatDialogRef
 import { VentanaAciertoPreguntaComponent } from '../ventana-acierto-pregunta/ventana-acierto-pregunta.component';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-battlemode',
@@ -67,7 +68,8 @@ export class BattlemodeComponent implements OnInit {
     private authService: AuthService,
     private questionS: QuestionService,
     private _formBuilder: FormBuilder,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public userService: UserService
   ) { }
 
   ngOnDestroy(): void {
@@ -296,6 +298,11 @@ export class BattlemodeComponent implements OnInit {
       // Enviar el resultado solo si userEmail está definido
       console.log(`Enviando resultado a la sala: ${this.codigo}`);
       this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
+      this.userService.sendEstadisticas('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
+      .subscribe({
+        next: (response) => console.log('Estadísticas enviadas correctamente', response),
+        error: (error) => console.error('Error al enviar estadísticas', error)
+      });
       this.estado = 'esperandoResultados';  // Estado de espera para los resultados de los otros jugadores
       console.log('Juego terminado. Esperando resultados...');
     } else {
@@ -350,6 +357,8 @@ export class BattlemodeComponent implements OnInit {
     this.skipQuestionDialogRef.afterClosed().subscribe(result => {
       this.skipQuestionDialogRef = null;  // Limpiar referencia al cerrar
       if (result === true) {
+        this.respuestasIncorrectas++;
+        console.log('Pregunta omitida. Respuestas incorrectas:', this.respuestasIncorrectas);        
         this.nextQuestion();  // Saltar a la siguiente pregunta
       }
     });
@@ -366,7 +375,6 @@ export class BattlemodeComponent implements OnInit {
     }
 
     if (!resultado) {
-      this.respuestasIncorrectas++;
       this.palabras.forEach((palabra, index) => {
         if (this.respuesta[index] !== palabra.palabra) {
           this.palabras[index].estadoIncorrecto = true;  // Marca la palabra como incorrecta para cambiar el estilo

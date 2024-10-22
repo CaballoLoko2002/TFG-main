@@ -119,7 +119,7 @@ class Estadistica:
             self.partidas_battlemode += 1
         elif modo == 'Singleplayer':
             self.partidas_singleplayer += 1
-        elif modo == 'Infinity Mode':
+        elif modo == 'InfinityMode':
             self.partidas_infinity_mode += 1
 
     def sumar_pregunta_acertada(self, modo, numero_preguntas):
@@ -133,7 +133,7 @@ class Estadistica:
             self.preguntas_battlemode_acertadas += numero_preguntas
         elif modo == 'Singleplayer':
             self.preguntas_singleplayer_acertadas += numero_preguntas
-        elif modo == 'Infinity Mode':
+        elif modo == 'InfinityMode':
             self.preguntas_infinity_mode_acertadas += numero_preguntas
 
     def sumar_pregunta_fallada(self, modo, numero_preguntas):
@@ -147,7 +147,7 @@ class Estadistica:
             self.preguntas_battlemode_falladas += numero_preguntas
         elif modo == 'Singleplayer':
             self.preguntas_singleplayer_falladas += numero_preguntas
-        elif modo == 'Infinity Mode':
+        elif modo == 'InfinityMode':
             self.preguntas_infinity_mode_falladas += numero_preguntas
 
     def mostrar_estadisticas(self):
@@ -172,7 +172,7 @@ class Estadistica:
                 'Acertadas': self.preguntas_singleplayer_acertadas,
                 'Falladas': self.preguntas_singleplayer_falladas,
             },
-            'Infinity Mode': {
+            'InfinityMode': {
                 'Partidas': self.partidas_infinity_mode,
                 'Acertadas': self.preguntas_infinity_mode_acertadas,
                 'Falladas': self.preguntas_infinity_mode_falladas,

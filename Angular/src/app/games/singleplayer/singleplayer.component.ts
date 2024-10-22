@@ -330,6 +330,13 @@ export class SingleplayerComponent implements OnInit {
 
     // Enviamos los resultados de la partida al backend
     this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe();
+
+    // Enviamos las estadísticas de la partida al backend**
+    this.userS.sendEstadisticas('Singleplayer', this.respuestasCorrectas, this.respuestasIncorrectas)
+      .subscribe({
+        next: (response) => console.log('Estadísticas enviadas correctamente', response),
+        error: (error) => console.error('Error al enviar estadísticas', error)
+      });
   }
 
 
