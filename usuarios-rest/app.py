@@ -7,6 +7,7 @@ from flask import Flask, Response, flash, request, jsonify, send_from_directory
 from werkzeug.utils import secure_filename
 from mail import enviarCorreoRegistro, enviarCorreoPassword
 from modelo.user import User
+from modelo.estadistica import Estadistica
 import uuid as uuid;
 from flask_bcrypt import Bcrypt
 
@@ -365,6 +366,31 @@ def uploadFotoPerfil(id):
 def imagenRequest(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename, as_attachment=True,mimetype='image/jpg')
+
+@app.route("/estadisticas/actualiza_partida", methods=['GET'])
+def actualiza_partida():
+    # Obtenemos los parámetros de la URL
+    modo = request.args.get('modo')
+    respuestas_correctas = request.args.get('respuestasCorrectas', type=int)
+    respuestas_incorrectas = request.args.get('respuestasIncorrectas', type=int)
+
+    # Validamos que los parámetros no sean nulos
+    if not modo or respuestas_correctas is None or respuestas_incorrectas is None:
+        return jsonify({"error": "Faltan parámetros. Se requieren 'modo', 'respuestasCorrectas' y 'respuestasIncorrectas'."}), 400
+    
+    # Obtenemos la única instancia de Estadistica (Singleton)
+    estadistica = Estadistica()
+
+    # Actualizamos la partida
+    estadistica.actualiza_partida(modo, respuestas_correctas, respuestas_incorrectas)
+
+    # Guardamos las estadísticas en la base de datos
+    estadistica.guardar_en_base_datos(baseDatos.db)
+
+    # Devolvemos una respuesta indicando éxito
+    return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
+
+
 
 if __name__ == '__main__':
     from waitress import serve
