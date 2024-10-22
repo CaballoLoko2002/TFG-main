@@ -108,6 +108,20 @@ class Estadistica:
         self.sumar_partida_jugada(modo)
         self.sumar_pregunta_acertada(modo, respuestasCorrectas)
         self.sumar_pregunta_fallada(modo, respuestasIncorrectas)
+    
+    def actualiza_partida_juegoonline(self, modo):
+        """Suma una partida jugada en el modo especificado."""
+        self.partidas_jugadas += 1
+
+        if modo == 'Classroom':
+            self.partidas_classroom += 1
+        elif modo == 'Battlemode':
+            self.partidas_battlemode += 1
+    
+    def actualiza_pregunta_juegoonline(self, modo, respuestasCorrectas, respuestasIncorrectas):
+        """Actualiza los datos de una partida."""
+        self.sumar_pregunta_acertada(modo, respuestasCorrectas)
+        self.sumar_pregunta_fallada(modo, respuestasIncorrectas)
 
     def sumar_partida_jugada(self, modo):
         """Suma una partida jugada en el modo especificado."""

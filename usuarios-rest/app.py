@@ -390,6 +390,51 @@ def actualiza_partida():
     # Devolvemos una respuesta indicando éxito
     return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
 
+@app.route("/estadisticas/actualiza_partida_online", methods=['GET'])
+def actualiza_partida_online():
+    # Obtenemos los parámetros de la URL
+    modo = request.args.get('modo')
+    
+    # Validamos que los parámetros no sean nulos
+    if not modo:
+        return jsonify({"error": "Faltan parámetros. Se requieren 'modo'."}), 400
+
+    # Obtenemos la única instancia de Estadistica (Singleton)
+    estadistica = Estadistica()
+
+    # Actualizamos la partida
+    estadistica.actualiza_partida_juegoonline(modo)
+
+    # Guardamos las estadísticas en la base de datos
+    estadistica.guardar_en_base_datos(baseDatos.db)
+
+    # Devolvemos una respuesta indicando éxito
+    return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
+
+@app.route("/estadisticas/actualiza_pregunta_online", methods=['GET'])
+def actualiza_pregunta_online():
+    # Obtenemos los parámetros de la URL
+    modo = request.args.get('modo')
+    respuestas_correctas = request.args.get('respuestasCorrectas', type=int)
+    respuestas_incorrectas = request.args.get('respuestasIncorrectas', type=int)
+
+
+    # Validamos que los parámetros no sean nulos
+    if not modo or respuestas_correctas is None or respuestas_incorrectas is None or not id:
+        return jsonify({"error": "Faltan parámetros. Se requieren 'modo', 'respuestasCorrectas', 'respuestasIncorrectas' y 'id'."}), 400
+    
+    # Obtenemos la única instancia de Estadistica (Singleton)
+    estadistica = Estadistica()
+
+    # Actualizamos la partida
+    estadistica.actualiza_pregunta_juegoonline(modo, respuestas_correctas, respuestas_incorrectas)
+
+    # Guardamos las estadísticas en la base de datos
+    estadistica.guardar_en_base_datos(baseDatos.db)
+
+    # Devolvemos una respuesta indicando éxito
+    return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
+
 
 
 if __name__ == '__main__':

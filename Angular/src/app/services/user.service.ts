@@ -85,7 +85,19 @@ export class UserService {
   sendEstadisticas(modo: string, respuestasCorrectas: number, respuestasIncorrectas: number) {
     const params = `?modo=${modo}&respuestasCorrectas=${respuestasCorrectas}&respuestasIncorrectas=${respuestasIncorrectas}`;
     return this.http.get<any>(`${this.apiUrl}/estadisticas/actualiza_partida${params}`);
-}
+  }
+
+  sendEstadisticasOnline(modo: string) {
+    const params = `?modo=${modo}`;
+    return this.http.get<any>(`${this.apiUrl}/estadisticas/actualiza_partida_online${params}`);
+  }
+
+  sendPreguntaOnline(modo: string, respuestasCorrectas: number, respuestasIncorrectas: number) {
+    const params = `?modo=${modo}&respuestasCorrectas=${respuestasCorrectas}&respuestasIncorrectas=${respuestasIncorrectas}`;
+    return this.http.get<any>(`${this.apiUrl}/estadisticas/actualiza_pregunta_online${params}`);
+  }
+  
+  
 
 }
 

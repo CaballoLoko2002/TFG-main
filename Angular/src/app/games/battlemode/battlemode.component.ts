@@ -290,6 +290,12 @@ export class BattlemodeComponent implements OnInit {
         }
       }
     });
+
+    this.userService.sendEstadisticasOnline('Battlemode').subscribe({
+      next: (response) => console.log('Estadísticas enviadas correctamente', response),
+      error: (error) => console.error('Error al enviar estadísticas', error)
+    });
+
   }
 
 
@@ -298,11 +304,13 @@ export class BattlemodeComponent implements OnInit {
       // Enviar el resultado solo si userEmail está definido
       console.log(`Enviando resultado a la sala: ${this.codigo}`);
       this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
-      this.userService.sendEstadisticas('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
+
+      this.userService.sendPreguntaOnline('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
       .subscribe({
         next: (response) => console.log('Estadísticas enviadas correctamente', response),
         error: (error) => console.error('Error al enviar estadísticas', error)
       });
+
       this.estado = 'esperandoResultados';  // Estado de espera para los resultados de los otros jugadores
       console.log('Juego terminado. Esperando resultados...');
     } else {
