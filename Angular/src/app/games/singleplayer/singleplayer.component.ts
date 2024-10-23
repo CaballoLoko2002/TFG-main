@@ -36,7 +36,7 @@ export class SingleplayerComponent implements OnInit {
   puntuacionMix: number = 0;
   fin: boolean = false;
   respuestasCorrectas = 0;
-  respuestasIncorrectas = 10;
+  respuestasIncorrectas = 0;
   skipQuestionDialogRef: MatDialogRef<SkipQuestionDialogComponent> | null = null;
   correcto: boolean = true;
 
@@ -204,9 +204,9 @@ export class SingleplayerComponent implements OnInit {
       this.puntuacionMix += 10;
       this.respuestasCorrectas++;
     }
-
     else {
       this.vidas--;
+      this.respuestasIncorrectas++;
       if (this.vidas >= 0) {
         this.imagenesVidas = Array(this.vidas).fill(null);
       }
@@ -286,7 +286,7 @@ export class SingleplayerComponent implements OnInit {
 
   obtenerResultadosFinal() {
     this.fin = true;
-    this.respuestasIncorrectas = this.preguntas.length - this.respuestasCorrectas;
+    this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
     this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
     this.gameRecord.score = this.puntuacion;
     this.gameRecord.scoreMix = this.puntuacionMix; // Solo relevante si el topic es Mix
