@@ -435,7 +435,16 @@ def actualiza_pregunta_online():
     # Devolvemos una respuesta indicando éxito
     return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
 
+@app.route("/estadisticas", methods=['GET'])
+def obtener_estadisticas():
+    # Obtener la única instancia de Estadistica (Singleton)
+    estadistica = Estadistica.cargar_desde_base_datos(baseDatos.db)
 
+    # Devolver las estadísticas en formato JSON
+    return jsonify({
+        "resultado": "OK",
+        "estadisticas": estadistica.to_dict()
+    }), 200
 
 if __name__ == '__main__':
     from waitress import serve

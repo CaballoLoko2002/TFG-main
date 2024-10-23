@@ -1,0 +1,52 @@
+<div *ngIf="estadisticas" class="estadisticas-container">
+    <h3 class="text-center">Player Statistics</h3>
+    <table class="table" mat-table [dataSource]="dataSource">
+      
+      <!-- Mode Column -->
+      <ng-container matColumnDef="Mode">
+        <th mat-header-cell *matHeaderCellDef> Mode </th>
+        <td mat-cell *matCellDef="let element"> {{element.mode}} </td>
+      </ng-container>
+  
+      <!-- Games Played Column -->
+      <ng-container matColumnDef="Games Played">
+        <th mat-header-cell *matHeaderCellDef> Games Played </th>
+        <td mat-cell *matCellDef="let element"> {{element.gamesPlayed}} </td>
+      </ng-container>
+  
+      <!-- Correct Column -->
+      <ng-container matColumnDef="Correct">
+        <th mat-header-cell *matHeaderCellDef> Correct Answers</th>
+        <td mat-cell *matCellDef="let element"> {{element.correct}} </td>
+      </ng-container>
+  
+      <!-- Incorrect Column -->
+      <ng-container matColumnDef="Incorrect">
+        <th mat-header-cell *matHeaderCellDef> Incorrect Answers</th>
+        <td mat-cell *matCellDef="let element"> {{element.incorrect}} </td>
+      </ng-container>
+  
+      <!-- Total Column -->
+      <ng-container matColumnDef="Total">
+        <th mat-header-cell *matHeaderCellDef> Total Answers</th>
+        <td mat-cell *matCellDef="let element"> {{element.total}} </td>
+      </ng-container>
+  
+      <!-- Correct Percentage Column -->
+      <ng-container matColumnDef="Correct %">
+        <th mat-header-cell *matHeaderCellDef> Correct % </th>
+        <td mat-cell *matCellDef="let element"> {{element.correctPercentage | number: '1.0-2'}}% </td>
+      </ng-container>
+  
+      <!-- Incorrect Percentage Column -->
+      <ng-container matColumnDef="Incorrect %">
+        <th mat-header-cell *matHeaderCellDef> Incorrect % </th>
+        <td mat-cell *matCellDef="let element"> {{element.incorrectPercentage | number: '1.0-2'}}% </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  
+    </table>
+  </div>
+  

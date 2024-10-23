@@ -35,6 +35,7 @@ import { LandingpageComponent } from './landingpage/landingpage.component';
 import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-question-dialog.component';
 import { BattlemodeComponent } from './games/battlemode/battlemode.component';
 import { VentanaAciertoPreguntaComponent } from './games/ventana-acierto-pregunta/ventana-acierto-pregunta.component';
+import { StatsmngComponent } from './databasemanagement/statsmng/statsmng.component';
 
 
 
@@ -69,7 +70,8 @@ import { VentanaAciertoPreguntaComponent } from './games/ventana-acierto-pregunt
     DialogError,
     SkipQuestionDialogComponent,
     BattlemodeComponent,
-    VentanaAciertoPreguntaComponent
+    VentanaAciertoPreguntaComponent,
+    StatsmngComponent
 
   ],
   imports: [

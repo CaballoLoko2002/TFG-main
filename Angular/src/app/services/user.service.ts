@@ -96,6 +96,10 @@ export class UserService {
     const params = `?modo=${modo}&respuestasCorrectas=${respuestasCorrectas}&respuestasIncorrectas=${respuestasIncorrectas}`;
     return this.http.get<any>(`${this.apiUrl}/estadisticas/actualiza_pregunta_online${params}`);
   }
+
+  getEstadisticas(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/estadisticas`)
+  }
   
   
 

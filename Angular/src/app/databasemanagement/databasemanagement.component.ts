@@ -14,6 +14,6 @@ export class DatabasemanagementComponent implements OnInit {
 
   handleMatTabChange(event: number) {
     localStorage.setItem('userTabLocation', event.toString());
-}
+  }
 
 }
