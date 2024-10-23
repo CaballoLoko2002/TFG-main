@@ -1,4 +1,4 @@
-import { Component,OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { GameRecord } from 'src/app/interfaces/gameRecord';
 import { Question } from 'src/app/interfaces/question';
 import { User } from 'src/app/interfaces/user';
@@ -14,23 +14,23 @@ interface room {
   id: string,
   gameCode: number,
   players: string[]
-  timer:number;
+  timer: number;
 }
 @Component({
   selector: 'app-class-room-challenge-test',
   templateUrl: './class-room-challenge-test.component.html',
   styleUrls: ['./class-room-challenge-test.component.css', '../../singleplayer/singleplayer.component.css'],
-  providers:[SocketService]
+  providers: [SocketService]
 })
 
 
-export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
+export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
 
   @ViewChild('basicTimer') temporizador;
 
 
   sala: room;
-  errorSala:boolean=false;
+  errorSala: boolean = false;
   codigoSala: any;
   user?: User | null
   codigo: any;
@@ -43,34 +43,34 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
   palabras: any[];
   respuesta: string[]
   numeroPalabras: number;
-  timerEnabled:boolean;
+  timerEnabled: boolean;
   tiempo: number = 20
   puntuacion: number = 0;
   respuestasCorrectas = 0;
   respuestasIncorrectas = 10;
   correcto: boolean = true;
-  estado:string='inicio'
-  acumulado:number=0;
+  estado: string = 'inicio'
+  acumulado: number = 0;
 
   //VARIABLES DE LA CLASFICIACION
-  clasification:any;
-  winner:any
-  index:number=1
+  clasification: any;
+  winner: any
+  index: number = 1
 
   //VARIABLE PARA EL PROFESOR
-  preguntaTerminada:boolean=false;
+  preguntaTerminada: boolean = false;
 
   gameRecord: GameRecord = <GameRecord>{}
 
-  constructor(private socketService: SocketService, private auth: AuthService, public dialog: MatDialog,private userS: UserService) {
+  constructor(private socketService: SocketService, private auth: AuthService, public dialog: MatDialog, private userS: UserService) {
 
   }
 
 
 
   ngOnDestroy() {
-    if(this.sala!=undefined){
-      this.socketService.salirSala(this.sala.id,this.user!.correo); // Envía una señal al servidor antes de cerrar la pestaña o cambiar de vista
+    if (this.sala != undefined) {
+      this.socketService.salirSala(this.sala.id, this.user!.correo); // Envía una señal al servidor antes de cerrar la pestaña o cambiar de vista
     }
     document.removeEventListener('keydown', this.handleEnterPress);
     this.socketService.cerrarSocket()
@@ -93,18 +93,18 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
     this.socketService.recibirSala().subscribe((info) => {
 
-      if(info==undefined){
+      if (info == undefined) {
 
-        this.errorSala=true
+        this.errorSala = true
       }
-      else{
+      else {
         this.sala = info;
-        if(this.sala.timer==-1){
-          this.timerEnabled=false
+        if (this.sala.timer == -1) {
+          this.timerEnabled = false
         }
-        else{
-          this.timerEnabled=true
-          this.tiempo=this.sala.timer
+        else {
+          this.timerEnabled = true
+          this.tiempo = this.sala.timer
         }
       }
 
@@ -114,7 +114,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
     this.socketService.mostrarResultado().subscribe(() => {
       this.construirHistorial();
 
-      if(this.timerEnabled){
+      if (this.timerEnabled) {
         this.temporizador.stop()
       }
 
@@ -127,10 +127,10 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
     this.socketService.recibirGanador().subscribe((info) => {
 
-      this.clasification=info
-      this.winner=this.clasification[0]
-      this.estado='finPartida'
-        this.terminarPartida();
+      this.clasification = info
+      this.winner = this.clasification[0]
+      this.estado = 'finPartida'
+      this.terminarPartida();
 
 
 
@@ -140,26 +140,26 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
     this.socketService.recibirPregunta().subscribe((info) => {
       this.dialog.closeAll();
 
-      if(info!=undefined){
-      this.acumulado=0;
-      this.pregunta = info;
-      this.estado = 'enPartida';
-      this.correcto = true;
+      if (info != undefined) {
+        this.acumulado = 0;
+        this.pregunta = info;
+        this.estado = 'enPartida';
+        this.correcto = true;
 
-      if (this.indicePregunta != 0) {
-        this.preguntaTerminada=false
-        if(this.timerEnabled){
-          this.temporizador.reset()
-          this.temporizador.start()
+        if (this.indicePregunta != 0) {
+          this.preguntaTerminada = false
+          if (this.timerEnabled) {
+            this.temporizador.reset()
+            this.temporizador.start()
+          }
+
         }
-
-      }
 
         this.actualizarPregunta()
       }
-      else{
-        if(this.user?.rol=='Student'){
-          this.socketService.enviarResultado(this.user?.correo!,this.puntuacion,this.sala.id)
+      else {
+        if (this.user?.rol == 'Student') {
+          this.socketService.enviarResultado(this.user?.correo!, this.puntuacion, this.sala.id)
         }
 
       }
@@ -170,7 +170,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       document.addEventListener('keydown', this.handleEnterPress);
     }
   }
-  
+
   handleEnterPress = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       this.sendResults();
@@ -179,12 +179,12 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
   //METODOS DEL SOCKET
   public crearSala() {
-    if(this.codigo!=undefined){
+    if (this.codigo != undefined) {
       this.socketService.crearSala(this.user!.correo!, this.codigo)
 
     }
-    else{
-      this.errorSala=true;
+    else {
+      this.errorSala = true;
     }
   }
 
@@ -192,7 +192,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
   public handleKeyDown(event: KeyboardEvent, posicionActual: number) {
     const LEFT_ARROW_KEY = 37;
     const RIGHT_ARROW_KEY = 39;
-  
+
     // Si se presiona la flecha derecha, simular la tecla Tab
     if (event.keyCode === RIGHT_ARROW_KEY) {
       event.preventDefault(); // Prevenir el comportamiento por defecto
@@ -202,7 +202,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
         focusableElements[index + 1].focus();
       }
     }
-  
+
     // Si se presiona la flecha izquierda, simular Shift + Tab
     if (event.keyCode === LEFT_ARROW_KEY) {
       event.preventDefault(); // Prevenir el comportamiento por defecto
@@ -213,21 +213,21 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       }
     }
   }
-  
+
   public handleEnter(event: KeyboardEvent) {
     // Verifica si la tecla presionada es "Enter"
     if (event.key === "Enter") {
-        event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
-        this.sendResults(); 
+      event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
+      this.sendResults();
     }
   }
 
-  
+
   public entrarSala() {
-    if(this.codigoSala==undefined){
-      this.errorSala=true
+    if (this.codigoSala == undefined) {
+      this.errorSala = true
     }
-    else{
+    else {
       this.socketService.entrarSala(this.user!.correo!, this.codigoSala)
     }
 
@@ -240,20 +240,20 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       next: (response) => console.log('Estadísticas enviadas correctamente', response),
       error: (error) => console.error('Error al enviar estadísticas', error)
     });
-    
+
   }
 
   public siguientePregunta() {
     this.socketService.siguientePregunta(this.sala.id)
   }
 
-  public updateTimer(){
-    if(this.timerEnabled){
-      this.socketService.updateTimer(this.sala.id,this.tiempo)
+  public updateTimer() {
+    if (this.timerEnabled) {
+      this.socketService.updateTimer(this.sala.id, this.tiempo)
     }
 
-    else{
-      this.socketService.updateTimer(this.sala.id,-1)
+    else {
+      this.socketService.updateTimer(this.sala.id, -1)
     }
 
   }
@@ -281,7 +281,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
-        utterance.lang = 'en-GB'; 
+        utterance.lang = 'en-GB';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -290,7 +290,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       if ('speechSynthesis' in window) {
         const synth = window.speechSynthesis;
         const utterance = new SpeechSynthesisUtterance(this.pregunta.question);
-        utterance.lang = 'en-US'; 
+        utterance.lang = 'en-US';
         synth.speak(utterance);
       } else {
         console.warn('Speech synthesis not supported in this browser.');
@@ -300,12 +300,12 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
   sendResults() {
     this.dialog
-    .open(EsperarResultadosModalComponent, {
-      data: "",
-      disableClose: true
-    })
-    if(this.timerEnabled){
-      this.acumulado=this.temporizador.get().seconds
+      .open(EsperarResultadosModalComponent, {
+        data: "",
+        disableClose: true
+      })
+    if (this.timerEnabled) {
+      this.acumulado = this.temporizador.get().seconds
       this.temporizador.stop()
 
     }
@@ -313,7 +313,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
   }
 
   timeOut() {
-    if(this.user?.rol=='Teacher'){
+    if (this.user?.rol == 'Teacher') {
       this.terminarPregunta()
 
     }
@@ -346,7 +346,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
 
   checkResults(): boolean {
-    if(this.timerEnabled){
+    if (this.timerEnabled) {
       this.temporizador.stop();
     }
 
@@ -354,8 +354,8 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
     //COMPROBAMOS LA RESPUESTA
     for (let i = 0; i < this.numeroPalabras; i++) {
-      if(this.respuesta[i]==undefined){
-        correct=false
+      if (this.respuesta[i] == undefined) {
+        correct = false
       }
       else if (this.palabras[i].palabra != this.respuesta[i].toLocaleUpperCase()) {
         correct = false
@@ -369,7 +369,7 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
 
     let resultado = this.checkResults()
     if (resultado) {
-      this.puntuacion += 10+this.acumulado;
+      this.puntuacion += 10 + this.acumulado;
       this.respuestasCorrectas++;
     }
 
@@ -380,9 +380,9 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
       .open(VentanaFinPreguntaCCComponent, {
         data: {
           resultado: resultado,
-          correctAns:this.pregunta.answer,
-          score:10+this.acumulado
-         },
+          correctAns: this.pregunta.answer,
+          score: 10 + this.acumulado
+        },
         disableClose: true
       })
 
@@ -390,50 +390,50 @@ export class ClassRoomChallengeTestComponent implements OnInit,OnDestroy {
   }
 
   terminarPregunta() {
-    this.preguntaTerminada=true;
+    this.preguntaTerminada = true;
     this.socketService.terminarPregunta(this.sala.id);
   }
 
 
-  public terminarPartida(){
-    this.gameRecord.correctAnswers=this.respuestasCorrectas;
+  public terminarPartida() {
+    this.gameRecord.correctAnswers = this.respuestasCorrectas;
     this.respuestasIncorrectas = this.indicePregunta - this.respuestasCorrectas;
-    this.gameRecord.incorrectAnswers=this.respuestasIncorrectas;
-    this.gameRecord.score=this.puntuacion;
+    this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
+    this.gameRecord.score = this.puntuacion;
     const posicion = this.clasification.findIndex(objeto => objeto.nombre === this.user?.correo);
 
-    if(posicion==0){
+    if (posicion == 0) {
       this.user!.vitrina!.trofeoOro! = this.user!.vitrina!.trofeoOro! + 1
     }
-    else if(posicion==1){
+    else if (posicion == 1) {
       this.user!.vitrina!.trofeoPlata! = this.user!.vitrina!.trofeoPlata! + 1
     }
-    else if(posicion==2){
-      this.user!.vitrina!.trofeoBronce! = this.user!.vitrina!.trofeoBronce!+1
+    else if (posicion == 2) {
+      this.user!.vitrina!.trofeoBronce! = this.user!.vitrina!.trofeoBronce! + 1
     }
 
-    if(this.user?.rol=='Teacher'){
-      this.gameRecord.top=this.clasification;
-      this.gameRecord.place=-1;
+    if (this.user?.rol == 'Teacher') {
+      this.gameRecord.top = this.clasification;
+      this.gameRecord.place = -1;
     }
-    else{
-      this.gameRecord.place=posicion
+    else {
+      this.gameRecord.place = posicion
     }
 
 
-    this.user!.vitrina!.numPartidas=this.user!.vitrina!.numPartidas+1
-    this.gameRecord.fecha=new Date().toString()
+    this.user!.vitrina!.numPartidas = this.user!.vitrina!.numPartidas + 1
+    this.gameRecord.fecha = new Date().toString()
     this.user?.history?.push(this.gameRecord)
     this.auth.updateUser(this.user!)
-    this.userS.sendGameResults(this.user?._id!,this.gameRecord).subscribe()
+    this.userS.sendGameResults(this.user?._id!, this.gameRecord).subscribe()
 
-    this.userS.sendPreguntaOnline("Classroom", this.respuestasCorrectas, this.respuestasIncorrectas,)
-    .subscribe({
-      next: (response) => console.log('Estadísticas enviadas correctamente', response),
-      error: (error) => console.error('Error al enviar estadísticas', error)
-    });
-
-
+    if (this.user?.rol == 'Student') {
+      this.userS.sendPreguntaOnline("Classroom", this.respuestasCorrectas, this.respuestasIncorrectas,)
+        .subscribe({
+          next: (response) => console.log('Estadísticas enviadas correctamente', response),
+          error: (error) => console.error('Error al enviar estadísticas', error)
+        });
+    }
   }
 
 

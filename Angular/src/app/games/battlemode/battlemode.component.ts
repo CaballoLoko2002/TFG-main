@@ -319,6 +319,12 @@ export class BattlemodeComponent implements OnInit {
     }
   }
 
+  volverAlMenu() {
+    // Solo el jugador que ha presionado el botón vuelve al menú, sin emitir nada al resto
+    this.router.navigate(['/home']);
+  }
+
+
   nextQuestion() {
     // Resetear el estadoIncorrecto de todas las palabras antes de pasar a la siguiente pregunta
     this.palabras.forEach(palabra => {
