@@ -37,10 +37,15 @@ def after_request(response):
 #################### FUNCIONES AUXILIARES ####################
 
 def comprobarLogin(correo, contrasena) -> User:
-    user = baseDatos.getUserByMail(correo)
-    if(user != None and bcrypt.check_password_hash(user.password, contrasena)):
-        return user
+    try:
+        user = baseDatos.getUserByMail(correo)
+        if user is not None and bcrypt.check_password_hash(user.password, contrasena):
+            return user
+    except Exception as e:
+        # Registrar error para depuración
+        print(f"Error comprobando login: {str(e)}")
     return None
+
 
 
 def allowed_file(filename):
@@ -60,17 +65,26 @@ def index():
 
 @app.route("/login", methods=['POST']) 
 def login():
-    jon = json.loads(request.data)
-    mail = jon["mail"]
-    password = jon["contrasena"]
-    user = comprobarLogin(mail,password)
-    if user != None:
-        contenido=user.to_dict()
-        response = jsonify(contenido)
-        response.status_code = 200
-        return response
-    else:
-        return Response(status=401)
+    try:
+        jon = json.loads(request.data)
+        mail = jon.get("mail")
+        password = jon.get("contrasena")
+
+        if mail is None or password is None:
+            return jsonify({"error": "Faltan campos requeridos"}), 400
+
+        user = comprobarLogin(mail, password)
+        if user is not None:
+            contenido = user.to_dict()
+            return jsonify(contenido), 200
+        else:
+            return jsonify({"error": "Credenciales incorrectas"}), 401
+    except ValueError as e:
+        return jsonify({"error": "JSON inválido"}), 400
+    except Exception as e:
+        print(f"Error en login: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
 
 @app.route("/comprobarCorreo",methods=['POST'])
 def comprobarRegistro():
@@ -131,20 +145,36 @@ def sendMailContrasena():
 
 @app.route("/usuarios/chngPsswrd", methods=['POST'])
 def cambioContrasena():
-    jon=json.loads(request.data)
-    mail=jon["email"]
-    contra=jon["pass"]
-    baseDatos.updatePassword(mail,contra)
-    return Response(status=200)
+    try:
+        jon = json.loads(request.data)
+        mail = jon.get("email")
+        contra = jon.get("pass")
+
+        if mail is None or contra is None:
+            return jsonify({"error": "Faltan campos requeridos"}), 400
+
+        baseDatos.updatePassword(mail, contra)
+        return jsonify({"resultado": "Contraseña actualizada"}), 200
+    except ValueError:
+        return jsonify({"error": "JSON inválido"}), 400
+    except Exception as e:
+        print(f"Error cambiando contraseña: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
 
 
 @app.route("/usuarios/<id>", methods=['GET'])
 def getUser(id):
-    user=baseDatos.getUserById(id)
-    contenido=user.to_dict()
-    response=jsonify(contenido)
-    response.status_code=200
-    return response
+    try:
+        user = baseDatos.getUserById(id)
+        if user is None:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        contenido = user.to_dict()
+        return jsonify(contenido), 200
+    except Exception as e:
+        print(f"Error obteniendo usuario {id}: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
 
 
 @app.route("/usuarios", methods=['GET'])
@@ -330,36 +360,32 @@ def addTrophy(userId, resultado, modo, place, topic):
 #ACTUALIZAR FOTOS
 @app.route("/usuarios/<id>", methods=['POST'])
 def uploadFotoPerfil(id):
-
-    if 'files' not in request.files:
-        flash('No file part')
-        return Response(status=400)
-    
-    file= request.files['files']
-    
-    if file.filename =='':
-        flash('No selected file')
-        return Response(status=400)
-    
-    if file and allowed_file(file.filename):
-        filename=secure_filename(file.filename)
-        #Evitamos nombres repetidos
-        nombre_archivo= str(uuid.uuid1())+"_"+filename
-
-        #Eliminamos la foto antigua, para ello obtenemos su nombre primero 
-        user= baseDatos.getUserById(id)
-        if(user.image!=""):
-            os.remove(os.path.join(app.config['UPLOAD_FOLDER'],user.image))
+    try:
+        if 'files' not in request.files:
+            return jsonify({"error": "No se ha enviado ningún archivo"}), 400
         
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'],nombre_archivo))
-        baseDatos.updateProfileImage(id,nombre_archivo)
-        contenido = {
+        file = request.files['files']
         
-        "image" : nombre_archivo,
-        }
-        response = jsonify(contenido)
-        response.status_code = 200
-        return response
+        if file.filename == '':
+            return jsonify({"error": "No se ha seleccionado ningún archivo"}), 400
+        
+        if not allowed_file(file.filename):
+            return jsonify({"error": "Formato de archivo no permitido"}), 400
+
+        filename = secure_filename(file.filename)
+        nombre_archivo = str(uuid.uuid1()) + "_" + filename
+
+        # Guardar archivo y actualizar imagen en la base de datos
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_archivo))
+        baseDatos.updateProfileImage(id, nombre_archivo)
+        
+        contenido = {"image": nombre_archivo}
+        return jsonify(contenido), 200
+    except Exception as e:
+        print(f"Error subiendo archivo para usuario {id}: {str(e)}")
+        return jsonify({"error": "Error interno del servidor"}), 500
+
+
     
     
 @app.route('/imagen/<filename>')
