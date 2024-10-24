@@ -38,10 +38,11 @@ export class RegisterComponent{
   mailWarningEnabled:boolean=false
   @ViewChild('inputRef') inputRef: ElementRef;
 
+  private emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 
   firstFormGroup = this._formBuilder.group({
-    email: ['', Validators.required],
+    email: ['', [Validators.required, Validators.pattern(this.emailPattern)]], 
   });
   secondFormGroup = this._formBuilder.group({
     name: ['', Validators.required],
@@ -56,6 +57,7 @@ export class RegisterComponent{
 
   constructor(private _formBuilder: FormBuilder, private auth: AuthService,private mailService: MailService, private hashService:HashService){}
 
+  
   ngAfterViewInit() {
     fromEvent(this.inputRef.nativeElement, 'input')
       .pipe(debounceTime(200))
@@ -100,21 +102,23 @@ export class RegisterComponent{
   }
 
   comprobarCorreo(){
-    this.email=this.firstFormGroup.get('email')?.value!
-
+    this.email = this.firstFormGroup.get('email')?.value!;
+  
+    // Realiza la verificación solo para comprobar si el correo ya está en uso
     this.auth.comprobarMail(this.email).subscribe({
       next: () => {
-
-        this.mailEnabled=false;
-        this.mailWarningEnabled=false;
+        // Si no hay error, significa que el correo no está en uso
+        this.mailEnabled = false;
+        this.mailWarningEnabled = false;
       },
       error: () => {
-
-        this.mailWarningEnabled=true
-        this.mailEnabled=true;
+        // Si hay error, significa que el correo ya está en uso
+        this.mailWarningEnabled = true;
+        this.mailEnabled = true;
       }
-    })
+    });
   }
+  
 
   enviarCodigo(){
     this.mailService.enviarCorreoCodigo(this.email).subscribe({

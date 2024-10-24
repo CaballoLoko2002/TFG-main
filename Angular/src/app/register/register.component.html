@@ -1,6 +1,4 @@
-
-
-<mat-stepper  linear>
+<mat-stepper linear>
     <mat-step [stepControl]="firstFormGroup" [editable]="isEditable">
         <div class="card flex ">
             <div class="card-body">
@@ -13,25 +11,45 @@
                         <input matInput placeholder="Your email address" formControlName="email" #inputRef>
                     </mat-form-field>
 
-                    <div *ngIf="mailWarningEnabled">
+                    <!-- Mensajes de error personalizados con el mismo estilo -->
+                    <div *ngIf="firstFormGroup.get('email')?.invalid && firstFormGroup.get('email')?.touched">
                         <ul>
-                            <li [ngClass]="{'cross-red': mailWarningEnabled}"> The email address is already in use or
-                                isn't a @um.es address
+                            <!-- Error si el patrón no se cumple -->
+                            <li *ngIf="firstFormGroup.get('email')?.hasError('pattern')"
+                                [ngClass]="{'cross-red': true}">
+                                Please enter a valid email address.
+                            </li>
+
+                            <!-- Error si el campo está vacío -->
+                            <li *ngIf="firstFormGroup.get('email')?.hasError('required')"
+                                [ngClass]="{'cross-red': true}">
+                                Email is required.
                             </li>
                         </ul>
                     </div>
 
+                    <!-- Mensaje de error si el email ya está en uso según la lógica del servicio -->
+                    <div *ngIf="mailWarningEnabled">
+                        <ul>
+                            <li [ngClass]="{'cross-red': mailWarningEnabled}">
+                                The email address is already in use.
+                            </li>
+                        </ul>
+                    </div>
+
+
                     <div>
                         <button mat-raised-button matStepperNext [disabled]="mailEnabled" color="primary"
-                            (click)="enviarCodigo()">Next</button>
+                            (click)="enviarCodigo()">
+                            Next
+                        </button>
                     </div>
                 </form>
-
             </div>
         </div>
     </mat-step>
-    
-        
+
+    <!--
     <mat-step label="Email validation" [editable]="false">
         <div class="card flex ">
             <div class="card-body">
@@ -54,7 +72,7 @@
             </div>
         </div>
     </mat-step>
-    
+    -->
 
     <mat-step [stepControl]="secondFormGroup" label="What's your name?" [editable]="isEditable">
         <div class="card flex ">
@@ -123,7 +141,7 @@
                             <li [ngClass]="{'tick-green': hasNonAlphaNumeric, 'cross-red': !hasNonAlphaNumeric}">Contain
                                 at least one non-alphanumeric character
                             </li>
-                            <li [ngClass]="{'tick-green': isValidated, 'cross-red': !isValidated}">Be identical 
+                            <li [ngClass]="{'tick-green': isValidated, 'cross-red': !isValidated}">Be identical
                             </li>
                         </ul>
                     </div>
@@ -145,8 +163,10 @@
             <div class="card flex ">
                 <div class="card-body">
                     <h5 class="card-title">Thank you for your registration!</h5>
-                    <p class="card-text">Your account has been created succesfully. You can now log-in and start learning.  </p>
-                    <button  mat-raised-button color="primary" [routerLink]="['/login']" type="button" class="btn btn-primary">Log in </button>
+                    <p class="card-text">Your account has been created succesfully. You can now log-in and start
+                        learning. </p>
+                    <button mat-raised-button color="primary" [routerLink]="['/login']" type="button"
+                        class="btn btn-primary">Log in </button>
                 </div>
             </div>
         </div>
@@ -155,7 +175,8 @@
 
 <div style="text-align: center;">
 
-   <hr>
-   <h6>Already registered?</h6>
-   <button  mat-raised-button color="primary" [routerLink]="['/login']" type="button" class="btn btn-primary">Sign in </button>
+    <hr>
+    <h6>Already registered?</h6>
+    <button mat-raised-button color="primary" [routerLink]="['/login']" type="button" class="btn btn-primary">Sign in
+    </button>
 </div>
