@@ -72,7 +72,7 @@ export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
     if (this.sala != undefined) {
       this.socketService.salirSala(this.sala.id, this.user!.correo); // Envía una señal al servidor antes de cerrar la pestaña o cambiar de vista
     }
-    document.removeEventListener('keydown', this.handleEnterPress);
+   
     this.socketService.cerrarSocket()
 
   }
@@ -166,16 +166,8 @@ export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
 
     })
 
-    if (this.user?.rol != "Teacher") {
-      document.addEventListener('keydown', this.handleEnterPress);
-    }
+    
   }
-
-  handleEnterPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      this.sendResults();
-    }
-  };
 
   //METODOS DEL SOCKET
   public crearSala() {
@@ -211,14 +203,6 @@ export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
       if (index > 0) {
         focusableElements[index - 1].focus();
       }
-    }
-  }
-
-  public handleEnter(event: KeyboardEvent) {
-    // Verifica si la tecla presionada es "Enter"
-    if (event.key === "Enter") {
-      event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
-      this.sendResults();
     }
   }
 

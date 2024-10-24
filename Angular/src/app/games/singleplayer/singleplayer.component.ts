@@ -80,20 +80,7 @@ export class SingleplayerComponent implements OnInit {
         });
     }
 
-
-    document.addEventListener('keydown', this.handleEnterPress);
   }
-
-  ngOnDestroy(): void {
-    document.removeEventListener('keydown', this.handleEnterPress);
-  }
-
-  handleEnterPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      this.sendResults();
-    }
-  };
-
 
   confirmSkipQuestion(): void {
     // Abre el diálogo y guarda la referencia

@@ -68,19 +68,10 @@ export class InfinitemodeComponent implements OnInit {
       }
     })
 
-    document.addEventListener('keydown', this.handleEnterPress);
-    
+      
   }
 
-  ngOnDestroy(): void {
-    document.removeEventListener('keydown', this.handleEnterPress);
-  }
-  
-  handleEnterPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      this.sendResults();
-    }
-  };
+
 
   actualizarPregunta() {
 

@@ -162,7 +162,7 @@
 
             <!-- Buttons for sending the student's answer and skipping the question -->
             <div class="col-lg-2">
-                <button mat-raised-button color="primary" (keydown)="handleEnter($event)" (click)="sendResults()"
+                <button mat-raised-button color="primary" (click)="sendResults()"
                     *ngIf="!preguntaTerminada">Send answer</button>
                 <button mat-raised-button color="warn" (click)="confirmSkipQuestion()">Skip question</button>
             </div>
@@ -195,7 +195,7 @@
             {{respuestasIncorrectas}}
 
             <p class="card-text">You can see the detailed results in your History.</p>
-            <button mat-raised-button color="primary" (click)="volverAlMenu()">Return to Menu</button>
+            <button mat-raised-button color="primary" (click)="volverAlMenu()">Go to main menu</button>
         </div>
     </div>
 

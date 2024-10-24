@@ -80,12 +80,6 @@ export class BattlemodeComponent implements OnInit {
 
   }
 
-  handleEnterPress = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      this.sendResults();
-    }
-  };
-
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
       if (user) {
@@ -441,14 +435,6 @@ export class BattlemodeComponent implements OnInit {
     }
 
     return correct;  // Devuelve si la respuesta es correcta o no
-  }
-
-  public handleEnter(event: KeyboardEvent) {
-    // Verifica si la tecla presionada es "Enter"
-    if (event.key === "Enter") {
-      event.preventDefault();  // Prevenir el comportamiento predeterminado del navegador (opcional)
-      this.sendResults();
-    }
   }
 
   actualizarPregunta() {
