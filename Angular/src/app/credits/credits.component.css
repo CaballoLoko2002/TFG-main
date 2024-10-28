@@ -1,0 +1,38 @@
+/* credits.component.css */
+
+:host {
+    display: block;
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 12px;
+    font-weight: 600; /* Ajuste del grosor de la fuente */
+}
+
+p {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 8px; /* Espacio más pequeño para un aspecto más limpio */
+
+}
+
+h2 {
+    font-size: 24px;
+    color: #444;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+h3 {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    font-weight: 500;
+}

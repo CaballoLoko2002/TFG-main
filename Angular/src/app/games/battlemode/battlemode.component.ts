@@ -12,6 +12,8 @@ import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-questi
 import { MatDialogRef } from '@angular/material/dialog';  // Importar MatDialogRef
 import { VentanaAciertoPreguntaComponent } from '../ventana-acierto-pregunta/ventana-acierto-pregunta.component';
 import { UserService } from 'src/app/services/user.service';
+import { GameRecord } from 'src/app/interfaces/gameRecord';
+import { User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-battlemode',
@@ -32,6 +34,7 @@ export class BattlemodeComponent implements OnInit {
   paisSeleccionado: string;
   temaSeleccionado: string;
   resultadosFinales: { user: string, score: number }[] = [];
+  user?: User | null
 
   // Variables del juego
   form: FormGroup;
@@ -56,6 +59,7 @@ export class BattlemodeComponent implements OnInit {
   index: number = 1;
   respuestasCorrectas: number = 0;
   respuestasIncorrectas: number = 0;
+  gameRecord: GameRecord = <GameRecord>{};
 
 
   // Temporizador para el juego
@@ -83,9 +87,15 @@ export class BattlemodeComponent implements OnInit {
   ngOnInit(): void {
     this.authService.user.subscribe(user => {
       if (user) {
+        this.user = user;
         this.userEmail = user.correo;  // Obtener el correo del usuario
       }
     });
+
+    this.gameRecord.gameMode = 'Battlemode';
+    this.gameRecord.correctAnswers = 0;
+    this.gameRecord.answers = [];
+    this.gameRecord.score = 0;
 
     // Crear el formulario de selección de país y tema
     this.form = this._formBuilder.group({
@@ -170,6 +180,18 @@ export class BattlemodeComponent implements OnInit {
 
 
   }
+
+
+  construirHistorial() {
+    const entrada = {
+      question: this.pregunta.question,
+      correctAnswer: this.pregunta.answer,
+      answer: this.respuesta.join(" "),
+      correct: this.correcto  // Añade esta propiedad para registrar si fue correcta
+    };
+    this.gameRecord.answers.push(entrada);
+  }
+
 
   // Método para manejar el envío del formulario
   submit() {
@@ -258,12 +280,12 @@ export class BattlemodeComponent implements OnInit {
     const pais = this.form.get('country')?.value;
     const tema = this.form.get('topic')?.value;
     const maximo = this.form.get('maximo')?.value; // Obtener el máximo de preguntas del formulario
-  
+
     if (!this.userEmail) {
       console.error("User email is undefined. Cannot start the game.");
       return;
     }
-  
+
     // Obtener las preguntas para el anfitrión
     this.questionS.getQuestionsBattleMode(pais, tema, maximo).subscribe({
       next: (preguntas: Question[]) => {
@@ -272,10 +294,10 @@ export class BattlemodeComponent implements OnInit {
           this.pregunta = this.preguntas[this.indicePregunta];
           this.actualizarPregunta();
           this.estado = 'enPartida';
-  
+
           // Enviar preguntas a todos los jugadores en la sala
           this.socketService.enviarPreguntas(this.codigo, this.preguntas);
-  
+
           // Iniciar el temporizador y enviarlo a todos los jugadores si está habilitado
           if (this.timerEnabled) {
             this.socketService.enviarTemporizador(this.codigo, this.tiempo);
@@ -295,23 +317,33 @@ export class BattlemodeComponent implements OnInit {
 
   finalizarJuego() {
     if (this.userEmail) {
-      // Enviar el resultado solo si userEmail está definido
       console.log(`Enviando resultado a la sala: ${this.codigo}`);
       this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
 
+      // Actualiza gameRecord con los resultados finales
+      this.gameRecord.correctAnswers = this.respuestasCorrectas;
+      this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
+      this.gameRecord.score = this.puntuacion;
+      this.gameRecord.fecha = new Date().toString();
+
       this.userService.sendPreguntaOnline('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
-      .subscribe({
-        next: (response) => console.log('Estadísticas enviadas correctamente', response),
-        error: (error) => console.error('Error al enviar estadísticas', error)
+        .subscribe({
+          next: (response) => console.log('Estadísticas enviadas correctamente', response),
+          error: (error) => console.error('Error al enviar estadísticas', error)
+        });
+
+      this.userService.sendGameResults(this.user?._id!, this.gameRecord).subscribe({
+        next: () => console.log('Registro de juego enviado correctamente'),
+        error: (error) => console.error('Error al enviar el registro de juego', error)
       });
 
-      this.estado = 'esperandoResultados';  // Estado de espera para los resultados de los otros jugadores
+      this.estado = 'esperandoResultados';
       console.log('Juego terminado. Esperando resultados...');
     } else {
       console.error("User email is undefined. Cannot send results.");
-      // Aquí puedes manejar el caso en el que userEmail sea undefined, por ejemplo, mostrando un error en la UI
     }
   }
+
 
   volverAlMenu() {
     // Solo el jugador que ha presionado el botón vuelve al menú, sin emitir nada al resto
@@ -366,7 +398,7 @@ export class BattlemodeComponent implements OnInit {
       this.skipQuestionDialogRef = null;  // Limpiar referencia al cerrar
       if (result === true) {
         this.respuestasIncorrectas++;
-        console.log('Pregunta omitida. Respuestas incorrectas:', this.respuestasIncorrectas);        
+        console.log('Pregunta omitida. Respuestas incorrectas:', this.respuestasIncorrectas);
         this.nextQuestion();  // Saltar a la siguiente pregunta
       }
     });
@@ -382,33 +414,37 @@ export class BattlemodeComponent implements OnInit {
       this.temporizador.stop();  // Detener el temporizador
     }
 
+    // Construir la entrada de historial para gameRecord
+    this.construirHistorial();
+
     if (!resultado) {
+      // Si la respuesta es incorrecta, aumenta `respuestasIncorrectas`
+      this.respuestasIncorrectas++;
       this.palabras.forEach((palabra, index) => {
         if (this.respuesta[index] !== palabra.palabra) {
           this.palabras[index].estadoIncorrecto = true;  // Marca la palabra como incorrecta para cambiar el estilo
         }
       });
     } else {
-      // Incrementa la puntuación base y añade los segundos restantes
+      // Si es correcta, incrementa `puntuacion`, `respuestasCorrectas`, y marca `preguntaTerminada`
       this.puntuacion += 10 + this.acumulado;
       this.respuestasCorrectas++;
-      this.preguntaTerminada = true;  // Marcar que la pregunta fue respondida correctamente
+      this.preguntaTerminada = true;
 
       // Abrir el diálogo de resultado similar al Single Player
       this.dialog
         .open(VentanaAciertoPreguntaComponent, {
           data: {
-            resultado: resultado,  // Si la respuesta fue correcta o incorrecta
-            correctAns: this.pregunta.answer  // Mostrar la respuesta correcta en el diálogo
+            resultado: resultado,
+            correctAns: this.pregunta.answer
           },
-          disableClose: true  // El usuario debe interactuar con el diálogo para cerrarlo
+          disableClose: true
         })
         .afterClosed()
         .subscribe((confirmado: Boolean) => {
           if (confirmado && resultado) {
             this.nextQuestion();  // Pasar a la siguiente pregunta si se cerró el diálogo
           } else {
-            // Si no es correcto o se sigue intentando, mantener la pregunta activa
             this.preguntaTerminada = false;
             if (this.timerEnabled) {
               this.temporizador.reset();
@@ -418,6 +454,7 @@ export class BattlemodeComponent implements OnInit {
         });
     }
   }
+
 
 
 

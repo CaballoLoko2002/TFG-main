@@ -36,6 +36,7 @@ import { SkipQuestionDialogComponent } from './games/skip-question-dialog/skip-q
 import { BattlemodeComponent } from './games/battlemode/battlemode.component';
 import { VentanaAciertoPreguntaComponent } from './games/ventana-acierto-pregunta/ventana-acierto-pregunta.component';
 import { StatsmngComponent } from './databasemanagement/statsmng/statsmng.component';
+import { CreditsComponent } from './credits/credits.component';
 
 
 
@@ -71,7 +72,8 @@ import { StatsmngComponent } from './databasemanagement/statsmng/statsmng.compon
     SkipQuestionDialogComponent,
     BattlemodeComponent,
     VentanaAciertoPreguntaComponent,
-    StatsmngComponent
+    StatsmngComponent,
+    CreditsComponent
 
   ],
   imports: [

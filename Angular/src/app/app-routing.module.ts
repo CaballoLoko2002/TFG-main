@@ -21,6 +21,7 @@ import { RestorePassComponent } from './restore-pass/restore-pass.component';
 import { InfinitemodeComponent } from './games/infinitemode/infinitemode.component';
 import { LandingpageComponent } from './landingpage/landingpage.component';
 import { BattlemodeComponent } from './games/battlemode/battlemode.component';
+import { CreditsComponent } from './credits/credits.component';
 
 const routes: Routes = [
   {path:"home",component:MainComponent,canActivate:[AuthGuard]},
@@ -43,7 +44,9 @@ const routes: Routes = [
   {path:"rankings",component:RankingsComponent,canActivate:[AuthGuard]},
   {path:"restore-pass",component:RestorePassComponent},
   {path:"games/infinite",component:InfinitemodeComponent,canActivate:[AuthGuard]},
-  {path:"games/battle",component:BattlemodeComponent,canActivate:[AuthGuard]}
+  {path:"games/battle",component:BattlemodeComponent,canActivate:[AuthGuard]},
+  {path:"credits",component:CreditsComponent}
+  
  
 
 
