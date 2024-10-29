@@ -3,7 +3,9 @@ class Estadistica:
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
+            # Crea la instancia por primera vez y carga desde la base de datos si existe
             cls._instance = super(Estadistica, cls).__new__(cls)
+            cls._instance = cls.cargar_desde_base_datos(baseDatos.db)
         return cls._instance
 
     def __init__(self, partidas_jugadas=0, preguntas_acertadas=0, preguntas_falladas=0, 
@@ -15,32 +17,33 @@ class Estadistica:
                  preguntas_infinity_mode_acertadas=0, preguntas_infinity_mode_falladas=0):
         # Evitamos re-inicializar si ya ha sido inicializado
         if not hasattr(self, 'inicializado'):
+            # Atributos generales
             self.partidas_jugadas = partidas_jugadas
             self.preguntas_acertadas = preguntas_acertadas
             self.preguntas_falladas = preguntas_falladas
             self.preguntas_totales = preguntas_totales
 
-            # Classroom mode
+            # Modo Classroom
             self.partidas_classroom = partidas_classroom
             self.preguntas_classroom_acertadas = preguntas_classroom_acertadas
             self.preguntas_classroom_falladas = preguntas_classroom_falladas
 
-            # Battle mode
+            # Modo Battle
             self.partidas_battlemode = partidas_battlemode
             self.preguntas_battlemode_acertadas = preguntas_battlemode_acertadas
             self.preguntas_battlemode_falladas = preguntas_battlemode_falladas
 
-            # Single player mode
+            # Modo Singleplayer
             self.partidas_singleplayer = partidas_singleplayer
             self.preguntas_singleplayer_acertadas = preguntas_singleplayer_acertadas
             self.preguntas_singleplayer_falladas = preguntas_singleplayer_falladas
 
-            # Infinity mode
+            # Modo Infinity
             self.partidas_infinity_mode = partidas_infinity_mode
             self.preguntas_infinity_mode_acertadas = preguntas_infinity_mode_acertadas
             self.preguntas_infinity_mode_falladas = preguntas_infinity_mode_falladas
 
-            # Marcamos que la instancia ya ha sido inicializada
+            # Marcar instancia como inicializada
             self.inicializado = True
 
     def to_dict(self):
@@ -89,8 +92,9 @@ class Estadistica:
     def guardar_en_base_datos(self, db):
         """Guarda la estadística en la base de datos."""
         estadisticas_coleccion = db.estadisticas
-        # Usar un solo documento para guardar las estadísticas
-        estadisticas_coleccion.update_one({}, {"$set": self.to_dict()}, upsert=True)
+        resultado = estadisticas_coleccion.update_one({}, {"$set": self.to_dict()}, upsert=True)
+        if not resultado.acknowledged:
+            raise Exception("Error al guardar en la base de datos")  # Manejo de error en caso de fallo
 
     @classmethod
     def cargar_desde_base_datos(cls, db):
@@ -100,33 +104,34 @@ class Estadistica:
         if datos:
             return cls.from_dict(datos)
         else:
+            print("No se encontraron datos de estadísticas en la base de datos, inicializando nueva instancia.")
             return cls()  # Devuelve una instancia vacía si no existen datos
 
 
-    def actualiza_partida(self, modo, respuestasCorrectas, respuestasIncorrectas):
+    # Métodos de actualización
+    def actualiza_partida(self, modo, respuestas_correctas, respuestas_incorrectas):
         """Actualiza los datos de una partida."""
         self.sumar_partida_jugada(modo)
-        self.sumar_pregunta_acertada(modo, respuestasCorrectas)
-        self.sumar_pregunta_fallada(modo, respuestasIncorrectas)
+        self.sumar_pregunta_acertada(modo, respuestas_correctas)
+        self.sumar_pregunta_fallada(modo, respuestas_incorrectas)
     
     def actualiza_partida_juegoonline(self, modo):
         """Suma una partida jugada en el modo especificado."""
         self.partidas_jugadas += 1
-
         if modo == 'Classroom':
             self.partidas_classroom += 1
         elif modo == 'Battlemode':
             self.partidas_battlemode += 1
     
-    def actualiza_pregunta_juegoonline(self, modo, respuestasCorrectas, respuestasIncorrectas):
-        """Actualiza los datos de una partida."""
-        self.sumar_pregunta_acertada(modo, respuestasCorrectas)
-        self.sumar_pregunta_fallada(modo, respuestasIncorrectas)
+    def actualiza_pregunta_juegoonline(self, modo, respuestas_correctas, respuestas_incorrectas):
+        """Actualiza los datos de una partida en línea."""
+        self.sumar_pregunta_acertada(modo, respuestas_correctas)
+        self.sumar_pregunta_fallada(modo, respuestas_incorrectas)
 
+    # Métodos de incremento
     def sumar_partida_jugada(self, modo):
         """Suma una partida jugada en el modo especificado."""
         self.partidas_jugadas += 1
-
         if modo == 'Classroom':
             self.partidas_classroom += 1
         elif modo == 'Battlemode':
@@ -140,7 +145,6 @@ class Estadistica:
         """Suma preguntas acertadas en el modo especificado."""
         self.preguntas_totales += numero_preguntas
         self.preguntas_acertadas += numero_preguntas
-
         if modo == 'Classroom':
             self.preguntas_classroom_acertadas += numero_preguntas
         elif modo == 'Battlemode':
@@ -154,7 +158,6 @@ class Estadistica:
         """Suma preguntas falladas en el modo especificado."""
         self.preguntas_totales += numero_preguntas
         self.preguntas_falladas += numero_preguntas
-
         if modo == 'Classroom':
             self.preguntas_classroom_falladas += numero_preguntas
         elif modo == 'Battlemode':
@@ -192,4 +195,3 @@ class Estadistica:
                 'Falladas': self.preguntas_infinity_mode_falladas,
             }
         }
-

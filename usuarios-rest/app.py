@@ -395,26 +395,24 @@ def imagenRequest(filename):
 
 @app.route("/estadisticas/actualiza_partida", methods=['GET'])
 def actualiza_partida():
-    # Obtenemos los parámetros de la URL
+    # Obtener y validar los parámetros
     modo = request.args.get('modo')
     respuestas_correctas = request.args.get('respuestasCorrectas', type=int)
     respuestas_incorrectas = request.args.get('respuestasIncorrectas', type=int)
 
-    # Validamos que los parámetros no sean nulos
     if not modo or respuestas_correctas is None or respuestas_incorrectas is None:
-        return jsonify({"error": "Faltan parámetros. Se requieren 'modo', 'respuestasCorrectas' y 'respuestasIncorrectas'."}), 400
+        return jsonify({"error": "Faltan parámetros"}), 400
     
-    # Obtenemos la única instancia de Estadistica (Singleton)
-    estadistica = Estadistica()
-
-    # Actualizamos la partida
+    # Obtener instancia de Estadistica
+    estadistica = Estadistica.cargar_desde_base_datos(baseDatos.db)  # Asegura que siempre carga la última versión
+    
+    # Actualizar partida
     estadistica.actualiza_partida(modo, respuestas_correctas, respuestas_incorrectas)
+    estadistica.guardar_en_base_datos(baseDatos.db)  # Guardar tras cada modificación
 
-    # Guardamos las estadísticas en la base de datos
-    estadistica.guardar_en_base_datos(baseDatos.db)
-
-    # Devolvemos una respuesta indicando éxito
+    # Respuesta
     return jsonify({"resultado": "Partida actualizada correctamente", "estadisticas": estadistica.to_dict()}), 200
+
 
 @app.route("/estadisticas/actualiza_partida_online", methods=['GET'])
 def actualiza_partida_online():
@@ -471,6 +469,13 @@ def obtener_estadisticas():
         "resultado": "OK",
         "estadisticas": estadistica.to_dict()
     }), 200
+
+@app.after_request
+def save_estadistica_on_update(response):
+    estadistica = Estadistica()
+    estadistica.guardar_en_base_datos(baseDatos.db)  # Guarda los datos tras cada petición
+    return response
+
 
 if __name__ == '__main__':
     from waitress import serve
