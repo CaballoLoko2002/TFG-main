@@ -25,7 +25,7 @@ export class PreguntasmngComponent implements OnInit {
   dataSorted: MatTableDataSource<Question>
   @ViewChild(MatPaginator) paginator: MatPaginator
   @ViewChild(MatSort) sort: MatSort
-  displayedColumns: string[] = ['Title', 'Answer', 'Country', 'Topic', 'Image', 'Information', 'Options'];
+  displayedColumns: string[] = ['Title', 'Answer', 'Country', 'Topic', 'Image', 'Hits', 'Misses', 'Options'];
   countryFilter: string;
   topicFilter: string;
   respFilter: string;

@@ -170,7 +170,7 @@ def getPregunta():
     response.headers["Access-Control-Allow-Headers"] = "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
     return response
 
-@app.route("/preguntas", methods=['GET']) 
+@app.route("/preguntas/all", methods=['GET']) 
 def getPreguntas():
 
     preguntas = baseDatos.getAllPreguntas()
@@ -557,6 +557,15 @@ def recibir_temporizador(sala, timer):
     # Emitir el temporizador a todos los jugadores en la sala
     socketio.emit('actualizarTemporizador', {'tiempo': timer}, to=int(sala))
 
+@app.route("/preguntas/acierto/<id>", methods=["POST"])
+def incrementar_acierto(id):
+    baseDatos.incrementar_acierto(id)
+    return Response(status=200)
+
+@app.route("/preguntas/fallo/<id>", methods=["POST"])
+def incrementar_fallo(id):
+    baseDatos.incrementar_fallo(id)
+    return Response(status=200)
 
 
        

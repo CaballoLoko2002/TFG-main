@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { VentanaFinPreguntaCCComponent } from '../ventana-fin-pregunta-cc/ventana-fin-pregunta-cc.component';
 import { UserService } from 'src/app/services/user.service';
 import { EsperarResultadosModalComponent } from '../esperar-resultados-modal/esperar-resultados-modal.component';
+import  QuestionService  from 'src/app/services/question.service';
 
 
 interface room {
@@ -62,7 +63,7 @@ export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
 
   gameRecord: GameRecord = <GameRecord>{}
 
-  constructor(private socketService: SocketService, private auth: AuthService, public dialog: MatDialog, private userS: UserService) {
+  constructor(private socketService: SocketService, private auth: AuthService, public dialog: MatDialog, private userS: UserService, private questionService : QuestionService) {
 
   }
 
@@ -355,6 +356,12 @@ export class ClassRoomChallengeTestComponent implements OnInit, OnDestroy {
     if (resultado) {
       this.puntuacion += 10 + this.acumulado;
       this.respuestasCorrectas++;
+      if (this.user?.rol == 'Student') 
+        this.questionService.incrementarAcierto(this.pregunta._id).subscribe()
+    }
+    else {
+      if (this.user?.rol == 'Student')
+        this.questionService.incrementarFallo(this.pregunta._id).subscribe()
     }
 
 

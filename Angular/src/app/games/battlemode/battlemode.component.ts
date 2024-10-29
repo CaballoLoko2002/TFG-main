@@ -397,6 +397,7 @@ export class BattlemodeComponent implements OnInit {
     this.skipQuestionDialogRef.afterClosed().subscribe(result => {
       this.skipQuestionDialogRef = null;  // Limpiar referencia al cerrar
       if (result === true) {
+        this.questionS.incrementarFallo(this.pregunta._id).subscribe();
         this.respuestasIncorrectas++;
         console.log('Pregunta omitida. Respuestas incorrectas:', this.respuestasIncorrectas);
         this.nextQuestion();  // Saltar a la siguiente pregunta
@@ -413,13 +414,11 @@ export class BattlemodeComponent implements OnInit {
       this.acumulado = this.temporizador.get().seconds;  // Capturar los segundos restantes
       this.temporizador.stop();  // Detener el temporizador
     }
-
+    
     // Construir la entrada de historial para gameRecord
     this.construirHistorial();
 
     if (!resultado) {
-      // Si la respuesta es incorrecta, aumenta `respuestasIncorrectas`
-      this.respuestasIncorrectas++;
       this.palabras.forEach((palabra, index) => {
         if (this.respuesta[index] !== palabra.palabra) {
           this.palabras[index].estadoIncorrecto = true;  // Marca la palabra como incorrecta para cambiar el estilo
@@ -427,6 +426,7 @@ export class BattlemodeComponent implements OnInit {
       });
     } else {
       // Si es correcta, incrementa `puntuacion`, `respuestasCorrectas`, y marca `preguntaTerminada`
+      this.questionS.incrementarAcierto(this.pregunta._id).subscribe();
       this.puntuacion += 10 + this.acumulado;
       this.respuestasCorrectas++;
       this.preguntaTerminada = true;

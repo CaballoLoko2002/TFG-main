@@ -52,6 +52,13 @@ class DataBase:
             return None
         return json_data
     
+    def incrementar_acierto(self, id_pregunta):
+        self.collection.update_one({"_id": ObjectId(id_pregunta)}, {"$inc": {"aciertos": 1}})
+
+    def incrementar_fallo(self, id_pregunta):
+        self.collection.update_one({"_id": ObjectId(id_pregunta)}, {"$inc": {"fallos": 1}})
+
+        
     def getPreguntasPorCategorias(self,temas):
         
 

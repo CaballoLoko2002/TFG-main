@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
 import { VentanaFinPreguntaComponent } from '../ventana-fin-pregunta/ventana-fin-pregunta.component';
 import { SkipQuestionDialogComponent } from '../skip-question-dialog/skip-question-dialog.component';
+import QuestionService from 'src/app/services/question.service';
 
 
 @Component({
@@ -47,7 +48,7 @@ export class SingleplayerComponent implements OnInit {
 
 
 
-  constructor(private activatedRoute: ActivatedRoute, private auth: AuthService, private userS: UserService, public dialog: MatDialog, private router: Router) {
+  constructor(private activatedRoute: ActivatedRoute, private auth: AuthService, private userS: UserService, public dialog: MatDialog, private router: Router, private questionS: QuestionService) {
 
   }
 
@@ -190,10 +191,12 @@ export class SingleplayerComponent implements OnInit {
       this.puntuacion += 10;
       this.puntuacionMix += 10;
       this.respuestasCorrectas++;
+      this.questionS.incrementarAcierto(this.preguntaActual._id).subscribe();
     }
     else {
       this.vidas--;
       this.respuestasIncorrectas++;
+      this.questionS.incrementarFallo(this.preguntaActual._id).subscribe();
       if (this.vidas >= 0) {
         this.imagenesVidas = Array(this.vidas).fill(null);
       }

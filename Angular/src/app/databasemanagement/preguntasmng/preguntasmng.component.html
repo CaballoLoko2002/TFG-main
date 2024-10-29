@@ -169,9 +169,22 @@
     <td mat-cell *matCellDef="let element"> <img width="75" [src]="element.image"  alt=""> </td>
   </ng-container>
 
-  <ng-container matColumnDef="Information">
-    <th mat-header-cell *matHeaderCellDef> Information </th>
-    <td mat-cell *matCellDef="let element"> {{element.information}} </td>
+  
+  <ng-container matColumnDef="Hits">
+    <th mat-header-cell *matHeaderCellDef> Hits </th>
+    <td mat-cell *matCellDef="let element"> {{element.hits}} </td>
+  </ng-container>
+  <ng-container matColumnDef="Misses">
+    <th mat-header-cell *matHeaderCellDef> Misses </th>
+    <td mat-cell *matCellDef="let element"> {{element.misses}} </td>
+  </ng-container>
+  <ng-container matColumnDef="HitPercentage">
+    <th mat-header-cell *matHeaderCellDef> Hit % </th>
+    <td mat-cell *matCellDef="let element"> {{element.hitPercentage | number:'1.0-2'}} % </td>
+  </ng-container>
+  <ng-container matColumnDef="MissPercentage">
+    <th mat-header-cell *matHeaderCellDef> Miss % </th>
+    <td mat-cell *matCellDef="let element"> {{element.missPercentage | number:'1.0-2'}} % </td>
   </ng-container>
 
   <ng-container matColumnDef="Options">

@@ -158,11 +158,12 @@ export class InfinitemodeComponent implements OnInit {
   nextQuestion(resultado: boolean) {
     if (resultado) {
       this.puntuacion += 1;
+      this.questionS.incrementarAcierto(this.preguntaActual._id).subscribe()
     }
-
     else {
       this.vidas--;
       this.preguntasIncorrectas++
+      this.questionS.incrementarFallo(this.preguntaActual._id).subscribe()
       if (this.vidas >= 0) {
         this.imagenesVidas = Array(this.vidas).fill(null);
       }

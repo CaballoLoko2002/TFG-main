@@ -26,7 +26,7 @@ export default class QuestionService {
   }
 
   getAllQuestions(): Observable<Question[]> {
-    return this.http.get<Question[]>(`${this.apiUrl}/preguntas`)
+    return this.http.get<Question[]>(`${this.apiUrl}/preguntas/all`)
       .pipe(
         map(questions => questions.map(question => ({
           _id: question._id,
@@ -35,11 +35,12 @@ export default class QuestionService {
           country: question.country,
           topic: question.topic,
           image: this.imageService.obtenerImagenPregunta(question),
-          information: question.information
-
-        }))));
-
+          information: question.information,
+          hits: question.hits,
+          misses: question.misses
+        }))))
   }
+
 
   getQuestionsSinglePlayer(pais: string, categoria: string): Observable<any> {
     // Si la categoría es "Mix", omitimos la categoría y buscamos todas las preguntas del país
@@ -51,7 +52,7 @@ export default class QuestionService {
     }
 
     console.log('URL generada:', url);
-    
+
     return this.http.get<any>(url)
       .pipe(
         map(questions => questions.map(question => ({
@@ -76,9 +77,9 @@ export default class QuestionService {
     }
 
     url += `&maximo=${maximo}`;
-    
+
     console.log('URL generada:', url);
-    
+
     return this.http.get<any>(url)
       .pipe(
         map(questions => questions.map(question => ({
@@ -158,6 +159,12 @@ export default class QuestionService {
     )
   }
 
+  incrementarAcierto(id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/preguntas/acierto/${id}`, {});
+  }
 
+  incrementarFallo(id: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/preguntas/fallo/${id}`, {});
+  }
 
 }
