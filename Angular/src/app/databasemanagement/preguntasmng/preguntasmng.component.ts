@@ -25,7 +25,7 @@ export class PreguntasmngComponent implements OnInit {
   dataSorted: MatTableDataSource<Question>
   @ViewChild(MatPaginator) paginator: MatPaginator
   @ViewChild(MatSort) sort: MatSort
-  displayedColumns: string[] = ['Title', 'Answer', 'Country', 'Topic', 'Image', 'Hits', 'Misses', 'Options'];
+  displayedColumns: string[] = ['Title', 'Answer', 'Country', 'Topic', 'Image', 'Aciertos', 'Fallos', 'HitPercentage', 'MissPercentage', 'Options'];
   countryFilter: string;
   topicFilter: string;
   respFilter: string;
@@ -38,40 +38,48 @@ export class PreguntasmngComponent implements OnInit {
   form: FormGroup;
   nombreJuego: string = '';
 
-  horizontalPosition : MatSnackBarHorizontalPosition='start';
-  verticalPosition: MatSnackBarVerticalPosition='bottom';
+  horizontalPosition: MatSnackBarHorizontalPosition = 'start';
+  verticalPosition: MatSnackBarVerticalPosition = 'bottom';
 
-  constructor(private questionS: QuestionService, public dialog: MatDialog, private router: Router, private activatedRoute: ActivatedRoute, private _formBuilder: FormBuilder,private _snackBar:MatSnackBar ) {
+  constructor(private questionS: QuestionService, public dialog: MatDialog, private router: Router, private activatedRoute: ActivatedRoute, private _formBuilder: FormBuilder, private _snackBar: MatSnackBar) {
 
   }
 
   ngOnInit(): void {
-
-
-    //SI RECIBIMOS UN PARÁMETRO A TRAVÉS DE LA URL ENTONCES ESTAMOS EN EL MODO DE CREACIÓN DE JUEGO
+    // Modo de creación de juego
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
-      if (params.get('gameCreation') == "true") {
+      if (params.get('gameCreation') === "true") {
         this.gameCreation = true;
         this.dataSelectedTable = new MatTableDataSource(this.dataSelected);
         this.form = this._formBuilder.group({
           name: ['', Validators.required],
-        })
+        });
       }
+    });
 
-    })
-
+    // Obtener las preguntas y calcular los porcentajes
     this.questionS.getAllQuestions().subscribe({
       next: (results: any) => {
-        this.dataSource = results
+        this.dataSource = results.map((question: any) => {
+          const totalAttempts = question.aciertos + question.fallos;
+          const hitPercentage = totalAttempts > 0 ? (question.aciertos / totalAttempts) * 100 : 0;
+          const missPercentage = totalAttempts > 0 ? (question.fallos / totalAttempts) * 100 : 0;
+          return {
+            ...question,
+            hitPercentage: hitPercentage,
+            missPercentage: missPercentage
+          };
+        });
+
+        // Asigna el resultado a la tabla y configura el filtro y paginador
         this.dataSorted = new MatTableDataSource(this.dataSource);
         this.dataSorted.filterPredicate = this.customFiltered();
-        this.dataSorted.paginator = this.paginator
-
+        this.dataSorted.paginator = this.paginator;
       },
       error: (error: any) => console.log(error),
-    }
-    );
+    });
   }
+
 
   applyFilter(country: string, topic: string, resp: string) {
 
@@ -178,29 +186,29 @@ export class PreguntasmngComponent implements OnInit {
     const ids_preguntas = this.dataSelected.map(pregunta => pregunta._id)
 
 
-    if(this.preguntasIn!=0){
-    this.questionS.createGame(this.nombreJuego, ids_preguntas).subscribe({
-      next: () => {
-        this.dialog
-          .open(VentanaExitoComponent, {})
-          .afterClosed()
-          .subscribe(() => {
+    if (this.preguntasIn != 0) {
+      this.questionS.createGame(this.nombreJuego, ids_preguntas).subscribe({
+        next: () => {
+          this.dialog
+            .open(VentanaExitoComponent, {})
+            .afterClosed()
+            .subscribe(() => {
               this.router.navigate(['databaseManagement'])
 
-          })
-      }
-    })
-  }
-  else{
-    this.openSnackBar();
-  }
+            })
+        }
+      })
+    }
+    else {
+      this.openSnackBar();
+    }
 
   }
 
-  private openSnackBar(){
-    this._snackBar.open('You have to add at least one question to the game','Close',{
-      horizontalPosition:this.horizontalPosition,
-      verticalPosition:this.verticalPosition,
+  private openSnackBar() {
+    this._snackBar.open('You have to add at least one question to the game', 'Close', {
+      horizontalPosition: this.horizontalPosition,
+      verticalPosition: this.verticalPosition,
       duration: 3000
     })
   }

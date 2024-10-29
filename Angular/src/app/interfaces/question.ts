@@ -6,7 +6,7 @@ export interface Question {
     topic: string;
     image?:string;
     information?:string;
-    hits?:number;
-    misses?:number;
+    aciertos?:number;
+    fallos?:number;
    
 }

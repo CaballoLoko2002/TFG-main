@@ -9,7 +9,7 @@ from model.juego import Juego
 ############ FUNCIONES AUXILIARES ############
 
 def parteJsonToPregunta(json) ->Pregunta:
-    pregunta=Pregunta(json['_id'],json['enunciado'], json['solucion'], json['pais'],json['categoria'],json['informacion'],json['image'])
+    pregunta = Pregunta(json['_id'], json['enunciado'], json['solucion'], json['pais'], json['categoria'], json['informacion'], json['image'], json.get('aciertos', 0), json.get('fallos', 0))
     return pregunta
 
 def parseJsonToGame(json) -> Juego:

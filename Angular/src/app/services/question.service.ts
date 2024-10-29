@@ -36,10 +36,11 @@ export default class QuestionService {
           topic: question.topic,
           image: this.imageService.obtenerImagenPregunta(question),
           information: question.information,
-          hits: question.hits,
-          misses: question.misses
+          aciertos: question.aciertos,  
+          fallos: question.fallos       
         }))))
   }
+
 
 
   getQuestionsSinglePlayer(pais: string, categoria: string): Observable<any> {
