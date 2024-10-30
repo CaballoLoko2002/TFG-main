@@ -64,7 +64,11 @@ export class UserService {
           correo: user.correo,
           nombre: user.nombre,
           lastname: user.lastname,
-          image: this.imageService.obtenerImagen(user)
+          image: this.imageService.obtenerImagen(user),
+          classroom_challenge: user.classroom_challenge,
+          battlemode: user.battlemode,
+          single_player: user.single_player,
+          infinite_mode: user.infinite_mode
 
         }))));
   }
@@ -104,8 +108,8 @@ export class UserService {
   getEstadisticas(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/estadisticas`)
   }
-  
-  
+
+
 
 }
 

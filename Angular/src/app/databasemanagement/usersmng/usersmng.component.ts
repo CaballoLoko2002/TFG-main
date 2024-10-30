@@ -14,7 +14,7 @@ import { VentanasConfirmacionComponent } from '../ventanas-confirmacion/ventanas
 })
 export class UsersmngComponent implements OnInit {
 
-  columnsToDisplay = ['nombre', 'lastname', 'correo', 'image', 'rol', "actions"];
+  columnsToDisplay = ['nombre', 'lastname', 'correo', 'image', 'rol', 'classroom_challenge', 'battlemode', 'single_player', 'infinite_mode', 'actions'];
   dataSource: User[];
   dataSorted: MatTableDataSource<User>;
   @ViewChild(MatSort) sort: MatSort;
@@ -35,9 +35,15 @@ export class UsersmngComponent implements OnInit {
             data.nombre.toLowerCase().includes(transformedFilter) ||
             data.lastname.toLowerCase().includes(transformedFilter) ||
             data.correo.toLowerCase().includes(transformedFilter) ||
-            data.rol.toLowerCase().includes(transformedFilter)
+            data.rol.toLowerCase().includes(transformedFilter) ||
+            (data.classroom_challenge?.toString() || '0').includes(transformedFilter) ||
+            (data.battlemode?.toString() || '0').includes(transformedFilter) ||
+            (data.single_player?.toString() || '0').includes(transformedFilter) ||
+            (data.infinite_mode?.toString() || '0').includes(transformedFilter)
           );
         };
+        
+        
 
         // Custom sorting to ignore case sensitivity
         this.dataSorted.sortingDataAccessor = (item, property) => {

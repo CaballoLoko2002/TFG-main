@@ -56,6 +56,38 @@
             {{data.rol}}
         </td>
     </ng-container>
+    <!-- Classroom Challenge Column -->
+    <ng-container matColumnDef="classroom_challenge">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Classroom Challenge</th>
+        <td mat-cell *matCellDef="let data">
+            {{data.classroom_challenge}}
+        </td>
+    </ng-container>
+
+    <!-- Battlemode Column -->
+    <ng-container matColumnDef="battlemode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Battlemode</th>
+        <td mat-cell *matCellDef="let data">
+            {{data.battlemode}}
+        </td>
+    </ng-container>
+
+    <!-- Single Player Column -->
+    <ng-container matColumnDef="single_player">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Single Player</th>
+        <td mat-cell *matCellDef="let data">
+            {{data.single_player}}
+        </td>
+    </ng-container>
+
+    <!-- Infinite Mode Column -->
+    <ng-container matColumnDef="infinite_mode">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Infinite Mode</th>
+        <td mat-cell *matCellDef="let data">
+            {{data.infinite_mode}}
+        </td>
+    </ng-container>
+
 
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Options </th>

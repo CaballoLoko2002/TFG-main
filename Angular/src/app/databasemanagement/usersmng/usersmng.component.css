@@ -1,51 +1,51 @@
 .mat-mdc-row:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-.mat-mdc-form-field{
+  background-color: #f2f2f2;
+}
+
+.mat-mdc-form-field {
   width: 100%;
   margin-top: 10px;
   margin-bottom: 10px;
   outline: 10;
 }
 
-
-.mat-mdc-cell{
-  white-space: normal; 
+.mat-mdc-cell,
+.mat-mdc-header-cell {
+  white-space: normal;
   word-wrap: break-word;
+  text-align: center;
+  /* Centrado del contenido */
 }
 
-
 #ImageField {
-  width: 100%; /* Ocupa el ancho completo del contenedor padre */
-  height: 70px; /* Alto del contenedor: 50% del ancho visible del dispositivo */
+  width: 100%;
+  /* Ocupa el ancho completo del contenedor padre */
+  height: 70px;
+  /* Alto del contenedor: 50% del ancho visible del dispositivo */
   overflow: hidden;
 }
 
-.image{
+.image {
   width: 100%;
   max-height: 100%;
   object-fit: contain;
-  object-position:center;
-  
+  object-position: center;
 }
 
-
 @media (max-width: 768px) {
-  .mat-column-Information{
-  display: none !important;
+  .mat-column-Information {
+    display: none !important;
   }
 
-  .mat-column-image{
-    display:none !important;
+  .mat-column-image {
+    display: none !important;
   }
 
-  .mat-column-rol{
-    display:none !important;
+  .mat-column-rol {
+    display: none !important;
   }
 
   .mat-column-correo {
-   display:none !important;
+    display: none !important;
   }
-
 }
