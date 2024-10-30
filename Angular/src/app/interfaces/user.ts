@@ -7,8 +7,12 @@ export interface User {
     rol: string
     correo: string;
     nombre: string;
-    lastname:string;
+    lastname: string;
     vitrina?: Vitrina;
-    image?:string;
-    history?:GameRecord[]
+    image?: string;
+    history?: GameRecord[]
+    classroom_challenge?: number;
+    battlemode?: number;
+    single_player?: number;
+    infinite_mode?: number;
 }

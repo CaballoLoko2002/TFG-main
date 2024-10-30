@@ -318,41 +318,39 @@ def saveGameRecord(id):
 
 
 def addTrophy(userId, resultado, modo, place, topic):
-
     alumno = baseDatos.getUserById(userId)
     v = alumno.vitrina
-
     if modo == 'Single Player Mode':
-        # Verificamos si topic es 'Mix', y actuamos en consecuencia
         if topic == 'Mix':
-            # Si el topic es Mix, manejamos el récord de Mix
             if resultado > v.get('recordMix', 0):
                 v['recordMix'] = resultado
         else:
-            # Si no es 'Mix' o topic es None, manejamos las medallas
             if resultado < 9 and resultado >= 7:
                 v['medallaBronce'] = v.get('medallaBronce', 0) + 1
             elif resultado == 9:
                 v['medallaPlata'] = v.get('medallaPlata', 0) + 1
             elif resultado == 10:
                 v['medallaOro'] = v.get('medallaOro', 0) + 1
-
-    if modo == 'Classroom Challenge':
+        alumno.single_player += 1
+    elif modo == 'Classroom Challenge':
         if place == 0:
             v['trofeoOro'] = v.get('trofeoOro', 0) + 1
         elif place == 1:
             v['trofeoPlata'] = v.get('trofeoPlata', 0) + 1
         elif place == 2:
             v['trofeoBronce'] = v.get('trofeoBronce', 0) + 1
+        alumno.classroom_challenge += 1
+    elif modo == 'Battlemode':
+        alumno.battlemode += 1
+    elif modo == 'Infinite Mode':
+        alumno.infinite_mode += 1
 
     if modo == 'Infinite Mode' and resultado > v.get('recordInfinito', 0):
         v['recordInfinito'] = resultado
 
-    # Actualizamos el número de partidas
     v['numPartidas'] = v.get('numPartidas', 0) + 1
-
-    # Actualizamos la vitrina en la base de datos
     baseDatos.actualizarVitrina(userId, v)
+    baseDatos.updateUserStats(userId, alumno.to_dict())
 
 
 

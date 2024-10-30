@@ -11,8 +11,7 @@ from mail import enviarCorreoLogroToProfesor, enviarCorreoLogroToAlumno
 ############ FUNCIONES AUXILIARES ############
 
 def parseJsontoUser(json) -> User:
-  
-    user=User(json['_id'],json['mail'], json['password'], json['name'],json['lastname'],json['image'],json['rol'],json['vitrina'],json['history'])
+    user=User(json['_id'],json['mail'], json['password'], json['name'],json['lastname'],json['image'],json['rol'],json['vitrina'],json['history'],json.get('classroom_challenge',0),json.get('battlemode',0),json.get('single_player',0),json.get('infinite_mode',0))
     return user
 
 
@@ -49,13 +48,29 @@ class DataBase:
                 "trofeoBronce": 0,
                 "recordInfinito": 0,
                 "recordMix": 0,  # INICIALIZAR recordMix
-                "numPartidas": 0
+                "numPartidas": 0,
+                "classroom_challenge": 0,
+                "battlemode": 0,
+                "single_player": 0,
+                "infinite_mode": 0
             },
             "history": []
         }
         collection.insert_one(aInsertar)
 
+    def updateUserStats(self, user_id, user_data):
+        myquery = {"_id": ObjectId(user_id)}
 
+        update_data = {
+            "$set": {
+                "classroom_challenge": user_data["classroom_challenge"],
+                "battlemode": user_data["battlemode"],
+                "single_player": user_data["single_player"],
+                "infinite_mode": user_data["infinite_mode"]
+            }
+        }
+
+        self.collection.find_one_and_update(myquery, update_data)
 
     def getUserById(self,id) -> User:
         myquery={"_id":{"$eq":ObjectId(id)}}

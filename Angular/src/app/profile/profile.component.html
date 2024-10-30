@@ -11,6 +11,10 @@
                             <h4>{{user!.nombre}} {{user!.lastname}}</h4>
                             <p class="text-secondary mb-1">{{user!.correo}}</p>
                             <p class="text-secondary mb-1">{{user!.rol}}</p>
+                            <p class="text-secondary mb-1">Classroom challenge games: {{user!.classroom_challenge}}</p>
+                            <p class="text-secondary mb-1">Battle mode games: {{user!.battlemode}}</p>
+                            <p class="text-secondary mb-1">Single player games {{user!.single_player}}</p>
+                            <p class="text-secondary mb-1">Infinite mode games: {{user!.infinite_mode}}</p>
                             <button *ngIf="userActivo" id="ProfileChange" type="button" (click)="fileInput.click()"
                                 mat-button>Change profile picture</button>
                             <label for="file" style="display:none">Select a profile picture</label>

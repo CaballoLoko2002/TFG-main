@@ -43,7 +43,11 @@ export class UserService {
         lastname: user.lastname,
         image: this.imageService.obtenerImagen(user),
         vitrina: user.vitrina,
-        history: user.history
+        history: user.history,
+        classroom_challenge: user.classroom_challenge,
+        battlemode: user.battlemode,
+        single_player: user.single_player,
+        infinite_mode: user.infinite_mode
       }))
     )
   }
