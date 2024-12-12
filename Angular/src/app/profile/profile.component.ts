@@ -72,182 +72,161 @@ export class ProfileComponent implements OnInit {
 
     this.logros = [
       {
-        title: 'Invincible Classroom Champion', content: 'Win one gold trophy in a classroom competition', img: "assets/images/invincibleAchv.png",
-        condicion: (this.user?.vitrina?.trofeoOro! != 0)
-      },
-      {
-        title: 'Silver Champion', content: 'Win one silver trophy in a classroom competition', img: "assets/images/silverChampion.png",
-        condicion: (this.user?.vitrina?.trofeoPlata != 0)
-      },
-      {
-        title: 'Bronze Champion', content: 'Win one bronze trophy in a classroom competition', img: "assets/images/bronzeChampion.png",
-        condicion: (this.user?.vitrina?.trofeoBronce != 0)
-      },
-      {
-        title: 'Unstoppable', content: 'Earn 15 points in a single game of Infinite Mode', img: "assets/images/unstoppable.png",
-        condicion: (this.user?.vitrina?.recordInfinito! >= 15)
-      },
-      {
-        title: 'Honor Student', content: 'Win 30 medals (gold,silver and bronze) in Single Player Mode', img: "assets/images/honourStudent.png",
-        condicion: (this.user?.vitrina?.medallaOro! + this.user?.vitrina?.medallaPlata! + this.user?.vitrina?.medallaBronce!) >= 30
-      },
-      {
-        title: 'Gold Rush', content: 'Earn 30 gold medals in Single Player Mode', img: "assets/images/gold.png",
-        condicion: (this.user?.vitrina?.medallaOro! >= 30)
-      },
-      {
-        title: 'US Congressional Medal of Freedom', content: 'Earn 60 gold medals and 20 points in the infinite game mode', img: "assets/images/USMedal.png",
-        condicion: (this.user?.vitrina?.medallaOro! >= 60 && this.user?.vitrina?.recordInfinito! >= 20)
-      },
-      {
-        title: 'Queen of the United Kingdom award', content: 'Earn 1 gold trophy, 20 points in Infinite Mode and 60 gold medalds', img: "assets/images/queen.png",
-        condicion: (this.user?.vitrina?.trofeoOro != 0 && this.user?.vitrina?.recordInfinito! >= 20 && this.user?.vitrina?.medallaOro! >= 60)
-      },
-      {
-        title: 'Silver Faculty Of Magical Arts And Humanities: Accepted For Admission', 
-        content: 'Earn 10 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 10)
-      },
-      {
-        title: 'Silver Broomstick', 
-        content: 'Earn 20 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 20)
-      },
-      {
-        title: 'Silver Magic Pen', 
-        content: 'Earn 30 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 30)
-      },
-      {
-        title: 'Silver Magic Potion', 
-        content: 'Earn 40 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 40)
-      },
-      {
-        title: 'Silver Magic Sword', 
-        content: 'Earn 50 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 50)
-      },
-      {
-        title: 'Silver Magic Wand', 
-        content: 'Earn 60 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 60)
-      },
-      {
-        title: 'Silver Magical Wisdom', 
-        content: 'Earn 70 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 70)
-      },
-      {
-        title: 'Silver Rays Of Knowledge', 
-        content: 'Earn 80 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 80)
-      },
-      {
-        title: 'Silver Quill', 
-        content: 'Earn 90 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 90)
-      },
-      {
-        title: 'Silver Ring Of Knowledge', 
-        content: 'Earn 100 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 100)
-      },
-      {
-        title: 'Silver Crystal Ball', 
-        content: 'Earn 120 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 120)
-      },
-      {
-        title: 'English Studies silver badge of merit', 
-        content: 'Earn 150 silver medals', 
-        img: "assets/images/battleMode.png",
-        condicion: (this.user?.vitrina?.medallaPlata! >= 150)
-      },      
-      {
-        title: 'Golden Faculty Of Magical Arts And Humanities: Accepted For Admission', content: 'Earn 10 gold medals', img: "assets/images/battleMode.png",
+        title: 'Faculty of Magical Humanities: Accepted for Admission', content: 'Earn 10 gold medals', img: "assets/images/goldfaculty.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 10)
       },
       {
-        title: 'Golden Broomstick', content: 'Earn 20 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Broomstick', content: 'Earn 20 gold medals', img: "assets/images/goldbroom.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 20)
       },
       {
-        title: 'Golden Magic Pen', content: 'Earn 30 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Magic Pen', content: 'Earn 30 gold medals', img: "assets/images/goldpen.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 30)
       },
       {
-        title: 'Golden Magic Potion', content: 'Earn 40 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Magic Potion', content: 'Earn 40 gold medals', img: "assets/images/goldpotion.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 40)
       },
       {
-        title: 'Golden Magic Sword', content: 'Earn 50 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Magic Sword', content: 'Earn 50 gold medals', img: "assets/images/goldsword.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 50)
       },
       {
-        title: 'Gold Magic Wand', content: 'Earn 60 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Magic Wand', content: 'Earn 60 gold medals', img: "assets/images/goldmagicwand.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 60)
       },
       {
-        title: 'Golden Magical Wisdom', content: 'Earn 70 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Magical Wisdom', content: 'Earn 70 gold medals', img: "assets/images/goldwisdom.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 70)
       },
       {
-        title: 'Gold Rays Of Knowledge', content: 'Earn 80 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Rays of Knowledge', content: 'Earn 80 gold medals', img: "assets/images/goldrays.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 80)
       },
       {
-        title: 'Golden Quill', content: 'Earn 90 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Quill', content: 'Earn 90 gold medals', img: "assets/images/goldquill.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 90)
       },
       {
-        title: 'Gold Ring Of Knowledge', content: 'Earn 100 gold medals', img: "assets/images/battleMode.png",
+        title: 'Gold Ring of Knowledge', content: 'Earn 100 gold medals', img: "assets/images/goldring.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 100)
       },
       {
-        title: 'Golden Crystal Ball', content: 'Earn 120 gold medals', img: "assets/images/battleMode.png",
+        title: 'Golden Crystal Ball', content: 'Earn 120 gold medals', img: "assets/images/goldenball.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 120)
       },
       {
-        title: 'English Studies gold badge of merit', content: 'Earn 150 gold medals', img: "assets/images/battleMode.png",
+        title: 'English Studies Gold Badge of Merit', content: 'Earn 150 gold medals', img: "assets/images/goldbadge.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 150)
       },
       {
-        title: 'Honour Student', content: 'Earn 10 gold medals and 10 silver medals', img: "assets/images/battleMode.png",
+        title: 'Faculty of Magical Humanities: Accepted for Admission',
+        content: 'Earn 10 silver medals',
+        img: "assets/images/silverfaculty.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 10)
+      },
+      {
+        title: 'Silver Broomstick',
+        content: 'Earn 20 silver medals',
+        img: "assets/images/silverbroom.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 20)
+      },
+      {
+        title: 'Silver Magic Pen',
+        content: 'Earn 30 silver medals',
+        img: "assets/images/silverpen.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 30)
+      },
+      {
+        title: 'Silver Magic Potion',
+        content: 'Earn 40 silver medals',
+        img: "assets/images/silverpotion.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 40)
+      },
+      {
+        title: 'Silver Magic Sword',
+        content: 'Earn 50 silver medals',
+        img: "assets/images/silversword.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 50)
+      },
+      {
+        title: 'Silver Magic Wand',
+        content: 'Earn 60 silver medals',
+        img: "assets/images/silvermagicwand.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 60)
+      },
+      {
+        title: 'Silver Magical Wisdom',
+        content: 'Earn 70 silver medals',
+        img: "assets/images/silverwisdom.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 70)
+      },
+      {
+        title: 'Silver Rays of Knowledge',
+        content: 'Earn 80 silver medals',
+        img: "assets/images/silverrays.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 80)
+      },
+      {
+        title: 'Silver Quill',
+        content: 'Earn 90 silver medals',
+        img: "assets/images/silverquill.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 90)
+      },
+      {
+        title: 'Silver Ring of Knowledge',
+        content: 'Earn 100 silver medals',
+        img: "assets/images/silverring.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 100)
+      },
+      {
+        title: 'Silver Crystal Ball',
+        content: 'Earn 120 silver medals',
+        img: "assets/images/silverball.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 120)
+      },
+      {
+        title: 'English Studies Silver Badge of Merit',
+        content: 'Earn 150 silver medals',
+        img: "assets/images/silverbadge.jpg",
+        condicion: (this.user?.vitrina?.medallaPlata! >= 150)
+      },
+      {
+        title: 'Honour Student', content: 'Earn 10 gold medals and 10 silver medals', img: "assets/images/honourstudent.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 10 && this.user?.vitrina?.medallaPlata! >= 10)
       },
       {
-        title: 'Unstoppable', content: 'Earn 20 gold medals and 20 silver medals', img: "assets/images/battleMode.png",
+        title: 'Unstoppable', content: 'Earn 20 gold medals and 20 silver medals', img: "assets/images/unstoppable.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 20 && this.user?.vitrina?.medallaPlata! >= 20)
       },
       {
-        title: 'Talented Magician', content: 'Earn 30 gold medals and 30 silver medals', img: "assets/images/battleMode.png",
+        title: 'Talented Magician', content: 'Earn 30 gold medals and 30 silver medals', img: "assets/images/talentedmagician.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 30 && this.user?.vitrina?.medallaPlata! >= 30)
       },
       {
-        title: 'Top Scholar', content: 'Earn 60 gold medals and 60 silver medals', img: "assets/images/battleMode.png",
+        title: 'Top Scholar', content: 'Earn 60 gold medals and 60 silver medals', img: "assets/images/topscholar.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 60 && this.user?.vitrina?.medallaPlata! >= 60)
       },
       {
-        title: 'Outstanding Scholar', content: 'Earn 90 gold medals and 90 silver medals', img: "assets/images/battleMode.png",
+        title: 'Outstanding Scholar', content: 'Earn 90 gold medals and 90 silver medals', img: "assets/images/outstandingscholar.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 90 && this.user?.vitrina?.medallaPlata! >= 90)
       },
       {
-        title: 'Academic Excellence Award', content: 'Earn 120 gold medals and 120 silver medals', img: "assets/images/battleMode.png",
+        title: 'Academic Excellence Award', content: 'Earn 120 gold medals and 120 silver medals', img: "assets/images/academicexcellenceaward.jpg",
         condicion: (this.user?.vitrina?.medallaOro! >= 120 && this.user?.vitrina?.medallaPlata! >= 120)
+      },
+      {
+        title: 'Invincible Classroom Champion', content: 'Win one gold trophy in a classroom competition', img: "assets/images/invincibleAchv.jpg",
+        condicion: (this.user?.vitrina?.trofeoOro! != 0)
+      },
+      {
+        title: 'Silver Champion', content: 'Win one silver trophy in a classroom competition', img: "assets/images/silverChampion.jpg",
+        condicion: (this.user?.vitrina?.trofeoPlata != 0)
+      },
+      {
+        title: 'Bronze Champion', content: 'Win one bronze trophy in a classroom competition', img: "assets/images/bronzeChampion.jpg",
+        condicion: (this.user?.vitrina?.trofeoBronce != 0)
       }
-
     ];
 
   }
