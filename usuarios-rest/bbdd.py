@@ -31,7 +31,6 @@ class DataBase:
         
 
     def registrarAlumno(self, mail, password, name, lastname):
-        collection = self.db.User
         aInsertar = {
             "mail": mail,
             "password": password,
@@ -47,16 +46,18 @@ class DataBase:
                 "trofeoPlata": 0,
                 "trofeoBronce": 0,
                 "recordInfinito": 0,
-                "recordMix": 0,  # INICIALIZAR recordMix
+                "recordMix": 0,
                 "numPartidas": 0,
-                "classroom_challenge": 0,
-                "battlemode": 0,
-                "single_player": 0,
-                "infinite_mode": 0
+                "victoriasBattleMode": 0,
             },
-            "history": []
+            "history": [],
+            "classroom_challenge": 0,
+            "battlemode": 0,
+            "single_player": 0,
+            "infinite_mode": 0,
         }
-        collection.insert_one(aInsertar)
+        self.collection.insert_one(aInsertar)
+
 
     def updateUserStats(self, user_id, user_data):
         myquery = {"_id": ObjectId(user_id)}

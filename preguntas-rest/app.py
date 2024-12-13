@@ -530,26 +530,25 @@ def recibir_preguntas(data):
 def recibir_resultado_battlemode(user, score, sala):
     sala = int(sala)
     room = rooms.get(sala)
-    
-    # Verificación de la existencia de la sala
+
     if room is None:
         print(f"Error: Sala {sala} no encontrada para el usuario {user}")
-        return  # Manejo de error: la sala no existe
-    
-    # Registrar el resultado del jugador
+        return
+
+    # Verificar si el resultado ya fue procesado
+    if user in room.scores:
+        print(f"Resultado ya registrado para el usuario {user}")
+        return
+
     room.scores[user] = score
     room.scoresrcv += 1  # Incrementar el contador de resultados recibidos
 
-    # Emitir los resultados parciales a todos los jugadores en la sala
     socketio.emit('resultadosParciales_battlemode', {'user': user, 'score': score}, to=sala)
 
-    # Si todos los jugadores han terminado, enviar los resultados finales
     if room.scoresrcv == len(room.players):
-        # Convertir el diccionario de scores en una lista de objetos {nombre: user, score: score}
         resultados_finales = [{"user": nombre, "score": score} for nombre, score in room.scores.items()]
-
-        # Emitir los resultados finales en formato de lista
         socketio.emit("mostrarResultadosFinales_battlemode", resultados_finales, to=sala)
+
 
 
 @socketio.on('temporizador')
@@ -566,6 +565,33 @@ def incrementar_acierto(id):
 def incrementar_fallo(id):
     baseDatos.incrementar_fallo(id)
     return Response(status=200)
+
+@socketio.on('enviarPosicion')
+def recibir_posicion(data):
+    user = data.get('user')
+    posicion = data.get('posicion')
+
+    # Aquí puedes almacenar la posición en la sala o realizar alguna lógica adicional
+    sala = ...  # Identifica la sala del usuario
+    print(f"Usuario {user} tiene posición {posicion} en la sala {sala}")
+
+    # Enviar la posición al cliente
+    socketio.emit('recibirPosicion', posicion, to=sala)
+
+@socketio.on('enviarPosicion')
+def recibir_posicion(data):
+    user = data.get('user')
+    posicion = data.get('posicion')
+    sala = data.get('sala')
+
+    room = rooms.get(int(sala))
+    if not room:
+        print(f"Error: Sala {sala} no encontrada para el usuario {user}")
+        return
+
+    print(f"Usuario {user} tiene posición {posicion} en la sala {sala}")
+    socketio.emit('recibirPosicion', {'user': user, 'posicion': posicion}, to=sala)
+
 
 
        

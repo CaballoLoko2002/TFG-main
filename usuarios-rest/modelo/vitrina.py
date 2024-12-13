@@ -8,8 +8,9 @@ class Vitrina:
         self.trofeoPlata = 0
         self.trofeoBronce = 0
         self.recordInfinito = 0
-        self.recordMix = 0  # NUEVO CAMPO
+        self.recordMix = 0  
         self.numPartidas = 0
+        self.victoriasBattleMode = 0
 
     def setMedallaOro(self, numero):
         self.medallaOro = numero
@@ -31,3 +32,6 @@ class Vitrina:
 
     def setNumPartidas(self, numero):
         self.numPartidas = numero
+    
+    def setVictoriasBattleMode(self, numero):
+        self.victoriasBattleMode = numero

@@ -37,45 +37,49 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="d-flex align-items-center mb-3">Achievements</h5>
-
                             <div class="row">
                                 <div *ngFor="let logro of logros"
                                     class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
                                     <div [ngClass]="{'earned': logro.condicion, 'notEarned': !logro.condicion}"
-                                        class="card card-small mb-3 text-center ">
-                                        <div class="card-header">{{ logro.title }}</div>
+                                        class="card card-small mb-3 text-center">
+                                        <div class="card-header bold-text">{{ logro.title }}</div>
                                         <div class="card-body">
                                             <img *ngIf="logro.condicion" [src]="logro.img" class="card-img"
-                                                alt={{logro.title}} />
+                                                alt="{{logro.title}}" />
                                             <img *ngIf="!logro.condicion" src="assets/images/question_mark.png"
-                                                class="card-img" alt={{logro.title}} />
-                                            <p class="card-text" style="margin-top: 10px;">{{ logro.content }}</p>
+                                                class="card-img" alt="{{logro.title}}" />
+                                            <p class="card-text">{{ logro.content }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                     <mat-divider></mat-divider>
-                 
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="d-flex align-items-center mb-3">Medals and trophies</h5>
-                                <div class="row">
-                                    <div *ngFor="let trophie of vitrina" class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
-                                        <div class="card card-small bg-transparent mb-3 text-center">
-                                            <div class="card-header">{{ trophie.title }}</div>
-                                            <div class="card-body">
-                                                <img [src]="trophie.img" class="card-img" alt={{trophie.title}} />
-                                                <strong class="card-text">{{trophie.number}}</strong>
-                                                <p class="card-text">{{ trophie.content }}</p>
-                                            </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="d-flex align-items-center mb-3">Medals and Trophies</h5>
+                            <div class="row">
+                                <div *ngFor="let trophie of vitrina"
+                                    class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
+                                    <div class="card card-small bg-transparent mb-3 text-center">
+                                        <div class="card-header bold-text">{{ trophie.title }}</div>
+                                        <div class="card-body">
+                                            <img [src]="trophie.img" class="card-img" alt="{{trophie.title}}" />
+                                            <strong class="card-text">{{ trophie.number }}</strong>
+                                            <p class="card-text">{{ trophie.content }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+
+
                         </div>
-                   
+                    </div>
+
                 </div>
                 <div *ngIf="!modo1">
 
@@ -90,9 +94,10 @@
                                             <mat-expansion-panel-header>
                                                 <mat-panel-title>
                                                     <div>
-                                                        {{game.gameMode}} <span class="recordCYT"> - {{game.country}}/{{game.topic}} </span>
+                                                        {{game.gameMode}} <span class="recordCYT"> -
+                                                            {{game.country}}/{{game.topic}} </span>
                                                     </div>
-                                                    
+
                                                 </mat-panel-title>
                                                 <mat-panel-description>
                                                     Score: {{game.score}} - Played: {{game.fecha! |
@@ -100,11 +105,15 @@
                                                 </mat-panel-description>
                                             </mat-expansion-panel-header>
                                             <div class="d-flex justify-content-center" *ngIf="!game.top">
-                                                <p style="margin-right:10px; color:green;"><mat-icon>done</mat-icon>Correct: {{game.correctAnswers}}</p>
-                                                <p style="color:red;"><mat-icon>close</mat-icon>Wrong: {{game.incorrectAnswers}}</p>
+                                                <p style="margin-right:10px; color:green;">
+                                                    <mat-icon>done</mat-icon>Correct: {{game.correctAnswers}}
+                                                </p>
+                                                <p style="color:red;"><mat-icon>close</mat-icon>Wrong:
+                                                    {{game.incorrectAnswers}}</p>
                                             </div>
 
-                                            <button mat-raised-button color="primary" (click)="enterData(game)">More details</button>
+                                            <button mat-raised-button color="primary" (click)="enterData(game)">More
+                                                details</button>
 
                                         </mat-expansion-panel>
                                     </div>

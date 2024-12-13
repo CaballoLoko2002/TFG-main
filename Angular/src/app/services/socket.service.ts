@@ -171,6 +171,20 @@ export class SocketService {
       });
     });
   }
+
+  enviarPosicion(user: string, posicion: number, sala: number) {
+    this.socket.emit('enviarPosicion', { user, posicion, sala });
+  }
+  
+  
+  public recibirPosicion(): Observable<number> {
+    return new Observable((observer) => {
+      this.socket.on('recibirPosicion', (posicion: number) => {
+        observer.next(posicion);
+      });
+    });
+  }
+  
   
 
 }

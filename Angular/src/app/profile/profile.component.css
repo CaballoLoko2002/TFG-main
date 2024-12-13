@@ -20,6 +20,16 @@ strong {
     font-size: 120%;
 }
 
+.bold-text {
+    font-weight: bold;
+}
+
+.card-text {
+    font-weight: normal;
+}
+
+
+
 .earned {
     background-color: lightgreen;
 }

@@ -304,8 +304,12 @@ def saveGameRecord(id):
 
     if modo == 'Classroom Challenge':
         place = jon['place']
+    elif modo == 'Battlemode':
+        place = jon['place']
+        print(place)
     else:
         place = -1
+    
 
     # Aquí pasamos también el topic (si está presente)
     addTrophy(id, resultado, modo, place, topic)
@@ -332,6 +336,10 @@ def addTrophy(userId, resultado, modo, place, topic):
             elif resultado == 10:
                 v['medallaOro'] = v.get('medallaOro', 0) + 1
         alumno.single_player += 1
+    elif modo == 'Battlemode':
+        alumno.battlemode += 1
+        if place == 0:
+            v['victoriasBattleMode'] = v.get('victoriasBattleMode', 0) + 1
     elif modo == 'Classroom Challenge':
         if place == 0:
             v['trofeoOro'] = v.get('trofeoOro', 0) + 1
@@ -340,13 +348,12 @@ def addTrophy(userId, resultado, modo, place, topic):
         elif place == 2:
             v['trofeoBronce'] = v.get('trofeoBronce', 0) + 1
         alumno.classroom_challenge += 1
-    elif modo == 'Battlemode':
-        alumno.battlemode += 1
     elif modo == 'Infinite Mode':
         alumno.infinite_mode += 1
+        if modo == 'Infinite Mode' and resultado > v.get('recordInfinito', 0):
+            v['recordInfinito'] = resultado
 
-    if modo == 'Infinite Mode' and resultado > v.get('recordInfinito', 0):
-        v['recordInfinito'] = resultado
+    
 
     v['numPartidas'] = v.get('numPartidas', 0) + 1
     baseDatos.actualizarVitrina(userId, v)
