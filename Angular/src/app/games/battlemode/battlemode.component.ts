@@ -173,11 +173,21 @@ export class BattlemodeComponent implements OnInit {
         // Determina el ganador, que será el primer jugador en la lista ordenada
         this.winner = this.clasification[0];  // El jugador con la mayor puntuación es el primero
 
-        const posicion = this.clasification.findIndex((element) => element.user === this.userEmail);
-        if (this.userEmail) {
-          this.socketService.enviarPosicion(this.userEmail, posicion, this.codigo);
-        }
-
+        const posicionFilt = this.clasification.findIndex((element) => element.user === this.userEmail);
+        // Actualiza gameRecord con los resultados finales
+        this.gameRecord.correctAnswers = this.respuestasCorrectas;
+        this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
+        this.gameRecord.score = this.puntuacion;
+        this.gameRecord.fecha = new Date().toString();
+        if (posicionFilt === 0) {
+          this.gameRecord.place = 0;
+        } else {
+          this.gameRecord.place = -1;
+        }        
+        this.userService.sendGameResults(this.user?._id!, this.gameRecord).subscribe({
+          next: () => console.log('Registro de juego enviado correctamente'),
+          error: (error) => console.error('Error al enviar el registro de juego', error)
+        });
 
         this.estado = 'resultadosFinales';  // Cambia el estado para mostrar los resultados
       } else {
@@ -327,30 +337,15 @@ export class BattlemodeComponent implements OnInit {
       console.log(`Enviando resultado a la sala: ${this.codigo}`);
       this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
 
-      this.socketService.recibirPosicion().subscribe((posicionObj) => {
-        console.log('Posición final:', posicionObj);
-        // Actualiza gameRecord con los resultados finales
-        this.gameRecord.correctAnswers = this.respuestasCorrectas;
-        this.gameRecord.incorrectAnswers = this.respuestasIncorrectas;
-        this.gameRecord.score = this.puntuacion;
-        this.gameRecord.fecha = new Date().toString();
-        console.log('posicionposicionposicionposicionposicion', posicionObj);
-        const posicion = posicionObj['posicion'];
-        this.gameRecord.place = posicion;
 
-        this.userService.sendPreguntaOnline('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
-          .subscribe({
-            next: (response) => console.log('Estadísticas enviadas correctamente', response),
-            error: (error) => console.error('Error al enviar estadísticas', error)
-          });
 
-        this.userService.sendGameResults(this.user?._id!, this.gameRecord).subscribe({
-          next: () => console.log('Registro de juego enviado correctamente'),
-          error: (error) => console.error('Error al enviar el registro de juego', error)
+      this.userService.sendPreguntaOnline('Battlemode', this.respuestasCorrectas, this.respuestasIncorrectas)
+        .subscribe({
+          next: (response) => console.log('Estadísticas enviadas correctamente', response),
+          error: (error) => console.error('Error al enviar estadísticas', error)
         });
 
-      });
-
+      this.authService.updateUser(this.user!)
       this.estado = 'esperandoResultados';
       console.log('Juego terminado. Esperando resultados...');
     } else {

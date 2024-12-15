@@ -337,9 +337,11 @@ def addTrophy(userId, resultado, modo, place, topic):
                 v['medallaOro'] = v.get('medallaOro', 0) + 1
         alumno.single_player += 1
     elif modo == 'Battlemode':
-        alumno.battlemode += 1
         if place == 0:
+            alumno.battlemode += 1
             v['victoriasBattleMode'] = v.get('victoriasBattleMode', 0) + 1
+        else 
+            alumno.battlemode += 1
     elif modo == 'Classroom Challenge':
         if place == 0:
             v['trofeoOro'] = v.get('trofeoOro', 0) + 1
