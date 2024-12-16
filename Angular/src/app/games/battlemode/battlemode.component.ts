@@ -96,7 +96,7 @@ export class BattlemodeComponent implements OnInit {
     this.gameRecord.correctAnswers = 0;
     this.gameRecord.answers = [];
     this.gameRecord.score = 0;
-    this.gameRecord.place = 0;
+    this.gameRecord.place = -1;
 
     // Crear el formulario de selección de país y tema
     this.form = this._formBuilder.group({
@@ -287,7 +287,7 @@ export class BattlemodeComponent implements OnInit {
         if (this.codigoSala !== null) {
           this.codigo = this.codigoSala;
         }
-        console.log("Unido a la sala correctamente. Jugadores en la sala:", this.jugadores);
+        console.log("Unido a la sala correctamente. Jugadores en la sala:", this.jugadores); 
       }
     });
   }
@@ -333,9 +333,10 @@ export class BattlemodeComponent implements OnInit {
 
 
   finalizarJuego() {
-    if (this.userEmail) {
+      
       console.log(`Enviando resultado a la sala: ${this.codigo}`);
-      this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
+      if (this.userEmail)
+        this.socketService.enviarResultadoAlumnoBattlemode(this.userEmail, this.puntuacion, this.codigo.toString());
 
 
 
@@ -348,10 +349,9 @@ export class BattlemodeComponent implements OnInit {
       this.authService.updateUser(this.user!)
       this.estado = 'esperandoResultados';
       console.log('Juego terminado. Esperando resultados...');
-    } else {
-      console.error("User email is undefined. Cannot send results.");
+    
     }
-  }
+  
 
 
   volverAlMenu() {
