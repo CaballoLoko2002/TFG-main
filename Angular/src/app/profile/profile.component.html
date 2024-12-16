@@ -38,23 +38,25 @@
                         <div class="card-body">
                             <h5 class="d-flex align-items-center mb-3">Achievements</h5>
                             <div class="row">
-                                <div *ngFor="let logro of logros"
-                                    class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
-                                    <div [ngClass]="{'earned': logro.condicion, 'notEarned': !logro.condicion}"
-                                        class="card card-small mb-3 text-center">
+                                <div *ngFor="let logro of logros" class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch">
+                                    <div [ngClass]="{
+                                            'notEarned': !logro.condicion,
+                                            'goldMedals': logro.group === 'goldMedals',
+                                            'silverMedals': logro.group === 'silverMedals',
+                                            'infiniteMode': logro.group === 'infiniteMode',
+                                            'battleMode': logro.group === 'battleMode',
+                                            'honourStudent': logro.group === 'honourStudent',
+                                            'classroomChallenge': logro.group === 'classroomChallenge'
+                                        }" class="card card-small mb-3 text-center">
                                         <div class="card-header bold-text">{{ logro.title }}</div>
                                         <div class="card-body">
-                                            <img *ngIf="logro.condicion" [src]="logro.img" class="card-img"
-                                                alt="{{logro.title}}" />
-                                            <img *ngIf="!logro.condicion" src="assets/images/question_mark.png"
-                                                class="card-img" alt="{{logro.title}}" />
+                                            <img *ngIf="logro.condicion" [src]="logro.img" class="card-img" alt="{{logro.title}}" />
+                                            <img *ngIf="!logro.condicion" src="assets/images/question_mark.png" class="card-img" alt="{{logro.title}}" />
                                             <p class="card-text">{{ logro.content }}</p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-
-
+                            </div> 
                         </div>
                     </div>
                     <mat-divider></mat-divider>

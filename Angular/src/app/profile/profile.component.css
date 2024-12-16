@@ -28,10 +28,28 @@ strong {
     font-weight: normal;
 }
 
+.goldMedals {
+    background-color: goldenrod;
+}
 
+.silverMedals {
+    background-color: silver;
+}
 
-.earned {
+.infiniteMode {
     background-color: lightgreen;
+}
+
+.battleMode {
+    background-color: lightblue;
+}
+
+.honourStudent {
+    background-color: lightcoral;
+}
+
+.classroomChallenge {
+    background-color: crimson;
 }
 
 .notEarned {

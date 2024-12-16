@@ -8,4 +8,5 @@ export interface Vitrina {
     recordInfinito: number;
     recordMix: number;
     numPartidas: number;
+    victoriasBattleMode: number;
 }
