@@ -29,22 +29,27 @@ strong {
 }
 
 .goldMedals {
-    background-color: goldenrod;
+    color: navy;
+    background-color: rgb(243, 197, 81);
 }
 
 .silverMedals {
-    background-color: silver;
+    color: navy;
+    background-color: rgb(221, 221, 221);
 }
 
 .infiniteMode {
-    background-color: lightgreen;
+    color: navy;
+    background-color: rgb(87, 184, 87);
 }
 
 .battleMode {
-    background-color: lightblue;
+    color: navy;
+    background-color: rgb(108, 193, 221);
 }
 
 .honourStudent {
+    color: navy;
     background-color: lightcoral;
 }
 
@@ -52,7 +57,13 @@ strong {
     background-color: crimson;
 }
 
+.bronzeMedals {
+    color: navy;
+    background-color: rgb(238, 157, 77);
+}
+
 .notEarned {
+    color: navy;
     background-color: lightgray;
 }
 

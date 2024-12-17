@@ -240,7 +240,7 @@ export class ProfileComponent implements OnInit {
         condicion: (this.user?.vitrina?.victoriasBattleMode! >= 5), group: 'battleMode'
       },
       {
-        title: 'Battle Victory 6', content: 'Win 6 Battle Mode', img: "assets/images/battle6.jpg",
+        title: 'Magic Crystal Ball', content: 'Win 6 Battle Mode', img: "assets/images/battle6.jpg",
         condicion: (this.user?.vitrina?.victoriasBattleMode! >= 6), group: 'battleMode'
       },
       {
@@ -264,7 +264,7 @@ export class ProfileComponent implements OnInit {
         condicion: (this.user?.vitrina?.victoriasBattleMode! >= 11), group: 'battleMode'
       },
       {
-        title: 'Magic Snake', content: 'Win 12 Battle Mode', img: "assets/images/battle12.jpg",
+        title: 'Magic Basilisk', content: 'Win 12 Battle Mode', img: "assets/images/battle12.jpg",
         condicion: (this.user?.vitrina?.victoriasBattleMode! >= 12), group: 'battleMode'
       },
       {
@@ -305,15 +305,15 @@ export class ProfileComponent implements OnInit {
       },
       {
         title: 'Invincible Classroom Champion', content: 'Win one gold trophy in a classroom competition', img: "assets/images/invincibleAchv.jpg",
-        condicion: (this.user?.vitrina?.trofeoOro! != 0), group: 'classroomChallenge'
+        condicion: (this.user?.vitrina?.trofeoOro! != 0), group: 'goldMedals'
       },
       {
         title: 'Silver Champion', content: 'Win one silver trophy in a classroom competition', img: "assets/images/silverChampion.jpg",
-        condicion: (this.user?.vitrina?.trofeoPlata != 0), group: 'classroomChallenge'
+        condicion: (this.user?.vitrina?.trofeoPlata != 0), group: 'silverMedals'
       },
       {
         title: 'Bronze Champion', content: 'Win one bronze trophy in a classroom competition', img: "assets/images/bronzeChampion.jpg",
-        condicion: (this.user?.vitrina?.trofeoBronce != 0), group: 'classroomChallenge'
+        condicion: (this.user?.vitrina?.trofeoBronce != 0), group: 'bronzeMedals'
       }
     ];
 
