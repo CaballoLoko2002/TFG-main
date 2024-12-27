@@ -10,8 +10,8 @@ export const environment = {
     // preguntasApi: 'http://127.0.0.1:8385'
     
     
-   userApi: 'https://usuarios-rest-prueba.onrender.com',
-   preguntasApi: 'https://preguntas-rest.onrender.com'
+   userApi: 'https://tfg-usuarios-rest.onrender.com',
+   preguntasApi: 'https://tfg-preguntas-rest.onrender.com'
 
    
 };
