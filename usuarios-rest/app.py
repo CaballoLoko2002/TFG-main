@@ -28,7 +28,7 @@ diccionario = {}
 
 @app.after_request
 def after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "https://caballoloko2002.github.io/TFG-main/"
+    response.headers["Access-Control-Allow-Origin"] = "https://caballoloko2002.github.io"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS,PUT,DELETE"
     response.headers["Access-Control-Allow-Headers"] = "Accept, enctype, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
