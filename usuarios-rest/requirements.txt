@@ -5,3 +5,4 @@ uuid
 pymongo
 bson
 waitress
+flask-bcrypt
