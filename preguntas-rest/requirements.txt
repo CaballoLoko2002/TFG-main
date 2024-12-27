@@ -5,3 +5,4 @@ werkzeug
 uuid
 pymongo
 bson
+waitress
