@@ -483,6 +483,6 @@ def save_estadistica_on_update(response):
 
 
 if __name__ == '__main__':
-    from waitress import serve
+    #from waitress import serve
     #app.run(ssl_context=('/var/servers/servicioSidra/certificados2020Node/docentis_inf_um_es.crt', '/var/servers/servicioSidra/certificados2020Node/mydomain.key'), host='0.0.0.0',port=8384)
     app.run(host='127.0.0.1',port=8384,debug=True)
