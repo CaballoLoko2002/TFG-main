@@ -3,6 +3,5 @@ flask
 werkzeug
 uuid
 pymongo
-bson
 waitress
 flask-bcrypt
