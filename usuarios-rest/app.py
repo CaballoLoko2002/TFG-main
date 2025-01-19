@@ -21,6 +21,7 @@ app = Flask(__name__) #aquí creamos una nueva instancia del servidor Flask.
 bcrypt = Bcrypt(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 baseDatos = DataBase()
+Estadistica.inicializar(baseDatos.db)  
 listAlumnos = []
 diccionario = {}
 
@@ -28,7 +29,7 @@ diccionario = {}
 
 @app.after_request
 def after_request(response):
-    response.headers["Access-Control-Allow-Origin"] = "https://caballoloko2002.github.io"
+    response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Methods"] = "GET,POST,OPTIONS,PUT,DELETE"
     response.headers["Access-Control-Allow-Headers"] = "Accept, enctype, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization"
@@ -410,6 +411,7 @@ def actualiza_partida():
     
     # Obtener instancia de Estadistica
     estadistica = Estadistica.cargar_desde_base_datos(baseDatos.db)  # Asegura que siempre carga la última versión
+    print(f"Base de datos activa: {baseDatos.db.name}")
     
     # Actualizar partida
     estadistica.actualiza_partida(modo, respuestas_correctas, respuestas_incorrectas)

@@ -1,11 +1,17 @@
 class Estadistica:
     _instance = None
+    _baseDatos = None
+
+    @classmethod
+    def inicializar(cls, baseDatos):
+        cls._baseDatos = baseDatos
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
-            # Crea la instancia por primera vez y carga desde la base de datos si existe
+            if cls._baseDatos is None:
+                raise Exception("baseDatos no ha sido inicializado. Llama a Estadistica.inicializar(baseDatos) primero.")
             cls._instance = super(Estadistica, cls).__new__(cls)
-            cls._instance = cls.cargar_desde_base_datos(baseDatos.db)
+            cls._instance = cls.cargar_desde_base_datos(cls._baseDatos.db)
         return cls._instance
 
     def __init__(self, partidas_jugadas=0, preguntas_acertadas=0, preguntas_falladas=0, 
@@ -98,14 +104,17 @@ class Estadistica:
 
     @classmethod
     def cargar_desde_base_datos(cls, db):
-        """Carga la estadística desde la base de datos."""
         estadisticas_coleccion = db.estadisticas
         datos = estadisticas_coleccion.find_one({})
+        print("Datos obtenidos desde la base de datos:", datos)  # Verifica los datos
         if datos:
             return cls.from_dict(datos)
         else:
-            print("No se encontraron datos de estadísticas en la base de datos, inicializando nueva instancia.")
-            return cls()  # Devuelve una instancia vacía si no existen datos
+            print("No se encontraron datos de estadísticas en la base de datos. Inicializando nueva instancia.")
+            nueva_instancia = cls()
+            nueva_instancia.guardar_en_base_datos(db)
+            return nueva_instancia
+
 
 
     # Métodos de actualización
