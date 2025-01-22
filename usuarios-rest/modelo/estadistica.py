@@ -97,16 +97,33 @@ class Estadistica:
 
     def guardar_en_base_datos(self, db):
         """Guarda la estadística en la base de datos."""
-        estadisticas_coleccion = db.estadisticas
-        resultado = estadisticas_coleccion.update_one({}, {"$set": self.to_dict()}, upsert=True)
-        if not resultado.acknowledged:
-            raise Exception("Error al guardar en la base de datos")  # Manejo de error en caso de fallo
+        estadisticas_coleccion = db['estadisticas']
+        otra_coleccion = db['db.estadisticas']
+        datos = self.to_dict()
+
+        # Guardar en la colección 'estadisticas'
+        resultado_primario = estadisticas_coleccion.update_one(
+            {"_id": "singleton_estadisticas"},
+            {"$set": datos},
+            upsert=True
+        )
+
+        # Guardar en la colección 'db.estadisticas'
+        resultado_secundario = otra_coleccion.update_one(
+            {"_id": "singleton_estadisticas"},
+            {"$set": datos},
+            upsert=True
+        )
+
+        # Verificar que ambas operaciones fueron exitosas
+        if not (resultado_primario.acknowledged and resultado_secundario.acknowledged):
+            raise Exception("Error al guardar en una o ambas colecciones de la base de datos.")
+
 
     @classmethod
     def cargar_desde_base_datos(cls, db):
         estadisticas_coleccion = db.estadisticas
-        datos = estadisticas_coleccion.find_one({})
-        print("Datos obtenidos desde la base de datos:", datos)  # Verifica los datos
+        datos = estadisticas_coleccion.find_one({"_id": "singleton_estadisticas"})
         if datos:
             return cls.from_dict(datos)
         else:
